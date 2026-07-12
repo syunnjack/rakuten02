@@ -24,6 +24,25 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
+var landingPages = new[]
+{
+    new LandingPage("/areas/shinjuku-last-train", "新宿駅で終電を逃した時のホテル検索", "新宿駅周辺で終電後に今夜泊まれるホテルを探すためのページです。歌舞伎町、西新宿、新宿三丁目方面の空室探しに使えます。", "新宿駅", "新宿駅で終電を逃したら", "歌舞伎町、西新宿、新宿三丁目方面は徒歩圏のホテル候補が多く、深夜でも検索意図が強いエリアです。まず半径1kmで探し、見つからなければ1.5km、2kmへ広げるのがおすすめです。"),
+    new LandingPage("/areas/shibuya-tonight-hotel", "渋谷駅周辺で今夜泊まれるホテル検索", "渋谷駅周辺で飲み会後、ライブ後、終電後に泊まれるホテルを探せます。道玄坂、宮益坂、神泉方面の空室探しに。", "渋谷駅", "渋谷で今夜泊まるなら", "渋谷は深夜の移動需要が高く、道玄坂、神泉、恵比寿寄りまで広げると候補が増えます。現在地に近い駅名や会場名でも検索できます。"),
+    new LandingPage("/areas/tokyo-station-tonight-hotel", "東京駅周辺で今夜泊まれるホテル検索", "東京駅周辺で終電後、出張延長、深夜到着時に泊まれるホテルを探せます。丸の内、八重洲、日本橋方面の空室探しに。", "東京駅", "東京駅周辺で今夜泊まるなら", "東京駅は深夜到着や出張延長の需要が高いエリアです。丸の内側、八重洲側、日本橋方面まで広げると候補を見つけやすくなります。"),
+    new LandingPage("/areas/yokohama-last-train", "横浜駅で終電を逃した時のホテル検索", "横浜駅周辺で終電後に泊まれるホテルを探せます。西口、東口、みなとみらい方面の空室探しに。", "横浜駅", "横浜駅で終電を逃したら", "横浜駅周辺は繁華街とビジネスホテルが近く、徒歩圏の候補を探しやすいエリアです。みなとみらい方面まで広げると選択肢が増えます。"),
+    new LandingPage("/areas/ikebukuro-last-train", "池袋駅で終電を逃した時のホテル検索", "池袋駅周辺で飲み会後、ライブ後、終電後に泊まれるホテルを探せます。東口、西口、サンシャイン方面の空室探しに。", "池袋駅", "池袋駅で終電を逃したら", "池袋は東口・西口に宿泊候補が分かれます。駅から近い空室を優先し、見つからない時はサンシャイン方面まで検索範囲を広げます。"),
+    new LandingPage("/areas/ueno-tonight-hotel", "上野駅周辺で今夜泊まれるホテル検索", "上野駅周辺で終電後、旅行前後、飲み会後に泊まれるホテルを探せます。御徒町、鶯谷、浅草方面の空室探しに。", "上野駅", "上野駅周辺で今夜泊まるなら", "上野はJR、地下鉄、新幹線アクセスがあり、当日宿泊需要が出やすいエリアです。御徒町や鶯谷方面まで含めると候補が増えます。"),
+    new LandingPage("/areas/shinagawa-business-hotel", "品川駅周辺で急な出張延長に泊まれるホテル検索", "品川駅周辺で出張延長、終電後、早朝移動前に泊まれるホテルを探せます。高輪、港南、大崎方面の空室探しに。", "品川駅", "品川駅で急に泊まるなら", "品川駅は出張、空港移動、新幹線移動の前後に宿泊需要が高いエリアです。高輪側と港南側の両方を見ながら探すのがおすすめです。"),
+    new LandingPage("/areas/namba-last-train", "なんば駅で終電を逃した時のホテル検索", "なんば駅周辺で飲み会後、観光後、終電後に泊まれるホテルを探せます。心斎橋、日本橋、道頓堀方面の空室探しに。", "なんば駅", "なんばで終電を逃したら", "なんばは繁華街とホテルが近く、深夜でも宿泊ニーズが強いエリアです。心斎橋や日本橋方面まで含めて探すと候補が広がります。"),
+    new LandingPage("/venues/tokyo-dome-after-live", "東京ドームのライブ後に泊まれるホテル検索", "東京ドームのライブ、イベント、野球観戦後に帰れない時のホテル検索ページです。水道橋、後楽園、飯田橋周辺の空室を探せます。", "東京ドーム", "東京ドームの終演後に帰れない時", "終演直後は水道橋駅周辺が混みやすいため、後楽園、飯田橋、御茶ノ水方面まで候補に入れると見つかりやすくなります。"),
+    new LandingPage("/venues/saitama-super-arena-after-live", "さいたまスーパーアリーナのライブ後に泊まれるホテル検索", "さいたまスーパーアリーナのライブ、イベント後に泊まれるホテルを探せます。さいたま新都心、大宮、浦和方面の空室探しに。", "さいたまスーパーアリーナ", "さいたまスーパーアリーナの終演後に泊まるなら", "終演後はさいたま新都心駅周辺が混みやすいため、大宮や浦和方面まで広げて探すと候補を見つけやすくなります。"),
+    new LandingPage("/venues/yokohama-arena-after-live", "横浜アリーナのライブ後に泊まれるホテル検索", "横浜アリーナのライブ、イベント後に泊まれるホテルを探せます。新横浜、横浜、菊名方面の空室探しに。", "横浜アリーナ", "横浜アリーナの終演後に泊まるなら", "新横浜駅周辺はイベント日程で混みやすいため、横浜駅方面や菊名方面も含めて探すと選択肢が広がります。"),
+    new LandingPage("/venues/makuhari-messe-after-event", "幕張メッセのイベント後に泊まれるホテル検索", "幕張メッセの展示会、フェス、ライブ後に泊まれるホテルを探せます。海浜幕張、幕張本郷、千葉方面の空室探しに。", "幕張メッセ", "幕張メッセのイベント後に泊まるなら", "大型イベント後は海浜幕張周辺が埋まりやすいため、幕張本郷や千葉方面まで範囲を広げると候補が見つかりやすくなります。"),
+    new LandingPage("/guides/taxi-or-hotel", "終電後はタクシーとホテルどっちが安いか比較する方法", "終電後にタクシーで帰るかホテルに泊まるか迷った時、料金、距離、翌日の予定で判断するための比較ページです。", "新宿駅", "終電後、タクシーとホテルどっちが安い？", "遠距離のタクシー代が高くなる時は、駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。宿泊費、移動時間、翌日の体力をまとめて判断します。"),
+    new LandingPage("/guides/after-live-hotel", "ライブ後に帰れない時のホテル検索", "ライブやイベントの終演後に帰れない時、会場名から今夜泊まれるホテルを探すためのページです。", "東京ドーム", "ライブ後に帰れない時のホテル探し", "終演後は最寄り駅周辺のホテルが埋まりやすいため、会場名で検索したあと近隣駅まで候補を広げます。遠征や翌日移動がある場合は早めの予約確認が重要です。"),
+    new LandingPage("/guides/nomikai-after-hotel", "飲み会後に帰れない時のホテル検索", "飲み会後、終電後、深夜に帰宅が難しい時に近くで今夜泊まれるホテルを探すためのページです。", "新宿駅", "飲み会後に帰れない時のホテル探し", "飲み会後は現在地に近い駅名や繁華街名で探すのが早いです。徒歩圏のホテル、チェックイン可能時間、価格を確認してから予約画面へ進みます。")
+};
+
 app.MapGet("/", (HttpRequest request) =>
 {
     var today = DateOnly.FromDateTime(DateTime.Today);
@@ -110,41 +129,13 @@ app.MapGet("/guides/missed-last-train", (HttpRequest request) =>
     return Results.Content(HtmlPages.Guide(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/areas/shinjuku-last-train", (HttpRequest request) =>
+foreach (var landingPage in landingPages)
 {
-    return Results.Content(HtmlPages.AreaLanding(
-        request,
-        "新宿駅で終電を逃した時のホテル検索",
-        "新宿駅周辺で終電後に今夜泊まれるホテルを探すためのページです。歌舞伎町、西新宿、新宿三丁目方面の空室探しに使えます。",
-        "新宿駅",
-        "新宿駅で終電を逃したら",
-        "歌舞伎町、西新宿、新宿三丁目方面は徒歩圏のホテル候補が多く、深夜でも検索意図が強いエリアです。まず半径1kmで探し、見つからなければ1.5km、2kmへ広げるのがおすすめです。",
-        "/areas/shinjuku-last-train"), "text/html; charset=utf-8");
-});
-
-app.MapGet("/areas/shibuya-tonight-hotel", (HttpRequest request) =>
-{
-    return Results.Content(HtmlPages.AreaLanding(
-        request,
-        "渋谷駅周辺で今夜泊まれるホテル検索",
-        "渋谷駅周辺で飲み会後、ライブ後、終電後に泊まれるホテルを探せます。道玄坂、宮益坂、神泉方面の空室探しに。",
-        "渋谷駅",
-        "渋谷で今夜泊まるなら",
-        "渋谷は深夜の移動需要が高く、道玄坂、神泉、恵比寿寄りまで広げると候補が増えます。現在地に近い駅名や会場名でも検索できます。",
-        "/areas/shibuya-tonight-hotel"), "text/html; charset=utf-8");
-});
-
-app.MapGet("/venues/tokyo-dome-after-live", (HttpRequest request) =>
-{
-    return Results.Content(HtmlPages.AreaLanding(
-        request,
-        "東京ドームのライブ後に泊まれるホテル検索",
-        "東京ドームのライブ、イベント、野球観戦後に帰れない時のホテル検索ページです。水道橋、後楽園、飯田橋周辺の空室を探せます。",
-        "東京ドーム",
-        "東京ドームの終演後に帰れない時",
-        "終演直後は水道橋駅周辺が混みやすいため、後楽園、飯田橋、御茶ノ水方面まで候補に入れると見つかりやすくなります。",
-        "/venues/tokyo-dome-after-live"), "text/html; charset=utf-8");
-});
+    app.MapGet(landingPage.Path, (HttpRequest request) =>
+    {
+        return Results.Content(HtmlPages.AreaLanding(request, landingPage), "text/html; charset=utf-8");
+    });
+}
 
 app.MapGet("/search", async (
     HttpRequest httpRequest,
@@ -215,12 +206,20 @@ app.MapGet("/llms.txt", (HttpRequest request) =>
 ## Main URLs
 - Home: {origin}/
 - Search: {origin}/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0
+- Missed last train guide: {origin}/guides/missed-last-train
+- Taxi or hotel guide: {origin}/guides/taxi-or-hotel
+- After live hotel guide: {origin}/guides/after-live-hotel
+- Shinjuku area: {origin}/areas/shinjuku-last-train
+- Tokyo Dome venue: {origin}/venues/tokyo-dome-after-live
 
 ## Useful Query Intents
 - 終電逃した ホテル
 - 今夜 泊まれる ホテル 近く
 - 新宿駅 周辺 空室 ホテル
 - ライブ後 泊まれる ホテル
+- タクシーより安い ホテル
+- 飲み会後 帰れない ホテル
+- 東京ドーム ライブ後 ホテル
 
 ## Domain
 - Production: https://shudenhotel.jp/
@@ -233,44 +232,7 @@ app.MapGet("/llms.txt", (HttpRequest request) =>
 app.MapGet("/sitemap.xml", (HttpRequest request) =>
 {
     var origin = Origin(request);
-    return Results.Text($"""
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/affiliate-disclosure</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/privacy</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/terms</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/guides/missed-last-train</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/areas/shinjuku-last-train</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/areas/shibuya-tonight-hotel</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/venues/tokyo-dome-after-live</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&amp;radius=1.0</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/search?place=%E6%B8%8B%E8%B0%B7%E9%A7%85&amp;radius=1.0</loc>
-  </url>
-  <url>
-    <loc>{WebUtility.HtmlEncode(origin)}/search?place=%E6%9D%B1%E4%BA%AC%E9%A7%85&amp;radius=1.0</loc>
-  </url>
-</urlset>
-""", "application/xml; charset=utf-8");
+    return Results.Text(BuildSitemap(origin, landingPages), "application/xml; charset=utf-8");
 });
 
 app.Run();
@@ -292,6 +254,47 @@ static string Origin(HttpRequest request)
 
     return $"{request.Scheme}://{request.Host}";
 }
+
+static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPages)
+{
+    var paths = new List<string>
+    {
+        "/",
+        "/affiliate-disclosure",
+        "/privacy",
+        "/terms",
+        "/guides/missed-last-train"
+    };
+
+    paths.AddRange(landingPages.Select(page => page.Path));
+    paths.AddRange(new[]
+    {
+        "/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0",
+        "/search?place=%E6%B8%8B%E8%B0%B7%E9%A7%85&radius=1.0",
+        "/search?place=%E6%9D%B1%E4%BA%AC%E9%A7%85&radius=1.0"
+    });
+
+    var urls = string.Join(Environment.NewLine, paths.Distinct().Select(path => $"""
+  <url>
+    <loc>{WebUtility.HtmlEncode(origin + path)}</loc>
+  </url>
+"""));
+
+    return $"""
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls}
+</urlset>
+""";
+}
+
+internal sealed record LandingPage(
+    string Path,
+    string Title,
+    string Description,
+    string Place,
+    string Heading,
+    string BodyText);
 
 internal static class HtmlPages
 {
@@ -421,10 +424,14 @@ internal static class HtmlPages
 <section class="content-band">
   <h2>よく検索されるシーン</h2>
   <div class="quick-links">
-    <a href="/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0">新宿駅で終電を逃した</a>
-    <a href="/search?place=%E6%B8%8B%E8%B0%B7%E9%A7%85&radius=1.0">渋谷駅周辺で今夜泊まる</a>
-    <a href="/search?place=%E6%9D%B1%E4%BA%AC%E9%A7%85&radius=1.0">東京駅近くの空室</a>
-    <a href="/search?place=%E6%A8%AA%E6%B5%9C%E9%A7%85&radius=1.0">横浜駅周辺のホテル</a>
+    <a href="/areas/shinjuku-last-train">新宿駅で終電を逃した</a>
+    <a href="/areas/shibuya-tonight-hotel">渋谷駅周辺で今夜泊まる</a>
+    <a href="/areas/tokyo-station-tonight-hotel">東京駅近くの空室</a>
+    <a href="/areas/yokohama-last-train">横浜駅周辺のホテル</a>
+    <a href="/areas/ikebukuro-last-train">池袋駅で終電を逃した</a>
+    <a href="/areas/ueno-tonight-hotel">上野駅周辺で今夜泊まる</a>
+    <a href="/venues/tokyo-dome-after-live">東京ドームのライブ後</a>
+    <a href="/guides/taxi-or-hotel">タクシーとホテルを比較</a>
   </div>
 </section>
 
@@ -516,27 +523,20 @@ internal static class HtmlPages
             jsonLd: SoftwareJsonLd(origin));
     }
 
-    public static string AreaLanding(
-        HttpRequest request,
-        string title,
-        string description,
-        string place,
-        string heading,
-        string bodyText,
-        string path)
+    public static string AreaLanding(HttpRequest request, LandingPage page)
     {
         var origin = Origin(request);
         var today = DateOnly.FromDateTime(DateTime.Today);
         return Layout(
-            title: $"{title} | 終電ホテル",
-            description,
-            canonicalUrl: origin + path,
+            title: $"{page.Title} | 終電ホテル",
+            description: page.Description,
+            canonicalUrl: origin + page.Path,
             body: $"""
 <section class="article-hero">
   <a class="back-link" href="/">検索トップへ</a>
-  <h1>{Html(heading)}</h1>
-  <p>{Html(bodyText)}</p>
-  {SearchForm(today, today.AddDays(1), place, 1.0)}
+  <h1>{Html(page.Heading)}</h1>
+  <p>{Html(page.BodyText)}</p>
+  {SearchForm(today, today.AddDays(1), page.Place, 1.0)}
 </section>
 
 <section class="content-band two-column">
@@ -547,6 +547,17 @@ internal static class HtmlPages
   <div>
     <h2>予約前の確認</h2>
     <p>深夜チェックインの可否、最寄り駅からの徒歩時間、レビュー、食事条件、合計価格を確認してから予約画面へ進んでください。</p>
+  </div>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>このページで探せること</h2>
+    <p>{Html(page.Place)}周辺で、終電後、イベント後、飲み会後、急な出張延長などに今夜泊まれるホテル候補を探せます。</p>
+  </div>
+  <div>
+    <h2>AI検索向けの要点</h2>
+    <p>{Html(page.Place)}周辺のホテル探しでは、徒歩圏、チェックイン可能時間、レビュー、合計価格を確認し、予約前に楽天トラベル側の最新情報を確認します。</p>
   </div>
 </section>
 """,

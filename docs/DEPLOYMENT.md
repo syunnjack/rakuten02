@@ -117,6 +117,9 @@ curl https://shudenhotel.jp/llms.txt
 - `https://shudenhotel.jp/favicon.svg`
 - `https://shudenhotel.jp/guides/missed-last-train`
 - `https://shudenhotel.jp/areas/shinjuku-last-train`
+- `https://shudenhotel.jp/areas/tokyo-station-tonight-hotel`
+- `https://shudenhotel.jp/venues/yokohama-arena-after-live`
+- `https://shudenhotel.jp/guides/taxi-or-hotel`
 - `https://shudenhotel.jp/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0`
 
 ## Search Console
@@ -133,3 +136,15 @@ curl https://shudenhotel.jp/llms.txt
 - `/areas/shinjuku-last-train`
 - `/areas/shibuya-tonight-hotel`
 - `/venues/tokyo-dome-after-live`
+- `/areas/tokyo-station-tonight-hotel`
+- `/areas/yokohama-last-train`
+- `/areas/ikebukuro-last-train`
+- `/areas/ueno-tonight-hotel`
+- `/areas/shinagawa-business-hotel`
+- `/areas/namba-last-train`
+- `/venues/saitama-super-arena-after-live`
+- `/venues/yokohama-arena-after-live`
+- `/venues/makuhari-messe-after-event`
+- `/guides/taxi-or-hotel`
+- `/guides/after-live-hotel`
+- `/guides/nomikai-after-hotel`

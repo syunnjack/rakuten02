@@ -45,10 +45,32 @@ GoogleのAI Overview / AI Mode向けに特別な隠し最適化を狙うより�
 
 - `/areas/shinjuku-last-train`
 - `/areas/shibuya-tonight-hotel`
+- `/areas/tokyo-station-tonight-hotel`
+- `/areas/yokohama-last-train`
+- `/areas/ikebukuro-last-train`
+- `/areas/ueno-tonight-hotel`
+- `/areas/shinagawa-business-hotel`
+- `/areas/namba-last-train`
 - `/venues/tokyo-dome-after-live`
+- `/venues/saitama-super-arena-after-live`
+- `/venues/yokohama-arena-after-live`
+- `/venues/makuhari-messe-after-event`
 - `/guides/missed-last-train`
+- `/guides/taxi-or-hotel`
+- `/guides/after-live-hotel`
+- `/guides/nomikai-after-hotel`
 
 各ページには、検索フォームだけでなく「どう探すか」「相場」「徒歩圏」「朝まで過ごす代替案」を本文で入れます。
+
+## LP追加方針
+
+初期は、検索需要が強い駅・会場・利用シーンを主ドメイン配下に集約します。別ドメインに分散させず、`shudenhotel.jp` 内の内部リンクとsitemapで評価を集めます。
+
+- 駅LP: `終電逃した`, `今夜泊まれる`, `駅周辺 空室`
+- 会場LP: `ライブ後`, `イベント後`, `帰れない`
+- シーンLP: `タクシーより安い`, `飲み会後`, `終演後`
+
+各LPはAI検索が引用しやすいように、ホテル検索フォームだけでなく「検索のコツ」「予約前の確認」「AI検索向けの要点」を本文に含めます。
 
 ## SNSでバズらせる切り口
 
