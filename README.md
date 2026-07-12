@@ -23,6 +23,18 @@ dotnet run --project rakuten02.Web
 
 `PUBLIC_BASE_URL` はcanonical、OGP URL、sitemap、llms.txtに使われます。
 
+## アプリ版の起動
+
+Windowsアプリ版も楽天APIキーを環境変数から読み込みます。
+
+```powershell
+$env:RAKUTEN_APPLICATION_ID="your_application_id"
+$env:RAKUTEN_AFFILIATE_ID="your_affiliate_id"
+dotnet run --project rakuten02
+```
+
+既に公開リポジトリへ古い `applicationId` をpushしている場合は、楽天ウェブサービス側で新しいアプリIDを発行し、古いIDを使わない運用に切り替えることをおすすめします。
+
 ## 楽天アフィリエイト対応
 
 Web版では楽天APIリクエストに `affiliateId` を渡します。予約リンクは次の優先順位で出力します。

@@ -12,8 +12,8 @@ namespace rakuten02
 {
     public partial class Form1 : Form
     {
-        private const string APP_ID = "1034453413438409121";
-        private const string AFFILIATE_ID = "13078974.c074128c.13078975.03b0a557";
+        private static readonly string APP_ID = Environment.GetEnvironmentVariable("RAKUTEN_APPLICATION_ID") ?? "";
+        private static readonly string AFFILIATE_ID = Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID") ?? "";
         private static readonly HttpClient httpClient = new HttpClient();
         private int page = 1;
         private List<JToken> allHotels = new List<JToken>();
@@ -61,6 +61,14 @@ namespace rakuten02
             page = 1;
             try
             {
+                if (string.IsNullOrWhiteSpace(APP_ID))
+                {
+                    MessageBox.Show(
+                        "楽天APIの applicationId が未設定です。\n環境変数 RAKUTEN_APPLICATION_ID を設定してください。",
+                        "設定エラー");
+                    return;
+                }
+
                 (double slat, double slon) = await GetLatLonAsync(txtPlace.Text.Trim());
 
                 string sLat = slat.ToString("F6", System.Globalization.CultureInfo.InvariantCulture);
