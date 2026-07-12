@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore rakuten02.sln
+
+      - name: Build
+        run: dotnet build rakuten02.sln --configuration Release --no-restore
+
+  web-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish web app
+        run: dotnet publish rakuten02.Web/rakuten02.Web.csproj --configuration Release --output publish
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rakuten02-web
+          path: publish
