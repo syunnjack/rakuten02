@@ -83,3 +83,4 @@ Renderで公開する場合は `render.yaml` をBlueprintとして読み込み�
 - `/terms` の利用規約を確認
 - `/sitemap.xml` に主要ページが含まれることを確認
 - `/robots.txt` のSitemap URLが `https://shudenhotel.jp/sitemap.xml` になっていることを確認
+- `/og-image.svg` と `/favicon.svg` が表示されることを確認

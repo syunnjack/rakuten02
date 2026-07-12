@@ -31,6 +31,8 @@ docker run --rm -p 8080:8080 `
 - `http://localhost:8080/affiliate-disclosure`
 - `http://localhost:8080/privacy`
 - `http://localhost:8080/terms`
+- `http://localhost:8080/og-image.svg`
+- `http://localhost:8080/favicon.svg`
 - `http://localhost:8080/robots.txt`
 - `http://localhost:8080/sitemap.xml`
 - `http://localhost:8080/llms.txt`
@@ -100,6 +102,8 @@ curl https://shudenhotel.jp/llms.txt
 - `https://shudenhotel.jp/affiliate-disclosure`
 - `https://shudenhotel.jp/privacy`
 - `https://shudenhotel.jp/terms`
+- `https://shudenhotel.jp/og-image.svg`
+- `https://shudenhotel.jp/favicon.svg`
 - `https://shudenhotel.jp/guides/missed-last-train`
 - `https://shudenhotel.jp/areas/shinjuku-last-train`
 - `https://shudenhotel.jp/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0`

@@ -28,6 +28,62 @@ app.MapGet("/", (HttpRequest request) =>
 
 app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
+app.MapGet("/favicon.svg", () => Results.Text("""
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#bf0000"/>
+  <path d="M14 42h36v8H14z" fill="#fff"/>
+  <path d="M18 34c0-9 6-16 14-16s14 7 14 16v8H18z" fill="#fff"/>
+  <path d="M26 34h12v8H26z" fill="#bf0000"/>
+  <circle cx="24" cy="26" r="3" fill="#bf0000"/>
+  <circle cx="40" cy="26" r="3" fill="#bf0000"/>
+</svg>
+""", "image/svg+xml; charset=utf-8"));
+
+app.MapGet("/og-image.svg", () => Results.Text("""
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="night" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#202124"/>
+      <stop offset="1" stop-color="#4b1111"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#night)"/>
+  <rect x="72" y="72" width="1056" height="486" rx="28" fill="#ffffff" opacity="0.94"/>
+  <text x="116" y="178" fill="#bf0000" font-family="Meiryo, sans-serif" font-size="44" font-weight="700">shudenhotel.jp</text>
+  <text x="116" y="305" fill="#202124" font-family="Meiryo, sans-serif" font-size="88" font-weight="800">終電ホテル</text>
+  <text x="116" y="395" fill="#3c4043" font-family="Meiryo, sans-serif" font-size="42" font-weight="600">終電を逃した夜に、今夜泊まれるホテルを探す。</text>
+  <text x="116" y="476" fill="#5f6368" font-family="Meiryo, sans-serif" font-size="30">楽天トラベル空室検索 / 駅名・地名・会場名から検索</text>
+  <path d="M930 210h110c46 0 84 38 84 84v126H846V294c0-46 38-84 84-84z" fill="#bf0000"/>
+  <rect x="810" y="420" width="350" height="54" rx="10" fill="#202124"/>
+  <circle cx="938" cy="284" r="20" fill="#fff"/>
+  <circle cx="1034" cy="284" r="20" fill="#fff"/>
+  <rect x="944" y="342" width="84" height="78" rx="8" fill="#fff"/>
+</svg>
+""", "image/svg+xml; charset=utf-8"));
+
+app.MapGet("/site.webmanifest", (HttpRequest request) =>
+{
+    var origin = Origin(request);
+    return Results.Json(new
+    {
+        name = "終電ホテル",
+        short_name = "終電ホテル",
+        start_url = origin + "/",
+        display = "standalone",
+        background_color = "#f7f5ef",
+        theme_color = "#bf0000",
+        icons = new[]
+        {
+            new
+            {
+                src = origin + "/favicon.svg",
+                sizes = "any",
+                type = "image/svg+xml"
+            }
+        }
+    });
+});
+
 app.MapGet("/affiliate-disclosure", (HttpRequest request) =>
 {
     return Results.Content(HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
@@ -521,10 +577,20 @@ internal static class HtmlPages
   <meta name="description" content="{Html(description)}">
   <link rel="canonical" href="{Html(canonicalUrl)}">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="終電ホテル">
   <meta property="og:title" content="{Html(title)}">
   <meta property="og:description" content="{Html(description)}">
   <meta property="og:url" content="{Html(canonicalUrl)}">
+  <meta property="og:image" content="{Html(OriginFromCanonical(canonicalUrl) + "/og-image.svg")}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{Html(title)}">
+  <meta name="twitter:description" content="{Html(description)}">
+  <meta name="twitter:image" content="{Html(OriginFromCanonical(canonicalUrl) + "/og-image.svg")}">
+  <meta name="theme-color" content="#bf0000">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="/styles.css">
   <script type="application/ld+json">{jsonLd}</script>
 </head>
@@ -688,6 +754,13 @@ internal static class HtmlPages
         }
 
         return $"{request.Scheme}://{request.Host}";
+    }
+
+    private static string OriginFromCanonical(string canonicalUrl)
+    {
+        return Uri.TryCreate(canonicalUrl, UriKind.Absolute, out var uri)
+            ? $"{uri.Scheme}://{uri.Authority}"
+            : string.Empty;
     }
 
     private static string Json(string value)
