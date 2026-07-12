@@ -1,10 +1,13 @@
 using System.Globalization;
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace Rakuten02.Core;
 
 public sealed class RakutenTravelClient
 {
+    private static readonly ConcurrentDictionary<string, CacheEntry> Cache = new(StringComparer.Ordinal);
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(10);
     private readonly HttpClient _httpClient;
     private readonly GeoCodingClient _geoCodingClient;
     private readonly RakutenApiOptions _options;
@@ -23,6 +26,12 @@ public sealed class RakutenTravelClient
         if (!_options.IsConfigured)
         {
             throw new InvalidOperationException("楽天APIの applicationId が未設定です。");
+        }
+
+        var cacheKey = BuildCacheKey(request);
+        if (Cache.TryGetValue(cacheKey, out var cached) && cached.ExpiresAt > DateTimeOffset.UtcNow)
+        {
+            return cached.Results;
         }
 
         var point = await _geoCodingClient.SearchAsync(request.Place, cancellationToken);
@@ -121,7 +130,7 @@ public sealed class RakutenTravelClient
                 ReadAffiliateUrl(roomBasicInfo, basicInfo)));
         }
 
-        return grouped.Values
+        var results = grouped.Values
             .Select(item => new HotelSearchResult(
                 item.HotelNo,
                 item.Name,
@@ -133,6 +142,34 @@ public sealed class RakutenTravelClient
                 item.Access,
                 item.Plans))
             .ToArray();
+        Cache[cacheKey] = new CacheEntry(results, DateTimeOffset.UtcNow.Add(CacheDuration));
+        CleanupExpiredCacheEntries();
+        return results;
+    }
+
+    private static string BuildCacheKey(HotelSearchRequest request)
+    {
+        return string.Join("|",
+            request.Place.Trim().ToUpperInvariant(),
+            request.CheckinDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            request.CheckoutDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            request.SearchRadiusKm.ToString("F1", CultureInfo.InvariantCulture),
+            request.Page.ToString(CultureInfo.InvariantCulture),
+            request.AdultNum.ToString(CultureInfo.InvariantCulture));
+    }
+
+    private static void CleanupExpiredCacheEntries()
+    {
+        if (Cache.Count < 256)
+        {
+            return;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        foreach (var pair in Cache.Where(pair => pair.Value.ExpiresAt <= now))
+        {
+            Cache.TryRemove(pair.Key, out _);
+        }
     }
 
     private static string ReadString(JsonElement element, string propertyName, string fallback = "")
@@ -223,4 +260,6 @@ public sealed class RakutenTravelClient
         public string Access { get; }
         public List<HotelPlan> Plans { get; } = new();
     }
+
+    private sealed record CacheEntry(IReadOnlyList<HotelSearchResult> Results, DateTimeOffset ExpiresAt);
 }

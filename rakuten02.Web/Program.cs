@@ -5,8 +5,14 @@ using Rakuten02.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient<GeoCodingClient>();
-builder.Services.AddHttpClient<RakutenTravelClient>();
+builder.Services.AddHttpClient<GeoCodingClient>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+builder.Services.AddHttpClient<RakutenTravelClient>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 builder.Services.AddSingleton(_ => new RakutenApiOptions(
     builder.Configuration["Rakuten:ApplicationId"]
         ?? Environment.GetEnvironmentVariable("RAKUTEN_APPLICATION_ID")

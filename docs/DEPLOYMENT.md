@@ -13,6 +13,17 @@ ASPNETCORE_ENVIRONMENT=Production
 
 `PUBLIC_BASE_URL` はcanonical、OGP URL、robots.txt、sitemap.xml、llms.txtで使われます。
 
+## APIタイムアウトとキャッシュ
+
+Web版は外部APIの応答待ちで詰まらないよう、楽天トラベルAPIとNominatimへのHTTPリクエストを10秒でタイムアウトします。
+
+また、外部APIへの負荷を抑えるため、アプリ内メモリで次のキャッシュを行います。
+
+- 地名・駅名の緯度経度: 14日
+- 楽天トラベル空室検索結果: 10分
+
+Renderのインスタンス再起動時にメモリキャッシュは消えます。
+
 ## Dockerで起動
 
 ```powershell

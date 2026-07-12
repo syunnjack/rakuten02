@@ -1,10 +1,13 @@
 using System.Globalization;
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace Rakuten02.Core;
 
 public sealed class GeoCodingClient
 {
+    private static readonly ConcurrentDictionary<string, CacheEntry> Cache = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromDays(14);
     private readonly HttpClient _httpClient;
 
     public GeoCodingClient(HttpClient httpClient)
@@ -23,8 +26,14 @@ public sealed class GeoCodingClient
             throw new ArgumentException("場所を入力してください。", nameof(place));
         }
 
+        var normalizedPlace = place.Trim();
+        if (Cache.TryGetValue(normalizedPlace, out var cached) && cached.ExpiresAt > DateTimeOffset.UtcNow)
+        {
+            return cached.Point;
+        }
+
         var url = "https://nominatim.openstreetmap.org/search"
-            + $"?q={Uri.EscapeDataString(place.Trim())}"
+            + $"?q={Uri.EscapeDataString(normalizedPlace)}"
             + "&format=json"
             + "&limit=1";
 
@@ -41,6 +50,10 @@ public sealed class GeoCodingClient
         var first = json.RootElement[0];
         var lat = double.Parse(first.GetProperty("lat").GetString() ?? "0", CultureInfo.InvariantCulture);
         var lon = double.Parse(first.GetProperty("lon").GetString() ?? "0", CultureInfo.InvariantCulture);
-        return new GeoPoint(lat, lon);
+        var point = new GeoPoint(lat, lon);
+        Cache[normalizedPlace] = new CacheEntry(point, DateTimeOffset.UtcNow.Add(CacheDuration));
+        return point;
     }
+
+    private sealed record CacheEntry(GeoPoint Point, DateTimeOffset ExpiresAt);
 }
