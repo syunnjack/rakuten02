@@ -96,6 +96,13 @@ namespace rakuten02
                         webView.NavigateToString(BuildHtml(new JArray(), txtCheckin.Text.Trim(), txtCheckout.Text.Trim()));
                         return;
                     }
+                    if ((int)response.StatusCode == 503)
+                    {
+                        MessageBox.Show(
+                            "楽天トラベルAPIが一時的に混み合っている可能性があります。\n少し時間を置いてから再検索してください。",
+                            "検索エラー");
+                        return;
+                    }
                     MessageBox.Show(
                         $"HTTP {(int)response.StatusCode} {response.ReasonPhrase}\n\n{responseText}",
                         "HTTPエラー");
@@ -122,7 +129,7 @@ namespace rakuten02
             finally
             {
                 btnSearch.Enabled = true;
-                btnSearch.Text = "検索中";
+                btnSearch.Text = "検索";
             }
         }
 
