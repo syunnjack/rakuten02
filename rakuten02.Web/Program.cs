@@ -28,6 +28,21 @@ app.MapGet("/", (HttpRequest request) =>
 
 app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
 
+app.MapGet("/affiliate-disclosure", (HttpRequest request) =>
+{
+    return Results.Content(HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
+});
+
+app.MapGet("/privacy", (HttpRequest request) =>
+{
+    return Results.Content(HtmlPages.Privacy(request), "text/html; charset=utf-8");
+});
+
+app.MapGet("/terms", (HttpRequest request) =>
+{
+    return Results.Content(HtmlPages.Terms(request), "text/html; charset=utf-8");
+});
+
 app.MapGet("/guides/missed-last-train", (HttpRequest request) =>
 {
     return Results.Content(HtmlPages.Guide(request), "text/html; charset=utf-8");
@@ -163,6 +178,15 @@ app.MapGet("/sitemap.xml", (HttpRequest request) =>
     <loc>{WebUtility.HtmlEncode(origin)}/</loc>
   </url>
   <url>
+    <loc>{WebUtility.HtmlEncode(origin)}/affiliate-disclosure</loc>
+  </url>
+  <url>
+    <loc>{WebUtility.HtmlEncode(origin)}/privacy</loc>
+  </url>
+  <url>
+    <loc>{WebUtility.HtmlEncode(origin)}/terms</loc>
+  </url>
+  <url>
     <loc>{WebUtility.HtmlEncode(origin)}/guides/missed-last-train</loc>
   </url>
   <url>
@@ -209,6 +233,112 @@ static string Origin(HttpRequest request)
 
 internal static class HtmlPages
 {
+    public static string AffiliateDisclosure(HttpRequest request)
+    {
+        var origin = Origin(request);
+        return Layout(
+            title: "広告・アフィリエイト表記 | 終電ホテル",
+            description: "終電ホテルの広告、アフィリエイトリンク、楽天トラベルAPI利用についての表記です。",
+            canonicalUrl: origin + "/affiliate-disclosure",
+            body: """
+<section class="article-hero">
+  <a class="back-link" href="/">検索トップへ</a>
+  <h1>広告・アフィリエイト表記</h1>
+  <p>終電ホテルは、楽天トラベルAPIを利用してホテル空室情報を表示しています。検索結果や予約ボタンには広告・アフィリエイトリンクが含まれる場合があります。</p>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>予約について</h2>
+    <p>予約、料金、空室状況、キャンセル条件、支払い条件は、リンク先の楽天トラベルまたは各宿泊施設の表示内容をご確認ください。</p>
+  </div>
+  <div>
+    <h2>収益について</h2>
+    <p>ユーザーが本サイトのリンク経由で予約した場合、運営者が成果報酬を受け取ることがあります。表示順位や掲載内容は、検索条件とAPIレスポンスに基づきます。</p>
+  </div>
+</section>
+""",
+            jsonLd: SoftwareJsonLd(origin));
+    }
+
+    public static string Privacy(HttpRequest request)
+    {
+        var origin = Origin(request);
+        return Layout(
+            title: "プライバシーポリシー | 終電ホテル",
+            description: "終電ホテルのプライバシーポリシーです。検索時に利用する情報、外部サービス、Cookie等について説明します。",
+            canonicalUrl: origin + "/privacy",
+            body: """
+<section class="article-hero">
+  <a class="back-link" href="/">検索トップへ</a>
+  <h1>プライバシーポリシー</h1>
+  <p>終電ホテルは、駅名・地名・会場名などユーザーが入力した検索条件をもとに、ホテル空室情報を表示します。</p>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>取得する情報</h2>
+    <p>本サイトは、検索フォームに入力された場所、日付、検索半径を検索処理に利用します。氏名、住所、電話番号、クレジットカード番号などの予約情報は本サイトでは取得しません。</p>
+  </div>
+  <div>
+    <h2>外部サービス</h2>
+    <p>ホテル検索には楽天トラベルAPI、地名の緯度経度変換にはOpenStreetMap Nominatimを利用します。予約はリンク先の楽天トラベル上で行われます。</p>
+  </div>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>アクセス解析とCookie</h2>
+    <p>今後アクセス解析や広告配信を導入する場合、Cookie等を利用することがあります。導入時には本ページの内容を更新します。</p>
+  </div>
+  <div>
+    <h2>お問い合わせ</h2>
+    <p>本サイトに関するお問い合わせは、GitHubリポジトリまたは運営者が別途指定する連絡先からお願いします。</p>
+  </div>
+</section>
+""",
+            jsonLd: SoftwareJsonLd(origin));
+    }
+
+    public static string Terms(HttpRequest request)
+    {
+        var origin = Origin(request);
+        return Layout(
+            title: "利用規約 | 終電ホテル",
+            description: "終電ホテルの利用規約です。ホテル空室情報の確認、予約、免責事項について説明します。",
+            canonicalUrl: origin + "/terms",
+            body: """
+<section class="article-hero">
+  <a class="back-link" href="/">検索トップへ</a>
+  <h1>利用規約</h1>
+  <p>終電ホテルは、急な宿泊先探しを補助するための検索サービスです。利用前に以下をご確認ください。</p>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>情報の正確性</h2>
+    <p>本サイトに表示されるホテル情報、価格、空室状況は外部APIから取得しています。最新かつ正確な情報は、必ずリンク先の予約画面で確認してください。</p>
+  </div>
+  <div>
+    <h2>予約契約</h2>
+    <p>宿泊予約はユーザーと予約サイトまたは宿泊施設との間で成立します。本サイトは予約契約の当事者ではありません。</p>
+  </div>
+</section>
+
+<section class="content-band two-column">
+  <div>
+    <h2>禁止事項</h2>
+    <p>本サイトへの過度な連続アクセス、スクレイピング、サービス妨害、不正利用、第三者の権利を侵害する行為を禁止します。</p>
+  </div>
+  <div>
+    <h2>免責事項</h2>
+    <p>本サイトの利用により発生した損害について、運営者は法令上認められる範囲で責任を負いません。</p>
+  </div>
+</section>
+""",
+            jsonLd: SoftwareJsonLd(origin));
+    }
+
     public static string Home(HttpRequest request, DateOnly defaultCheckin, DateOnly defaultCheckout)
     {
         var origin = Origin(request);
@@ -402,6 +532,7 @@ internal static class HtmlPages
   <header class="site-header">
     <a class="brand" href="/">終電ホテル</a>
     <nav>
+      <a href="/affiliate-disclosure">広告表記</a>
       <a href="/llms.txt">llms.txt</a>
       <a href="/sitemap.xml">sitemap</a>
     </nav>
@@ -409,6 +540,14 @@ internal static class HtmlPages
   <main>
     {body}
   </main>
+  <footer class="site-footer">
+    <p>終電ホテルは楽天トラベルAPIを利用しています。予約リンクには広告・アフィリエイトリンクが含まれる場合があります。</p>
+    <nav>
+      <a href="/affiliate-disclosure">広告・アフィリエイト表記</a>
+      <a href="/privacy">プライバシーポリシー</a>
+      <a href="/terms">利用規約</a>
+    </nav>
+  </footer>
 </body>
 </html>
 """;

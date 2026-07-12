@@ -71,8 +71,9 @@ https://shudenhotel.jp/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0
 2. `https://shudenhotel.jp/robots.txt` にsitemapが出る
 3. `https://shudenhotel.jp/sitemap.xml` のURLが `https://shudenhotel.jp` になる
 4. `https://shudenhotel.jp/llms.txt` が読める
-5. Search Consoleに `https://shudenhotel.jp/` を登録する
-6. 楽天アフィリエイトのクリックURLが `affiliateUrl` 優先で出ているか確認する
+5. `https://shudenhotel.jp/affiliate-disclosure` が読める
+6. Search Consoleに `https://shudenhotel.jp/` を登録する
+7. 楽天アフィリエイトのクリックURLが `affiliateUrl` 優先で出ているか確認する
 
 ## アフィリエイト確認
 

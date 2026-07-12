@@ -45,6 +45,9 @@ Web版には次を実装しています。
 - `robots.txt`
 - `sitemap.xml`
 - `llms.txt`
+- 広告・アフィリエイト表記
+- プライバシーポリシー
+- 利用規約
 
 詳細は [docs/SEO-AIO-LLMO.md](docs/SEO-AIO-LLMO.md) を参照してください。
 
@@ -72,3 +75,11 @@ Renderで公開する場合は `render.yaml` をBlueprintとして読み込み�
 - 渋谷駅 終電逃した ホテル
 
 駅名・会場名別の検索URLをX、TikTok、ブログ、YouTube Shortsの着地点にすると展開しやすくなります。
+
+## 公開前チェック
+
+- `/affiliate-disclosure` の広告・アフィリエイト表記を確認
+- `/privacy` のプライバシーポリシーを確認
+- `/terms` の利用規約を確認
+- `/sitemap.xml` に主要ページが含まれることを確認
+- `/robots.txt` のSitemap URLが `https://shudenhotel.jp/sitemap.xml` になっていることを確認
