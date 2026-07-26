@@ -21,7 +21,9 @@ builder.Services.AddSingleton(_ => new RakutenApiOptions(
         ?? Environment.GetEnvironmentVariable("RAKUTEN_APPLICATION_ID")
         ?? string.Empty,
     builder.Configuration["Rakuten:AffiliateId"]
-        ?? Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID")));
+        ?? Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID"),
+    builder.Configuration["Rakuten:AccessKey"]
+        ?? Environment.GetEnvironmentVariable("RAKUTEN_ACCESS_KEY")));
 
 var app = builder.Build();
 
