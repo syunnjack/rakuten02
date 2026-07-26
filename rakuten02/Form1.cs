@@ -50,7 +50,8 @@ namespace rakuten02
             string url = $"https://nominatim.openstreetmap.org/search"
                 + $"?q={Uri.EscapeDataString(place)}"
                 + $"&format=json"
-                + $"&limit=1";
+                + $"&limit=1"
+                + $"&countrycodes=jp";
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("User-Agent", "HotelSearchApp/1.0");
             var response = await httpClient.SendAsync(request);
