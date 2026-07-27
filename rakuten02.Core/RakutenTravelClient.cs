@@ -25,7 +25,7 @@ public sealed class RakutenTravelClient
     {
         if (!_options.IsConfigured)
         {
-            throw new InvalidOperationException("楽天APIの applicationId が未設定です。");
+            throw new InvalidOperationException("楽天APIの applicationId または accessKey が未設定です。");
         }
 
         var cacheKey = BuildCacheKey(request);
