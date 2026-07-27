@@ -12,13 +12,18 @@ builder.Services.AddHttpClient<GeoCodingClient>(client =>
 builder.Services.AddHttpClient<RakutenTravelClient>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.Add(
+        "Origin",
+        Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN") ?? "https://shudenhotel.jp");
 });
 builder.Services.AddSingleton(_ => new RakutenApiOptions(
     builder.Configuration["Rakuten:ApplicationId"]
         ?? Environment.GetEnvironmentVariable("RAKUTEN_APPLICATION_ID")
         ?? string.Empty,
     builder.Configuration["Rakuten:AffiliateId"]
-        ?? Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID")));
+        ?? Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID"),
+    builder.Configuration["Rakuten:AccessKey"]
+        ?? Environment.GetEnvironmentVariable("RAKUTEN_ACCESS_KEY")));
 
 var app = builder.Build();
 

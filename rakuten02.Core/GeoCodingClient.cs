@@ -35,7 +35,8 @@ public sealed class GeoCodingClient
         var url = "https://nominatim.openstreetmap.org/search"
             + $"?q={Uri.EscapeDataString(normalizedPlace)}"
             + "&format=json"
-            + "&limit=1";
+            + "&limit=1"
+            + "&countrycodes=jp";
 
         using var response = await _httpClient.GetAsync(url, cancellationToken);
         response.EnsureSuccessStatusCode();

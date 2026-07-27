@@ -38,6 +38,7 @@ public sealed class RakutenTravelClient
         var query = new Dictionary<string, string?>
         {
             ["applicationId"] = _options.ApplicationId,
+            ["accessKey"] = _options.AccessKey,
             ["affiliateId"] = _options.AffiliateId,
             ["latitude"] = point.Latitude.ToString("F6", CultureInfo.InvariantCulture),
             ["longitude"] = point.Longitude.ToString("F6", CultureInfo.InvariantCulture),
@@ -53,7 +54,7 @@ public sealed class RakutenTravelClient
             ["page"] = request.Page.ToString(CultureInfo.InvariantCulture)
         };
 
-        var url = "https://app.rakuten.co.jp/services/api/Travel/VacantHotelSearch/20170426"
+        var url = "https://openapi.rakuten.co.jp/engine/api/Travel/VacantHotelSearch/20170426"
             + "?"
             + string.Join("&", query
                 .Where(pair => !string.IsNullOrWhiteSpace(pair.Value))

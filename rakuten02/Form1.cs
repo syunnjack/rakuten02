@@ -14,7 +14,17 @@ namespace rakuten02
     {
         private static readonly string APP_ID = Environment.GetEnvironmentVariable("RAKUTEN_APPLICATION_ID") ?? "";
         private static readonly string AFFILIATE_ID = Environment.GetEnvironmentVariable("RAKUTEN_AFFILIATE_ID") ?? "";
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly string ACCESS_KEY = Environment.GetEnvironmentVariable("RAKUTEN_ACCESS_KEY") ?? "";
+        private static readonly HttpClient httpClient = CreateHttpClient();
+
+        private static HttpClient CreateHttpClient()
+        {
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Add(
+                "Origin",
+                Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN") ?? "https://shudenhotel.jp");
+            return client;
+        }
         private int page = 1;
         private List<JToken> allHotels = new List<JToken>();
 
@@ -40,7 +50,8 @@ namespace rakuten02
             string url = $"https://nominatim.openstreetmap.org/search"
                 + $"?q={Uri.EscapeDataString(place)}"
                 + $"&format=json"
-                + $"&limit=1";
+                + $"&limit=1"
+                + $"&countrycodes=jp";
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("User-Agent", "HotelSearchApp/1.0");
             var response = await httpClient.SendAsync(request);
@@ -79,8 +90,9 @@ namespace rakuten02
 
 
 
-                string baseUrl = "https://app.rakuten.co.jp/services/api/Travel/VacantHotelSearch/20170426";
+                string baseUrl = "https://openapi.rakuten.co.jp/engine/api/Travel/VacantHotelSearch/20170426";
                 string url = $"{baseUrl}?applicationId={APP_ID}"
+                           + $"&accessKey={ACCESS_KEY}"
                            + $"&affiliateId={AFFILIATE_ID}"
                            + $"&latitude={sLat}"
                            + $"&longitude={sLon}"
