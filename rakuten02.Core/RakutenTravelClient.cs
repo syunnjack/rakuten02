@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Collections.Concurrent;
+using System.Net;
 using System.Text.Json;
 
 namespace Rakuten02.Core;
@@ -64,6 +65,18 @@ public sealed class RakutenTravelClient
         if ((int)response.StatusCode == 404)
         {
             return Array.Empty<HotelSearchResult>();
+        }
+
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            throw new InvalidOperationException(
+                "楽天APIの認証に失敗しました。Application ID、Access Key、許可Webサイトを確認してください。");
+        }
+
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            throw new InvalidOperationException(
+                "楽天APIのリクエスト上限に達しました。しばらく待ってから再検索してください。");
         }
 
         response.EnsureSuccessStatusCode();
