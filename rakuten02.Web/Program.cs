@@ -11,10 +11,14 @@ builder.Services.AddHttpClient<GeoCodingClient>(client =>
 });
 builder.Services.AddHttpClient<RakutenTravelClient>(client =>
 {
+    var allowedOrigin =
+        Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN")
+        ?? "https://shudenhotel.jp";
+
     client.Timeout = TimeSpan.FromSeconds(10);
-    client.DefaultRequestHeaders.Add(
-        "Origin",
-        Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN") ?? "https://shudenhotel.jp");
+    client.DefaultRequestHeaders.Add("Origin", allowedOrigin);
+    client.DefaultRequestHeaders.Referrer = new Uri($"{allowedOrigin.TrimEnd('/')}/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("ShudenHotel/1.0");
 });
 builder.Services.AddSingleton(_ => new RakutenApiOptions(
     builder.Configuration["Rakuten:ApplicationId"]

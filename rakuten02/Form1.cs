@@ -19,10 +19,14 @@ namespace rakuten02
 
         private static HttpClient CreateHttpClient()
         {
+            var allowedOrigin =
+                Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN")
+                ?? "https://shudenhotel.jp";
+
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add(
-                "Origin",
-                Environment.GetEnvironmentVariable("RAKUTEN_ALLOWED_ORIGIN") ?? "https://shudenhotel.jp");
+            client.DefaultRequestHeaders.Add("Origin", allowedOrigin);
+            client.DefaultRequestHeaders.Referrer = new Uri($"{allowedOrigin.TrimEnd('/')}/");
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("ShudenHotel/1.0");
             return client;
         }
         private int page = 1;
