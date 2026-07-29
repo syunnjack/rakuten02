@@ -31,5 +31,7 @@ public sealed record GeoPoint(double Latitude, double Longitude);
 
 public sealed record RakutenApiOptions(string ApplicationId, string? AffiliateId, string? AccessKey)
 {
-    public bool IsConfigured => !string.IsNullOrWhiteSpace(ApplicationId);
+    public bool IsConfigured =>
+        !string.IsNullOrWhiteSpace(ApplicationId)
+        && !string.IsNullOrWhiteSpace(AccessKey);
 }

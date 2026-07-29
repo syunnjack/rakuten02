@@ -12,11 +12,13 @@
 
 ## Web版の起動
 
-楽天APIの `applicationId` と `affiliateId`、本番URLを環境変数で設定します。
+楽天APIの `applicationId`、`accessKey`、任意の `affiliateId`、本番URLを環境変数で設定します。
 
 ```powershell
 $env:RAKUTEN_APPLICATION_ID="your_application_id"
 $env:RAKUTEN_AFFILIATE_ID="your_affiliate_id"
+$env:RAKUTEN_ACCESS_KEY="your_access_key"
+$env:RAKUTEN_ALLOWED_ORIGIN="https://shudenhotel.jp"
 $env:PUBLIC_BASE_URL="https://shudenhotel.jp"
 dotnet run --project rakuten02.Web
 ```
@@ -30,6 +32,7 @@ Windowsアプリ版も楽天APIキーを環境変数から読み込みます。
 ```powershell
 $env:RAKUTEN_APPLICATION_ID="your_application_id"
 $env:RAKUTEN_AFFILIATE_ID="your_affiliate_id"
+$env:RAKUTEN_ACCESS_KEY="your_access_key"
 dotnet run --project rakuten02
 ```
 
@@ -81,11 +84,13 @@ docker build -t shudenhotel .
 docker run --rm -p 8080:8080 `
   -e RAKUTEN_APPLICATION_ID="your_application_id" `
   -e RAKUTEN_AFFILIATE_ID="your_affiliate_id" `
+  -e RAKUTEN_ACCESS_KEY="your_access_key" `
+  -e RAKUTEN_ALLOWED_ORIGIN="https://shudenhotel.jp" `
   -e PUBLIC_BASE_URL="https://shudenhotel.jp" `
   shudenhotel
 ```
 
-Renderで公開する場合は `render.yaml` をBlueprintとして読み込み、`RAKUTEN_APPLICATION_ID` と `RAKUTEN_AFFILIATE_ID` を環境変数に設定します。
+Renderで公開する場合は `render.yaml` をBlueprintとして読み込み、`RAKUTEN_APPLICATION_ID`、`RAKUTEN_ACCESS_KEY`、任意の `RAKUTEN_AFFILIATE_ID` を環境変数に設定します。
 
 ## 初期訴求
 

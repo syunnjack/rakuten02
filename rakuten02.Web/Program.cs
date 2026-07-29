@@ -50,9 +50,9 @@ var landingPages = new[]
 
 app.MapGet("/", (HttpRequest request) =>
 {
-    var today = DateOnly.FromDateTime(DateTime.Today);
-    var defaultCheckin = today.AddDays(7);
-    var defaultCheckout = today.AddDays(8);
+    var today = CurrentJapanDate();
+    var defaultCheckin = today;
+    var defaultCheckout = today.AddDays(1);
     return Results.Content(HtmlPages.Home(request, defaultCheckin, defaultCheckout), "text/html; charset=utf-8");
 });
 
@@ -151,7 +151,7 @@ app.MapGet("/search", async (
     double? radius,
     CancellationToken cancellationToken) =>
 {
-    var today = DateOnly.FromDateTime(DateTime.Today);
+    var today = CurrentJapanDate();
     var parsedCheckin = ParseDate(checkin) ?? today;
     var parsedCheckout = ParseDate(checkout) ?? parsedCheckin.AddDays(1);
     var searchRadius = Math.Clamp(radius ?? 1.0, 0.5, 3.0);
@@ -160,6 +160,20 @@ app.MapGet("/search", async (
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, "場所を入力してください。", parsedCheckin, parsedCheckout),
+            "text/html; charset=utf-8");
+    }
+
+    if (parsedCheckin < today)
+    {
+        return Results.Content(
+            HtmlPages.SearchError(httpRequest, "チェックイン日は今日以降を指定してください。", today, today.AddDays(1)),
+            "text/html; charset=utf-8");
+    }
+
+    if (parsedCheckout <= parsedCheckin)
+    {
+        return Results.Content(
+            HtmlPages.SearchError(httpRequest, "チェックアウト日はチェックイン日の翌日以降を指定してください。", parsedCheckin, parsedCheckin.AddDays(1)),
             "text/html; charset=utf-8");
     }
 
@@ -247,6 +261,11 @@ static DateOnly? ParseDate(string? value)
     return DateOnly.TryParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
         ? date
         : null;
+}
+
+static DateOnly CurrentJapanDate()
+{
+    return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
 }
 
 static string Origin(HttpRequest request)
@@ -419,7 +438,7 @@ internal static class HtmlPages
             body: $"""
 <section class="hero">
   <div class="hero-copy">
-    <p class="eyebrow">Shuden Hotel by Rakuten Travel Search</p>
+    <p class="eyebrow">今夜の空室を、すぐ検索</p>
     <h1>終電を逃した夜に、近くで今夜泊まれるホテルを探す。</h1>
     <p class="lead">駅名・地名・会場名を入れるだけで、楽天トラベルの空室プランを検索できます。飲み会後、ライブ後、急な出張延長にも。</p>
   </div>
@@ -442,12 +461,12 @@ internal static class HtmlPages
 
 <section class="content-band two-column">
   <div>
-    <h2>AI検索で拾われやすい情報設計</h2>
-    <p>検索結果にはホテル名、住所、アクセス、レビュー、プラン名、食事条件、価格を本文として表示します。AI OverviewやLLM検索が引用しやすいように、画像だけに頼らずテキストで要点を残します。</p>
+    <h2>駅名や会場名から探せる</h2>
+    <p>現在地に近い駅、繁華街、ライブ会場などを入力すると、周辺の空室をまとめて確認できます。見つからない時は検索半径を広げて探せます。</p>
   </div>
   <div>
-    <h2>バズらせる切り口</h2>
-    <p>「終電逃した」「ライブ後に帰れない」「飲み会後に即ホテル」のような感情が乗る検索意図に寄せています。駅名別リンクをSNS投稿や動画の着地点にできます。</p>
+    <h2>料金と条件を比べやすい</h2>
+    <p>ホテル名、住所、アクセス、レビュー、宿泊プラン、食事条件、料金を一覧で確認できます。予約前に楽天トラベルで最新の空室とチェックイン条件をご確認ください。</p>
   </div>
 </section>
 """,
@@ -531,7 +550,7 @@ internal static class HtmlPages
     public static string AreaLanding(HttpRequest request, LandingPage page)
     {
         var origin = Origin(request);
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = CurrentJapanDate();
         return Layout(
             title: $"{page.Title} | 終電ホテル",
             description: page.Description,
@@ -643,6 +662,7 @@ internal static class HtmlPages
 
     private static string SearchForm(DateOnly checkin, DateOnly checkout, string place, double radius)
     {
+        var today = CurrentJapanDate();
         return $"""
 <form class="search-form" action="/search" method="get">
   <label>
@@ -651,11 +671,11 @@ internal static class HtmlPages
   </label>
   <label>
     チェックイン
-    <input type="date" name="checkin" value="{checkin:yyyy-MM-dd}" required>
+    <input type="date" name="checkin" value="{checkin:yyyy-MM-dd}" min="{today:yyyy-MM-dd}" required>
   </label>
   <label>
     チェックアウト
-    <input type="date" name="checkout" value="{checkout:yyyy-MM-dd}" required>
+    <input type="date" name="checkout" value="{checkout:yyyy-MM-dd}" min="{today.AddDays(1):yyyy-MM-dd}" required>
   </label>
   <label>
     半径
@@ -765,6 +785,11 @@ internal static class HtmlPages
     private static string Html(string value)
     {
         return WebUtility.HtmlEncode(value);
+    }
+
+    private static DateOnly CurrentJapanDate()
+    {
+        return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
     }
 
     private static string Origin(HttpRequest request)

@@ -7,6 +7,8 @@
 ```text
 RAKUTEN_APPLICATION_ID=your_application_id
 RAKUTEN_AFFILIATE_ID=your_affiliate_id
+RAKUTEN_ACCESS_KEY=your_access_key
+RAKUTEN_ALLOWED_ORIGIN=https://shudenhotel.jp
 PUBLIC_BASE_URL=https://shudenhotel.jp
 ASPNETCORE_ENVIRONMENT=Production
 ```
@@ -31,6 +33,8 @@ docker build -t shudenhotel .
 docker run --rm -p 8080:8080 `
   -e RAKUTEN_APPLICATION_ID="your_application_id" `
   -e RAKUTEN_AFFILIATE_ID="your_affiliate_id" `
+  -e RAKUTEN_ACCESS_KEY="your_access_key" `
+  -e RAKUTEN_ALLOWED_ORIGIN="https://shudenhotel.jp" `
   -e PUBLIC_BASE_URL="https://shudenhotel.jp" `
   shudenhotel
 ```
@@ -55,11 +59,29 @@ docker run --rm -p 8080:8080 `
 1. RenderでNew Blueprintを選択
 2. GitHubの `syunnjack/rakuten02` を選択
 3. `render.yaml` を読み込む
-4. 環境変数に `RAKUTEN_APPLICATION_ID` と `RAKUTEN_AFFILIATE_ID` を設定
-5. デプロイ完了後、RenderのCustom Domainに `shudenhotel.jp` を追加
+4. 環境変数に `RAKUTEN_APPLICATION_ID`、`RAKUTEN_ACCESS_KEY`、任意の `RAKUTEN_AFFILIATE_ID` を設定
+5. デプロイ完了後、Custom Domainsに `shudenhotel.jp` が追加されていることを確認
 6. Renderが表示するDNS設定を、お名前.com側に登録
 
-Render側で `PUBLIC_BASE_URL=https://shudenhotel.jp` は設定済みです。
+Render側で `PUBLIC_BASE_URL=https://shudenhotel.jp` と `RAKUTEN_ALLOWED_ORIGIN=https://shudenhotel.jp` は設定済みです。
+
+`render.yaml` の `domains` にルートドメインを定義しているため、Renderは `www.shudenhotel.jp` も自動追加し、ルートドメインへリダイレクトします。
+
+お名前.comでは、初期パーキング用Aレコード（`150.95.255.38`）を削除し、次を登録します。
+
+```text
+ホスト名: @
+TYPE: A
+VALUE: 216.24.57.1
+TTL: 3600
+
+ホスト名: www
+TYPE: CNAME
+VALUE: Renderの画面に表示された <サービス名>.onrender.com
+TTL: 3600
+```
+
+競合するA/CNAMEレコードやAAAAレコードがあれば削除してください。DNS反映後にRenderが検証し、TLS証明書を自動発行します。
 
 ## お名前.com DNS
 
