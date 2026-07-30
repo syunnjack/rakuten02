@@ -1,0 +1,186 @@
+From 688914ef0e2f681a4755f147e77fdd387b87b99d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 30 Jul 2026 07:36:06 +0000
+Subject: [PATCH] Add GA4, Search Console, sitemap, and IndexNow support
+
+- Inject analytics tags into all generated pages and root index.html
+- Use dynamic lastmod in sitemap generation
+- Add IndexNow key file and GitHub Action
+- Pass analytics secrets through GitHub Pages deploy workflow
+---
+ .github/workflows/indexnow.yml   | 33 ++++++++++++++++++++++++++++++++
+ .github/workflows/pages.yml      |  3 +++
+ machilistindex2026.txt           |  1 +
+ package.json                     |  4 ++--
+ scripts/generate-pages.js        |  4 +++-
+ scripts/inject-root-analytics.js | 22 +++++++++++++++++++++
+ scripts/site-analytics-head.js   | 27 ++++++++++++++++++++++++++
+ 7 files changed, 91 insertions(+), 3 deletions(-)
+ create mode 100644 .github/workflows/indexnow.yml
+ create mode 100644 machilistindex2026.txt
+ create mode 100644 scripts/inject-root-analytics.js
+ create mode 100644 scripts/site-analytics-head.js
+
+diff --git a/.github/workflows/indexnow.yml b/.github/workflows/indexnow.yml
+new file mode 100644
+index 0000000..7a10dbe
+--- /dev/null
++++ b/.github/workflows/indexnow.yml
+@@ -0,0 +1,33 @@
++name: IndexNow
++
++on:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++jobs:
++  submit:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Wait for deployment
++        run: |
++          set +e
++          for i in $(seq 1 30); do
++            if curl -fsS https://machi-list.jp/sitemap.xml | grep -q '<lastmod>'; then
++              echo "Deployment ready"
++              exit 0
++            fi
++            echo "Waiting for deployment... ($i/30)"
++            sleep 20
++          done
++          echo "Timed out waiting for deployment; submitting URLs anyway"
++
++      - name: Submit URLs to IndexNow
++        env:
++          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
++        run: |
++          KEY="${INDEXNOW_KEY:-machilistindex2026}"
++          curl -fsS -X POST "https://api.indexnow.org/indexnow" \
++            -H "Content-Type: application/json; charset=utf-8" \
++            -d "{\"host\":\"machi-list.jp\",\"key\":\"${KEY}\",\"keyLocation\":\"https://machi-list.jp/${KEY}.txt\",\"urlList\":[\"https://machi-list.jp/\",\"https://machi-list.jp/category/\"]}"
+diff --git a/.github/workflows/pages.yml b/.github/workflows/pages.yml
+index bad6556..6648876 100644
+--- a/.github/workflows/pages.yml
++++ b/.github/workflows/pages.yml
+@@ -29,6 +29,9 @@ jobs:
+ 
+       - name: Generate pages
+         run: npm run generate
++        env:
++          GOOGLE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.GOOGLE_ANALYTICS_MEASUREMENT_ID }}
++          GOOGLE_SITE_VERIFICATION: ${{ secrets.GOOGLE_SITE_VERIFICATION }}
+ 
+       - name: Upload artifact
+         uses: actions/upload-pages-artifact@v3
+diff --git a/machilistindex2026.txt b/machilistindex2026.txt
+new file mode 100644
+index 0000000..a704247
+--- /dev/null
++++ b/machilistindex2026.txt
+@@ -0,0 +1 @@
++machilistindex2026
+diff --git a/package.json b/package.json
+index 0b8716d..eed6a3d 100644
+--- a/package.json
++++ b/package.json
+@@ -4,8 +4,8 @@
+   "private": true,
+   "scripts": {
+     "start": "node server.js",
+-    "check": "node --check server.js && node --check assets/app.js && node --check scripts/load-env.js && node --check scripts/google-places-sync.js && node --check scripts/generate-pages.js && node --check scripts/analyze-coverage.js && node --check scripts/generate-place-seeds.js && node --check scripts/generate-growth-roadmap.js && node --check scripts/build-place-seed-queue.js && node --check scripts/data-quality-report.js && node --check scripts/review-place-candidates.js && node --check scripts/export-place-candidate-review.js && node --check scripts/approve-place-candidates.js && node --check scripts/adopt-approved-place-candidates.js && node --check scripts/generate-adoption-report.js && node --check scripts/generate-mvp-report.js && node --check scripts/run-data-pipeline.js && node --check scripts/preflight-data-workflow.js",
+-    "generate": "node scripts/normalize-data.js && node scripts/generate-pages.js",
++    "check": "node --check server.js && node --check assets/app.js && node --check scripts/load-env.js && node --check scripts/site-analytics-head.js && node --check scripts/inject-root-analytics.js && node --check scripts/google-places-sync.js && node --check scripts/generate-pages.js && node --check scripts/analyze-coverage.js && node --check scripts/generate-place-seeds.js && node --check scripts/generate-growth-roadmap.js && node --check scripts/build-place-seed-queue.js && node --check scripts/data-quality-report.js && node --check scripts/review-place-candidates.js && node --check scripts/export-place-candidate-review.js && node --check scripts/approve-place-candidates.js && node --check scripts/adopt-approved-place-candidates.js && node --check scripts/generate-adoption-report.js && node --check scripts/generate-mvp-report.js && node --check scripts/run-data-pipeline.js && node --check scripts/preflight-data-workflow.js",
++    "generate": "node scripts/normalize-data.js && node scripts/generate-pages.js && node scripts/inject-root-analytics.js",
+     "report:coverage": "node scripts/analyze-coverage.js",
+     "seeds:places": "node scripts/analyze-coverage.js && node scripts/generate-place-seeds.js && node scripts/generate-growth-roadmap.js && node scripts/build-place-seed-queue.js",
+     "seeds:queue": "node scripts/build-place-seed-queue.js",
+diff --git a/scripts/generate-pages.js b/scripts/generate-pages.js
+index 248ee16..e74e9e8 100644
+--- a/scripts/generate-pages.js
++++ b/scripts/generate-pages.js
+@@ -1,9 +1,10 @@
+ const fs = require("node:fs");
+ const path = require("node:path");
++const { siteAnalyticsHead } = require("./site-analytics-head");
+ 
+ const root = path.resolve(__dirname, "..");
+ const siteUrl = "https://machi-list.jp";
+-const today = "2026-07-23";
++const today = new Date().toISOString().slice(0, 10);
+ 
+ const shops = readJson("data/shops.json");
+ const areas = readJson("data/areas.json");
+@@ -535,6 +536,7 @@ function pageShell({ title, description, canonical, depth, body, structuredData
+     <meta name="description" content="${escapeHtml(description)}">
+     <link rel="canonical" href="${canonical}">
+     <link rel="stylesheet" href="${css(depth)}">
++    ${siteAnalyticsHead()}
+     ${structuredData}
+   </head>
+   <body>
+diff --git a/scripts/inject-root-analytics.js b/scripts/inject-root-analytics.js
+new file mode 100644
+index 0000000..d23d336
+--- /dev/null
++++ b/scripts/inject-root-analytics.js
+@@ -0,0 +1,22 @@
++const fs = require("node:fs");
++const path = require("node:path");
++const { siteAnalyticsHead } = require("./site-analytics-head");
++
++const root = path.resolve(__dirname, "..");
++const indexPath = path.join(root, "index.html");
++let html = fs.readFileSync(indexPath, "utf8");
++
++html = html.replace(/\n\s*<meta name="robots"[^>]*>\n?/g, "\n");
++html = html.replace(/\n\s*<meta name="google-site-verification"[^>]*>\n?/g, "\n");
++html = html.replace(/\n\s*<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js[^<]*><\/script>\n?/g, "\n");
++html = html.replace(/\n\s*<script>window\.dataLayer[\s\S]*?<\/script>\n?/g, "\n");
++
++const marker = "</head>";
++if (!html.includes(marker)) {
++  throw new Error("index.html is missing </head>");
++}
++
++html = html.replace(marker, `\n${siteAnalyticsHead()}\n  ${marker}`);
++fs.writeFileSync(indexPath, html);
++
++console.log("Injected site analytics into index.html");
+diff --git a/scripts/site-analytics-head.js b/scripts/site-analytics-head.js
+new file mode 100644
+index 0000000..8e8e10f
+--- /dev/null
++++ b/scripts/site-analytics-head.js
+@@ -0,0 +1,27 @@
++function escapeHtml(value) {
++  return String(value)
++    .replaceAll("&", "&amp;")
++    .replaceAll('"', "&quot;")
++    .replaceAll("<", "&lt;")
++    .replaceAll(">", "&gt;");
++}
++
++function siteAnalyticsHead() {
++  const parts = ['    <meta name="robots" content="index, follow">'];
++
++  const verification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
++  if (verification) {
++    parts.push(`    <meta name="google-site-verification" content="${escapeHtml(verification)}">`);
++  }
++
++  const measurementId = process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID?.trim();
++  if (measurementId) {
++    const id = escapeHtml(measurementId);
++    parts.push(`    <script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>`);
++    parts.push(`    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');</script>`);
++  }
++
++  return parts.join("\n");
++}
++
++module.exports = { siteAnalyticsHead };
+-- 
+2.43.0
+
