@@ -207,21 +207,21 @@ app.MapGet("/search", async (
     }
 });
 
-app.MapGet("/robots.txt", (HttpRequest request) =>
+app.MapMethods("/robots.txt", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    var origin = Origin(request);
-    return Results.Text($"""
+    var body = $"""
 User-agent: *
 Allow: /
 
-Sitemap: {origin}/sitemap.xml
-""", "text/plain; charset=utf-8");
+Sitemap: {Origin(request)}/sitemap.xml
+""";
+    await WriteTextResponse(context, request, body, "text/plain; charset=utf-8");
 });
 
-app.MapGet("/llms.txt", (HttpRequest request) =>
+app.MapMethods("/llms.txt", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
     var origin = Origin(request);
-    return Results.Text($"""
+    var body = $"""
 # 終電ホテル
 
 終電ホテルは、終電後、ライブ後、飲み会後、出張延長などで「今夜近くで泊まれるホテル」を探すための楽天トラベル空室検索サービスです。
@@ -249,13 +249,14 @@ app.MapGet("/llms.txt", (HttpRequest request) =>
 
 ## Notes
 検索結果は楽天トラベルAPIとOpenStreetMap Nominatimを利用して生成されます。楽天アフィリエイトリンクはAPIレスポンスのaffiliateUrlを優先して出力します。
-""", "text/plain; charset=utf-8");
+""";
+    await WriteTextResponse(context, request, body, "text/plain; charset=utf-8");
 });
 
-app.MapGet("/sitemap.xml", (HttpRequest request) =>
+app.MapMethods("/sitemap.xml", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    var origin = Origin(request);
-    return Results.Text(BuildSitemap(origin, landingPages), "application/xml; charset=utf-8");
+    var body = BuildSitemap(Origin(request), landingPages);
+    await WriteTextResponse(context, request, body, "application/xml; charset=utf-8");
 });
 
 var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
@@ -266,6 +267,18 @@ if (!string.IsNullOrWhiteSpace(indexNowKey))
 }
 
 app.Run();
+
+static async Task WriteTextResponse(HttpContext context, HttpRequest request, string body, string contentType)
+{
+    var bytes = Encoding.UTF8.GetBytes(body);
+    context.Response.ContentType = contentType;
+    context.Response.ContentLength = bytes.Length;
+    context.Response.Headers.CacheControl = "public, max-age=3600";
+    if (!HttpMethods.IsHead(request.Method))
+    {
+        await context.Response.Body.WriteAsync(bytes);
+    }
+}
 
 static DateOnly? ParseDate(string? value)
 {
