@@ -20,7 +20,7 @@ services:
       - key: RAKUTEN_ALLOWED_ORIGIN
         value: https://shudenhotel.jp
       - key: GOOGLE_ANALYTICS_MEASUREMENT_ID
-        sync: false
+        value: G-542370310
       - key: GOOGLE_SITE_VERIFICATION
         sync: false
       - key: INDEXNOW_KEY
