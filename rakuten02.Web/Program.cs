@@ -258,6 +258,13 @@ app.MapGet("/sitemap.xml", (HttpRequest request) =>
     return Results.Text(BuildSitemap(origin, landingPages), "application/xml; charset=utf-8");
 });
 
+var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
+if (!string.IsNullOrWhiteSpace(indexNowKey))
+{
+    var keyPath = $"/{indexNowKey.Trim()}.txt";
+    app.MapGet(keyPath, () => Results.Text(indexNowKey.Trim(), "text/plain; charset=utf-8"));
+}
+
 app.Run();
 
 static DateOnly? ParseDate(string? value)
@@ -825,13 +832,17 @@ internal static class HtmlPages
         }
 
         var id = Html(measurementId.Trim());
-        return $"""
-  <script async src="https://www.googletagmanager.com/gtag/js?id={id}"></script>
+        return """
+  <script async src="https://www.googletagmanager.com/gtag/js?id=
+""" + id + """
+"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){{dataLayer.push(arguments);}}
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', '{id}');
+    gtag('config', '
+""" + id + """
+');
   </script>
 """;
     }
@@ -932,17 +943,20 @@ internal static class HtmlPages
                 elements.Append(',');
             }
 
-            var itemUrl = item.Path.Length > 0 ? origin + item.Path : null;
-            var urlField = itemUrl is null ? string.Empty : $$""",
-  "item": "{{itemUrl}}"
-""";
             elements.Append($$"""
 {
   "@type": "ListItem",
   "position": {{position}},
-  "name": "{{Json(item.Label)}}"{{urlField}}
-}
-""");
+  "name": "{{Json(item.Label)}}"
+"""
+            );
+
+            if (item.Path.Length > 0)
+            {
+                elements.Append(",\n  \"item\": \"").Append(origin).Append(item.Path).Append('"');
+            }
+
+            elements.Append("\n}");
             position++;
         }
 

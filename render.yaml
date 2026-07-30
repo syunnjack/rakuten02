@@ -23,5 +23,7 @@ services:
         sync: false
       - key: GOOGLE_SITE_VERIFICATION
         sync: false
+      - key: INDEXNOW_KEY
+        value: shudenhotelindex2026
       - key: DOTNET_hostBuilder__reloadConfigOnChange
         value: "false"
