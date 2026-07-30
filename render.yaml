@@ -22,7 +22,7 @@ services:
       - key: GOOGLE_ANALYTICS_MEASUREMENT_ID
         value: G-542370310
       - key: GOOGLE_SITE_VERIFICATION
-        sync: false
+        value: z2cnfDF9eYms_B21Y6_3g3p9xQ1CrpzjKK02j2OfeLo
       - key: INDEXNOW_KEY
         value: shudenhotelindex2026
       - key: DOTNET_hostBuilder__reloadConfigOnChange
