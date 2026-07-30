@@ -285,26 +285,35 @@ static string Origin(HttpRequest request)
 
 static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPages)
 {
-    var paths = new List<string>
+    var lastmod = CurrentJapanDate().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    var entries = new List<(string Path, string ChangeFreq, string Priority)>
     {
-        "/",
-        "/affiliate-disclosure",
-        "/privacy",
-        "/terms",
-        "/guides/missed-last-train"
+        ("/", "daily", "1.0"),
+        ("/guides/missed-last-train", "weekly", "0.9")
     };
 
-    paths.AddRange(landingPages.Select(page => page.Path));
-    paths.AddRange(new[]
+    entries.AddRange(landingPages.Select(page => (page.Path, "weekly", "0.8")));
+    entries.AddRange(new[]
     {
-        "/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0",
-        "/search?place=%E6%B8%8B%E8%B0%B7%E9%A7%85&radius=1.0",
-        "/search?place=%E6%9D%B1%E4%BA%AC%E9%A7%85&radius=1.0"
+        ("/affiliate-disclosure", "monthly", "0.3"),
+        ("/privacy", "monthly", "0.3"),
+        ("/terms", "monthly", "0.3")
     });
 
-    var urls = string.Join(Environment.NewLine, paths.Distinct().Select(path => $"""
+    var searchPlaces = new[]
+    {
+        "新宿駅", "渋谷駅", "東京駅", "横浜駅", "池袋駅", "上野駅", "品川駅", "なんば駅",
+        "東京ドーム", "さいたまスーパーアリーナ", "横浜アリーナ", "幕張メッセ"
+    };
+    entries.AddRange(searchPlaces.Select(place =>
+        ($"/search?place={Uri.EscapeDataString(place)}&radius=1.0", "daily", "0.7")));
+
+    var urls = string.Join(Environment.NewLine, entries.Select(entry => $"""
   <url>
-    <loc>{WebUtility.HtmlEncode(origin + path)}</loc>
+    <loc>{WebUtility.HtmlEncode(origin + entry.Path)}</loc>
+    <lastmod>{lastmod}</lastmod>
+    <changefreq>{entry.ChangeFreq}</changefreq>
+    <priority>{entry.Priority}</priority>
   </url>
 """));
 
@@ -382,7 +391,7 @@ internal static class HtmlPages
 <section class="content-band two-column">
   <div>
     <h2>アクセス解析とCookie</h2>
-    <p>今後アクセス解析や広告配信を導入する場合、Cookie等を利用することがあります。導入時には本ページの内容を更新します。</p>
+    <p>本サイトでは、Google Analytics（GA4）を利用してアクセス状況を分析しています。GA4はCookie等を利用し、ページ閲覧数や参照元などの統計情報を収集します。収集された情報は個人を特定する目的では利用しません。ブラウザのアドオンや設定でCookieを無効にできます。</p>
   </div>
   <div>
     <h2>お問い合わせ</h2>
@@ -460,6 +469,14 @@ internal static class HtmlPages
     <a href="/areas/ueno-tonight-hotel">上野駅周辺で今夜泊まる</a>
     <a href="/venues/tokyo-dome-after-live">東京ドームのライブ後</a>
     <a href="/guides/taxi-or-hotel">タクシーとホテルを比較</a>
+    <a href="/guides/missed-last-train">終電を逃した時の探し方</a>
+    <a href="/guides/after-live-hotel">ライブ後のホテル探し</a>
+    <a href="/guides/nomikai-after-hotel">飲み会後のホテル探し</a>
+    <a href="/areas/shinagawa-business-hotel">品川駅で急に泊まる</a>
+    <a href="/areas/namba-last-train">なんばで終電を逃した</a>
+    <a href="/venues/saitama-super-arena-after-live">さいたまアリーナのライブ後</a>
+    <a href="/venues/yokohama-arena-after-live">横浜アリーナのライブ後</a>
+    <a href="/venues/makuhari-messe-after-event">幕張メッセのイベント後</a>
   </div>
 </section>
 
@@ -516,11 +533,24 @@ internal static class HtmlPages
     public static string Guide(HttpRequest request)
     {
         var origin = Origin(request);
+        var faqs = new (string Question, string Answer)[]
+        {
+            ("終電を逃した時、最初に何をすればいい？", "現在地に近い駅名や繁華街名を入力し、半径1km以内で空室を探します。見つからなければ2km、3kmへ広げます。"),
+            ("タクシーとホテル、どちらが安い？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
+            ("表示される空室は最新ですか？", "検索結果は10分間キャッシュされます。予約前には必ず楽天トラベルで最新の空室と料金を確認してください。")
+        };
+        var breadcrumb = BreadcrumbSection("ガイド", "終電を逃した時の探し方", "/guides/missed-last-train");
+        var jsonLd = CombineJsonLd(
+            WebApplicationNode(origin),
+            BreadcrumbJsonLd(origin, breadcrumb),
+            FaqJsonLd(faqs));
+
         return Layout(
             title: "終電を逃した時に今夜泊まれるホテルを探す方法 | 終電ホテル",
             description: "終電を逃した時、タクシー、ネットカフェ、カプセルホテル、ビジネスホテルを比較しながら今夜泊まれる宿を探す方法をまとめました。",
             canonicalUrl: origin + "/guides/missed-last-train",
-            body: """
+            body: $"""
+{BreadcrumbHtml(breadcrumb)}
 <section class="article-hero">
   <a class="back-link" href="/">検索トップへ</a>
   <h1>終電を逃した時に、今夜泊まれるホテルを探す方法</h1>
@@ -547,19 +577,29 @@ internal static class HtmlPages
     <a href="/search?place=%E6%A8%AA%E6%B5%9C%E9%A7%85&radius=1.0">横浜駅周辺</a>
   </div>
 </section>
+
+{FaqSection(faqs)}
 """,
-            jsonLd: SoftwareJsonLd(origin));
+            jsonLd: jsonLd);
     }
 
     public static string AreaLanding(HttpRequest request, LandingPage page)
     {
         var origin = Origin(request);
         var today = CurrentJapanDate();
+        var faqs = LandingFaqs(page);
+        var breadcrumb = BreadcrumbSection("エリア・会場", page.Heading, page.Path);
+        var jsonLd = CombineJsonLd(
+            WebApplicationNode(origin),
+            BreadcrumbJsonLd(origin, breadcrumb),
+            FaqJsonLd(faqs));
+
         return Layout(
             title: $"{page.Title} | 終電ホテル",
             description: page.Description,
             canonicalUrl: origin + page.Path,
             body: $"""
+{BreadcrumbHtml(breadcrumb)}
 <section class="article-hero">
   <a class="back-link" href="/">検索トップへ</a>
   <h1>{Html(page.Heading)}</h1>
@@ -588,8 +628,10 @@ internal static class HtmlPages
     <p>{Html(page.Place)}周辺のホテル探しでは、徒歩圏、チェックイン可能時間、レビュー、合計価格を確認し、予約前に楽天トラベル側の最新情報を確認します。</p>
   </div>
 </section>
+
+{FaqSection(faqs)}
 """,
-            jsonLd: SoftwareJsonLd(origin));
+            jsonLd: jsonLd);
     }
 
     public static string SearchError(HttpRequest request, string message, DateOnly checkin, DateOnly checkout)
@@ -620,8 +662,11 @@ internal static class HtmlPages
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="{Html(description)}">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="{Html(canonicalUrl)}">
+  {GoogleSiteVerificationMeta()}
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="ja_JP">
   <meta property="og:site_name" content="終電ホテル">
   <meta property="og:title" content="{Html(title)}">
   <meta property="og:description" content="{Html(description)}">
@@ -637,6 +682,7 @@ internal static class HtmlPages
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="/styles.css">
+  {GoogleAnalyticsHead()}
   <script type="application/ld+json">{jsonLd}</script>
 </head>
 <body>
@@ -752,6 +798,169 @@ internal static class HtmlPages
   "applicationCategory": "TravelApplication",
   "operatingSystem": "Web",
   "description": "終電後や急な宿泊時に、駅名や地名から今夜泊まれるホテル空室を探すWebアプリです。"
+}
+""";
+    }
+
+    private static string WebApplicationNode(string origin)
+    {
+        return $$"""
+{
+  "@type": "WebApplication",
+  "name": "終電ホテル",
+  "url": "{{origin}}/",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Web",
+  "description": "終電後や急な宿泊時に、駅名や地名から今夜泊まれるホテル空室を探すWebアプリです。"
+}
+""";
+    }
+
+    private static string GoogleAnalyticsHead()
+    {
+        var measurementId = Environment.GetEnvironmentVariable("GOOGLE_ANALYTICS_MEASUREMENT_ID");
+        if (string.IsNullOrWhiteSpace(measurementId))
+        {
+            return string.Empty;
+        }
+
+        var id = Html(measurementId.Trim());
+        return $"""
+  <script async src="https://www.googletagmanager.com/gtag/js?id={id}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){{dataLayer.push(arguments);}}
+    gtag('js', new Date());
+    gtag('config', '{id}');
+  </script>
+""";
+    }
+
+    private static string GoogleSiteVerificationMeta()
+    {
+        var token = Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION");
+        return string.IsNullOrWhiteSpace(token)
+            ? string.Empty
+            : $"""  <meta name="google-site-verification" content="{Html(token.Trim())}">""";
+    }
+
+    private static (string Question, string Answer)[] LandingFaqs(LandingPage page)
+    {
+        return
+        [
+            ($"{page.Place}周辺で今夜泊まれるホテルはどう探しますか？", $"{page.Place}を検索欄に入力し、半径1kmから始めて空室が少なければ2kmまで広げます。{page.BodyText}"),
+            ("予約前に確認すべきことは？", "チェックイン可能時間、最寄り駅からの徒歩時間、レビュー、食事条件、合計価格を確認してから楽天トラベルの予約画面へ進んでください。"),
+            ("表示される空室情報は最新ですか？", "検索結果は10分間キャッシュされます。予約前には必ずリンク先の楽天トラベルで最新の空室と料金を確認してください。")
+        ];
+    }
+
+    private static string FaqSection(IReadOnlyList<(string Question, string Answer)> faqs)
+    {
+        var items = string.Join(Environment.NewLine, faqs.Select(faq => $"""
+  <details class="faq-item">
+    <summary>{Html(faq.Question)}</summary>
+    <p>{Html(faq.Answer)}</p>
+  </details>
+"""));
+
+        return $"""
+<section class="content-band faq">
+  <h2>よくある質問</h2>
+  <div class="faq-list">
+{items}
+  </div>
+</section>
+""";
+    }
+
+    private static string FaqJsonLd(IReadOnlyList<(string Question, string Answer)> faqs)
+    {
+        var entities = string.Join(",", faqs.Select(faq => $$"""
+{
+  "@type": "Question",
+  "name": "{{Json(faq.Question)}}",
+  "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "{{Json(faq.Answer)}}"
+  }
+}
+"""));
+
+        return $$"""
+{
+  "@type": "FAQPage",
+  "mainEntity": [{{entities}}]
+}
+""";
+    }
+
+    private static (string Label, string Path)[] BreadcrumbSection(string sectionLabel, string pageLabel, string pagePath)
+    {
+        return
+        [
+            ("トップ", "/"),
+            (sectionLabel, string.Empty),
+            (pageLabel, pagePath)
+        ];
+    }
+
+    private static string BreadcrumbHtml((string Label, string Path)[] items)
+    {
+        var links = string.Join("", items.Select((item, index) =>
+        {
+            if (index == items.Length - 1)
+            {
+                return $"""<span aria-current="page">{Html(item.Label)}</span>""";
+            }
+
+            return item.Path.Length > 0
+                ? $"""<a href="{Html(item.Path)}">{Html(item.Label)}</a><span>/</span>"""
+                : $"""<span>{Html(item.Label)}</span><span>/</span>""";
+        }));
+
+        return $"""<nav class="breadcrumb" aria-label="パンくず">{links}</nav>""";
+    }
+
+    private static string BreadcrumbJsonLd(string origin, (string Label, string Path)[] items)
+    {
+        var elements = new StringBuilder();
+        var position = 1;
+        foreach (var item in items)
+        {
+            if (elements.Length > 0)
+            {
+                elements.Append(',');
+            }
+
+            var itemUrl = item.Path.Length > 0 ? origin + item.Path : null;
+            var urlField = itemUrl is null ? string.Empty : $$""",
+  "item": "{{itemUrl}}"
+""";
+            elements.Append($$"""
+{
+  "@type": "ListItem",
+  "position": {{position}},
+  "name": "{{Json(item.Label)}}"{{urlField}}
+}
+""");
+            position++;
+        }
+
+        return $$"""
+{
+  "@type": "BreadcrumbList",
+  "itemListElement": [{{elements}}]
+}
+""";
+    }
+
+    private static string CombineJsonLd(params string[] graphs)
+    {
+        var joined = string.Join(',', graphs.Where(graph => !string.IsNullOrWhiteSpace(graph)));
+        return $$"""
+{
+  "@context": "https://schema.org",
+  "@graph": [{{joined}}]
 }
 """;
     }

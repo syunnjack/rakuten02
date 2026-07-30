@@ -19,5 +19,9 @@ services:
         sync: false
       - key: RAKUTEN_ALLOWED_ORIGIN
         value: https://shudenhotel.jp
+      - key: GOOGLE_ANALYTICS_MEASUREMENT_ID
+        sync: false
+      - key: GOOGLE_SITE_VERIFICATION
+        sync: false
       - key: DOTNET_hostBuilder__reloadConfigOnChange
         value: "false"
