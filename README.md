@@ -20,10 +20,12 @@ $env:RAKUTEN_AFFILIATE_ID="your_affiliate_id"
 $env:RAKUTEN_ACCESS_KEY="your_access_key"
 $env:RAKUTEN_ALLOWED_ORIGIN="https://shudenhotel.jp"
 $env:PUBLIC_BASE_URL="https://shudenhotel.jp"
+$env:GOOGLE_ANALYTICS_MEASUREMENT_ID="G-XXXXXXXXXX"
 dotnet run --project rakuten02.Web
 ```
 
 `PUBLIC_BASE_URL` はcanonical、OGP URL、sitemap、llms.txtに使われます。
+`GOOGLE_ANALYTICS_MEASUREMENT_ID` はGoogle Analytics 4の測定ID（`G-` で始まる文字列）です。未設定の場合は計測タグを出力しません。
 
 ## アプリ版の起動
 
