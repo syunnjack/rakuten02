@@ -7,16 +7,17 @@
     "status": "completed",
     "ga4": "G-542370310",
     "searchConsole": "verified",
-    "sitemap": "success-32-not-applicable"
+    "sitemap": "success"
   },
   {
     "id": "darekore",
-    "repo": "syunnjack/rakuafi-tool",
+    "repo": "syunnjack/task-dashboard",
     "domain": "https://darekore.jp/",
     "stack": "vite-github-pages",
     "status": "patch-ready",
-    "patch": "patches/rakuafi-tool/0001-Add-GA4-Search-Console-sitemap-robots-and-IndexNow-s.patch",
+    "patch": "patches/task-dashboard/0001-Add-GA4-Search-Console-sitemap-robots-and-IndexNow-f.patch",
     "indexNowKey": "darekoreindex2026",
+    "note": "darekore.jp は task-dashboard が担当。rakuafi-tool とは別リポジトリです。",
     "secrets": [
       "VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "VITE_GOOGLE_SITE_VERIFICATION",
@@ -24,14 +25,22 @@
     ]
   },
   {
+    "id": "rakuafi-tool",
+    "repo": "syunnjack/rakuafi-tool",
+    "domain": "https://syunnjack.github.io/rakuafi-tool/",
+    "stack": "vite-github-pages",
+    "status": "no-custom-domain",
+    "note": "極 | 楽天ROOMクリック改善ツール。独自ドメイン未割当。"
+  },
+  {
     "id": "machi-list",
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-github-pages",
-    "status": "patch-ready",
+    "status": "patch-ready-dns-parked",
     "patch": "patches/machi-list/0001-Add-GA4-Search-Console-sitemap-and-IndexNow-support.patch",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "お名前.com のパーキング解除後に有効",
+    "dnsNote": "お名前.com パーキング(150.95.255.38) → GitHub Pages Aレコードへ変更が必要",
     "secrets": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION",
@@ -44,42 +53,6 @@
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
     "status": "dns-parked",
-    "template": "scripts/site-analytics/templates/nextjs-site-analytics.tsx",
-    "dnsNote": "Cloudflare Sites / DNS 接続後"
-  },
-  {
-    "id": "machiselect",
-    "repo": "syunnjack/local-service-finder",
-    "domain": "https://machiselect.jp/",
-    "stack": "vinext-nextjs",
-    "status": "dns-parked"
-  },
-  {
-    "id": "goalpilot",
-    "repo": "syunnjack/goal-pilot-app",
-    "domain": "https://goalpilot.jp/",
-    "stack": "nextjs-github-pages",
-    "status": "dns-parked"
-  },
-  {
-    "id": "bowling-event",
-    "repo": "syunnjack/allbowl01",
-    "domain": "https://bowling-event.jp/",
-    "stack": "astro",
-    "status": "dns-parked"
-  },
-  {
-    "id": "tsumiage-log",
-    "repo": "syunnjack/tsumiage-log",
-    "domain": "https://syunnjack.dev/",
-    "stack": "vinext-nextjs",
-    "status": "dns-parked"
-  },
-  {
-    "id": "ima-serapi",
-    "repo": "syunnjack/reserve-serapi",
-    "domain": "https://ima-serapi.jp/",
-    "stack": "nextjs-vercel",
-    "status": "dns-parked"
+    "template": "scripts/site-analytics/templates/nextjs-site-analytics.tsx"
   }
 ]

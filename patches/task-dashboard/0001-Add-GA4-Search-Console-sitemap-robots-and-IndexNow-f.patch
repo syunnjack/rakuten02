@@ -1,0 +1,197 @@
+From c9491500fa7ac444e205e4cd48ed8f77a4c606a3 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Sun, 2 Aug 2026 02:12:06 +0000
+Subject: [PATCH] Add GA4, Search Console, sitemap, robots, and IndexNow for
+ darekore.jp
+
+- Inject analytics tags at Vite build time
+- Add robots.txt, sitemap.xml, IndexNow key, and CNAME
+- Add canonical/OGP meta tags
+- Add IndexNow GitHub Action after deploy
+---
+ .github/workflows/deploy.yml   |  2 ++
+ .github/workflows/indexnow.yml | 33 ++++++++++++++++++++++
+ index.html                     |  8 ++++++
+ public/CNAME                   |  1 +
+ public/darekoreindex2026.txt   |  1 +
+ public/robots.txt              |  4 +++
+ public/sitemap.xml             |  9 ++++++
+ vite.config.js                 | 50 ++++++++++++++++++++++++++++++----
+ 8 files changed, 103 insertions(+), 5 deletions(-)
+ create mode 100644 .github/workflows/indexnow.yml
+ create mode 100644 public/CNAME
+ create mode 100644 public/darekoreindex2026.txt
+ create mode 100644 public/robots.txt
+ create mode 100644 public/sitemap.xml
+
+diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+index ff1cacd..27aa272 100644
+--- a/.github/workflows/deploy.yml
++++ b/.github/workflows/deploy.yml
+@@ -41,6 +41,8 @@ jobs:
+           VITE_MGS_AFFILIATE_URL: ${{ secrets.VITE_MGS_AFFILIATE_URL }}
+           VITE_SOD_AFFILIATE_URL: ${{ secrets.VITE_SOD_AFFILIATE_URL }}
+           VITE_DTICASH_AFFILIATE_URL: ${{ secrets.VITE_DTICASH_AFFILIATE_URL }}
++          VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID }}
++          VITE_GOOGLE_SITE_VERIFICATION: ${{ secrets.VITE_GOOGLE_SITE_VERIFICATION }}
+       - uses: actions/upload-pages-artifact@v3
+         with:
+           path: dist
+diff --git a/.github/workflows/indexnow.yml b/.github/workflows/indexnow.yml
+new file mode 100644
+index 0000000..855a7d1
+--- /dev/null
++++ b/.github/workflows/indexnow.yml
+@@ -0,0 +1,33 @@
++name: IndexNow
++
++on:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++jobs:
++  submit:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Wait for deployment
++        run: |
++          set +e
++          for i in $(seq 1 30); do
++            if curl -fsS https://darekore.jp/sitemap.xml | grep -q '<lastmod>'; then
++              echo "Deployment ready"
++              exit 0
++            fi
++            echo "Waiting for deployment... ($i/30)"
++            sleep 20
++          done
++          echo "Timed out waiting for deployment; submitting URLs anyway"
++
++      - name: Submit URLs to IndexNow
++        env:
++          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
++        run: |
++          KEY="${INDEXNOW_KEY:-darekoreindex2026}"
++          curl -fsS -X POST "https://api.indexnow.org/indexnow" \
++            -H "Content-Type: application/json; charset=utf-8" \
++            -d "{\"host\":\"darekore.jp\",\"key\":\"${KEY}\",\"keyLocation\":\"https://darekore.jp/${KEY}.txt\",\"urlList\":[\"https://darekore.jp/\"]}"
+diff --git a/index.html b/index.html
+index 32c4867..a822a22 100644
+--- a/index.html
++++ b/index.html
+@@ -8,6 +8,14 @@
+       name="description"
+       content="この子だれ？は、作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。"
+     />
++    <link rel="canonical" href="https://darekore.jp/" />
++    <meta property="og:type" content="website" />
++    <meta property="og:locale" content="ja_JP" />
++    <meta property="og:site_name" content="この子だれ？" />
++    <meta property="og:title" content="この子だれ？" />
++    <meta property="og:description" content="作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。" />
++    <meta property="og:url" content="https://darekore.jp/" />
++    <meta name="twitter:card" content="summary" />
+     <script type="application/ld+json">
+       {
+         "@context": "https://schema.org",
+diff --git a/public/CNAME b/public/CNAME
+new file mode 100644
+index 0000000..434b365
+--- /dev/null
++++ b/public/CNAME
+@@ -0,0 +1 @@
++darekore.jp
+diff --git a/public/darekoreindex2026.txt b/public/darekoreindex2026.txt
+new file mode 100644
+index 0000000..5b6296a
+--- /dev/null
++++ b/public/darekoreindex2026.txt
+@@ -0,0 +1 @@
++darekoreindex2026
+diff --git a/public/robots.txt b/public/robots.txt
+new file mode 100644
+index 0000000..b1b6ca1
+--- /dev/null
++++ b/public/robots.txt
+@@ -0,0 +1,4 @@
++User-agent: *
++Allow: /
++
++Sitemap: https://darekore.jp/sitemap.xml
+diff --git a/public/sitemap.xml b/public/sitemap.xml
+new file mode 100644
+index 0000000..ed1840f
+--- /dev/null
++++ b/public/sitemap.xml
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
++  <url>
++    <loc>https://darekore.jp/</loc>
++    <lastmod>2026-08-02</lastmod>
++    <changefreq>daily</changefreq>
++    <priority>1.0</priority>
++  </url>
++</urlset>
+diff --git a/vite.config.js b/vite.config.js
+index b462c51..9fe56e6 100644
+--- a/vite.config.js
++++ b/vite.config.js
+@@ -1,8 +1,48 @@
+-import { defineConfig } from 'vite'
++import { defineConfig, loadEnv } from 'vite'
+ import react from '@vitejs/plugin-react'
+ 
+-// https://vite.dev/config/
+-export default defineConfig({
++function escapeHtml(value) {
++  return String(value)
++    .replaceAll('&', '&amp;')
++    .replaceAll('"', '&quot;')
++    .replaceAll('<', '&lt;')
++    .replaceAll('>', '&gt;')
++}
++
++function siteAnalyticsHead(env) {
++  const parts = ['    <meta name="robots" content="index, follow" />']
++
++  const verification = env.VITE_GOOGLE_SITE_VERIFICATION?.trim()
++  if (verification) {
++    parts.push(`    <meta name="google-site-verification" content="${escapeHtml(verification)}" />`)
++  }
++
++  const measurementId = env.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID?.trim()
++  if (measurementId) {
++    const id = escapeHtml(measurementId)
++    parts.push(`    <script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>`)
++    parts.push(`    <script>
++      window.dataLayer = window.dataLayer || [];
++      function gtag(){dataLayer.push(arguments);}
++      gtag('js', new Date());
++      gtag('config', '${id}');
++    </script>`)
++  }
++
++  return parts.join('\n')
++}
++
++function siteAnalyticsPlugin(mode) {
++  const env = loadEnv(mode, process.cwd(), '')
++  return {
++    name: 'site-analytics',
++    transformIndexHtml(html) {
++      return html.replace('</head>', `${siteAnalyticsHead(env)}\n  </head>`)
++    },
++  }
++}
++
++export default defineConfig(({ mode }) => ({
+   base: '/',
+-  plugins: [react()],
+-})
++  plugins: [react(), siteAnalyticsPlugin(mode)],
++}))
+-- 
+2.43.0
+
