@@ -36,14 +36,18 @@
     "id": "machi-list",
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
-    "stack": "static-github-pages",
-    "status": "patch-ready-dns-parked",
+    "stack": "static-render",
+    "status": "patch-ready-render-custom-domain",
     "patch": "patches/machi-list/0001-Add-GA4-Search-Console-sitemap-and-IndexNow-support.patch",
+    "patch2": "patches/machi-list/0002-Switch-to-Render-custom-domain.patch",
+    "deployDoc": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "お名前.com パーキング(150.95.255.38) → GitHub Pages Aレコードへ変更が必要",
-    "secrets": [
+    "dnsNote": "お名前.com パーキング(150.95.255.38) を削除 → Render Custom Domains の A/CNAME を設定（GitHub Pages 不使用）",
+    "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
-      "GOOGLE_SITE_VERIFICATION",
+      "GOOGLE_SITE_VERIFICATION"
+    ],
+    "githubSecrets": [
       "INDEXNOW_KEY"
     ]
   },
