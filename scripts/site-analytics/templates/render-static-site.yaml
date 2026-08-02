@@ -1,0 +1,18 @@
+# Render Static Site + custom domain (machi-list 等)
+# GitHub Pages を使わず独自ドメインで公開する場合のテンプレート
+services:
+  - type: web
+    name: CHANGE_ME
+    runtime: static
+    buildCommand: npm run generate
+    staticPublishPath: .
+    domains:
+      - example.jp
+      - www.example.jp
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: GOOGLE_ANALYTICS_MEASUREMENT_ID
+        sync: false
+      - key: GOOGLE_SITE_VERIFICATION
+        sync: false
