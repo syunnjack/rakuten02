@@ -1,0 +1,56 @@
+From 688914ef0e2f681a4755f147e77fdd387b87b99d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Tue, 4 Aug 2026 16:50:00 +0000
+Subject: [PATCH] Add robots/canonical metadata and Search Console setup doc
+
+GoalPilot already has GA4 and google-site-verification. This adds explicit
+robots/canonical metadata and documents sitemap submission.
+---
+ app/layout.tsx            |  2 ++
+ docs/SEARCH-CONSOLE.md    | 22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
+ create mode 100644 docs/SEARCH-CONSOLE.md
+
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 0000000..1111111 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -5,6 +5,8 @@ export const metadata: Metadata = {
+   metadataBase: new URL('https://goalpilot.jp'),
+   title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+   description: '逆算スケジュール、3分タスク、ご褒美設計、挫折リスク検知で目標達成を支援するアプリ。',
++  alternates: { canonical: 'https://goalpilot.jp/' },
++  robots: { index: true, follow: true },
+   openGraph: {
+     title: 'GoalPilot',
+     description: '三日坊主を前提に、目標達成まで戻してくれるアプリ。',
+diff --git a/docs/SEARCH-CONSOLE.md b/docs/SEARCH-CONSOLE.md
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/docs/SEARCH-CONSOLE.md
+@@ -0,0 +1,22 @@
++# goalpilot.jp — Search Console（手順 3）
++
++## 現状
++
++- GA4: `G-02C2YQ4WYE` 反映済み
++- HTML タグ確認: `Z0i0l-P_Rt-j5c-b31w9z3XWfqI_SZOJ-E6LUdYTNZc` 反映済み
++- sitemap: https://goalpilot.jp/sitemap.xml
++- robots.txt: https://goalpilot.jp/robots.txt
++
++## やること
++
++1. https://search.google.com/search-console で `https://goalpilot.jp/` を追加
+2. HTML タグで所有権確認（再デプロイ後に確認ボタン）
+3. **サイトマップ** → `https://goalpilot.jp/sitemap.xml` を送信
+4. トップページと `/diagnosis` の URL 検査 → インデックス登録をリクエスト
++
++## 確認（PowerShell）
++
++```powershell
++Invoke-WebRequest -Uri "https://goalpilot.jp/sitemap.xml" -UseBasicParsing
++Invoke-WebRequest -Uri "https://goalpilot.jp/robots.txt" -UseBasicParsing
++```
+-- 
+2.43.0

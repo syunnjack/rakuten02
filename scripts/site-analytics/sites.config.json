@@ -14,36 +14,54 @@
     "repo": "syunnjack/task-dashboard",
     "domain": "https://darekore.jp/",
     "stack": "vite-github-pages",
-    "status": "patch-ready",
+    "status": "ga4-done-gsc-pending",
+    "ga4": "G-5P2QCWYG8V",
+    "searchConsole": "html-tag-pending",
     "patch": "patches/task-dashboard/0001-Add-GA4-Search-Console-sitemap-robots-and-IndexNow-f.patch",
+    "patch2": "patches/task-dashboard/0002-Add-workflow-dispatch-for-Search-Console-token.patch",
+    "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
     "indexNowKey": "darekoreindex2026",
-    "note": "darekore.jp は task-dashboard が担当。rakuafi-tool とは別リポジトリです。",
+    "note": "VITE_GOOGLE_SITE_VERIFICATION Secret 追加 → Deploy 再実行で完了",
     "secrets": [
-      "VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID",
-      "VITE_GOOGLE_SITE_VERIFICATION",
-      "INDEXNOW_KEY"
+      "VITE_GOOGLE_SITE_VERIFICATION"
     ]
+  },
+  {
+    "id": "goalpilot",
+    "repo": "syunnjack/goal-pilot-app",
+    "domain": "https://goalpilot.jp/",
+    "stack": "nextjs-xserver",
+    "status": "gsc-sitemap-pending",
+    "ga4": "G-02C2YQ4WYE",
+    "searchConsole": "tag-live-unverified",
+    "patch": "patches/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch",
+    "note": "Search Console でサイトマップ送信のみ"
   },
   {
     "id": "rakuafi-tool",
     "repo": "syunnjack/rakuafi-tool",
     "domain": "https://syunnjack.github.io/rakuafi-tool/",
     "stack": "vite-github-pages",
-    "status": "no-custom-domain",
+    "status": "ga4-only",
+    "ga4": "G-VT3RZQM9VX",
     "note": "極 | 楽天ROOMクリック改善ツール。独自ドメイン未割当。"
   },
   {
     "id": "machi-list",
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
-    "stack": "static-github-pages",
-    "status": "patch-ready-dns-parked",
+    "stack": "static-render",
+    "status": "dns-parked-deploy-ready",
     "patch": "patches/machi-list/0001-Add-GA4-Search-Console-sitemap-and-IndexNow-support.patch",
+    "patch2": "patches/machi-list/0002-Switch-to-Render-custom-domain.patch",
+    "deployDoc": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "お名前.com パーキング(150.95.255.38) → GitHub Pages Aレコードへ変更が必要",
-    "secrets": [
+    "dnsNote": "150.95.255.38 パーキング → Render DNS へ変更",
+    "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
-      "GOOGLE_SITE_VERIFICATION",
+      "GOOGLE_SITE_VERIFICATION"
+    ],
+    "githubSecrets": [
       "INDEXNOW_KEY"
     ]
   },
@@ -52,7 +70,9 @@
     "repo": "syunnjack/kousokubus-benri",
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
-    "status": "dns-parked",
-    "template": "scripts/site-analytics/templates/nextjs-site-analytics.tsx"
+    "status": "patch-ready-dns-parked",
+    "patch": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
+    "indexNowKey": "busselectindex2026",
+    "dnsNote": "150.95.255.38 パーキング → Site Creator DNS へ変更"
   }
 ]
