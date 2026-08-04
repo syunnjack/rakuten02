@@ -1,0 +1,39 @@
+From 688914ef0e2f681a4755f147e77fdd387b87b99d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Tue, 4 Aug 2026 16:50:00 +0000
+Subject: [PATCH 2/2] Allow Search Console token via workflow_dispatch input
+
+Lets you redeploy with a verification token without waiting on Secrets UI.
+---
+ .github/workflows/deploy.yml | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/.github/workflows/deploy.yml b/.github/workflows/deploy.yml
+index 27aa272..b4c8e91 100644
+--- a/.github/workflows/deploy.yml
++++ b/.github/workflows/deploy.yml
+@@ -3,6 +3,12 @@ name: Deploy to GitHub Pages
+ on:
+   push:
+     branches: [main]
+-  workflow_dispatch:
++  workflow_dispatch:
++    inputs:
++      google_site_verification:
++        description: Search Console HTML tag content (overrides secret for this run)
++        required: false
++        type: string
+ 
+ permissions:
+   contents: read
+@@ -42,7 +48,7 @@ jobs:
+           VITE_SOD_AFFILIATE_URL: ${{ secrets.VITE_SOD_AFFILIATE_URL }}
+           VITE_DTICASH_AFFILIATE_URL: ${{ secrets.VITE_DTICASH_AFFILIATE_URL }}
+           VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_MEASUREMENT_ID }}
+-          VITE_GOOGLE_SITE_VERIFICATION: ${{ secrets.VITE_GOOGLE_SITE_VERIFICATION }}
++          VITE_GOOGLE_SITE_VERIFICATION: ${{ github.event.inputs.google_site_verification || secrets.VITE_GOOGLE_SITE_VERIFICATION }}
+       - uses: actions/upload-pages-artifact@v3
+         with:
+           path: dist
+-- 
+2.43.0
