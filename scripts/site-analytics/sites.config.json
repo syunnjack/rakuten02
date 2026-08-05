@@ -19,10 +19,10 @@
     "searchConsole": "html-tag-pending",
     "patch": "patches/task-dashboard/0001-Add-GA4-Search-Console-sitemap-robots-and-IndexNow-f.patch",
     "patch2": "patches/task-dashboard/0002-Add-workflow-dispatch-for-Search-Console-token.patch",
+    "patch3": "patches/task-dashboard/0003-Add-Search-Console-meta-to-index-html.patch",
     "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
     "indexNowKey": "darekoreindex2026",
     "note": "Search Console: public/googleXXXX.html を push（Secret 不要）が最短",
-    "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
     "secrets": []
   },
   {
