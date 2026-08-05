@@ -1,0 +1,25 @@
+From 688914ef0e2f681a4755f147e77fdd387b87b99d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Wed, 5 Aug 2026 10:40:00 +0000
+Subject: [PATCH 3/3] Add Search Console meta tag placeholder to index.html
+
+Matches the existing GA4-in-index.html approach. Replace the placeholder
+token, commit, and push — no GitHub Secret required.
+---
+ index.html | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/index.html b/index.html
+index 0000000..1111111 100644
+--- a/index.html
++++ b/index.html
+@@ -30,6 +30,7 @@
+       }
+     </script>
+     <title>この子だれ？</title>
++    <meta name="google-site-verification" content="REPLACE_WITH_GSC_TOKEN" />
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5P2QCWYG8V"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5P2QCWYG8V');</script></head>
+   <body>
+     <div id="root"></div>
+-- 
+2.43.0
