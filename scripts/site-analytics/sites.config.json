@@ -21,10 +21,9 @@
     "patch2": "patches/task-dashboard/0002-Add-workflow-dispatch-for-Search-Console-token.patch",
     "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
     "indexNowKey": "darekoreindex2026",
-    "note": "VITE_GOOGLE_SITE_VERIFICATION Secret 追加 → Deploy 再実行で完了",
-    "secrets": [
-      "VITE_GOOGLE_SITE_VERIFICATION"
-    ]
+    "note": "Search Console: public/googleXXXX.html を push（Secret 不要）が最短",
+    "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
+    "secrets": []
   },
   {
     "id": "goalpilot",
@@ -54,7 +53,8 @@
     "status": "dns-parked-deploy-ready",
     "patch": "patches/machi-list/0001-Add-GA4-Search-Console-sitemap-and-IndexNow-support.patch",
     "patch2": "patches/machi-list/0002-Switch-to-Render-custom-domain.patch",
-    "deployDoc": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
+    "deployDoc": "patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md",
+    "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
     "dnsNote": "150.95.255.38 パーキング → Render DNS へ変更",
     "renderEnv": [

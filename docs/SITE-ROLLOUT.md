@@ -1,22 +1,38 @@
 # 全サイト ロールアウト手順（1→4）
 
-最終確認: 2026-08-04
+最終確認: 2026-08-05
 
-## 手順 1: darekore.jp — Search Console タグ
+## 現状スナップショット
 
-**状態:** GA4 ✅ / Search Console HTML タグ ❌
+| サイト | 公開 | GA4 | GSC | 次のアクション |
+|--------|------|-----|-----|----------------|
+| shudenhotel.jp | ✅ | ✅ | ✅ | 完了 |
+| darekore.jp | ✅ | ✅ | ❌ | **HTML ファイルで Search Console 確認** |
+| goalpilot.jp | ✅ | ✅ | ✅ | Search Console でサイトマップ送信 |
+| machi-list.jp | ❌ DNS | ❓ | ❓ | **お名前.com DNS 変更** |
+| busselect.jp | ❌ DNS | ❌ | ❌ | パッチ適用 + DNS |
+
+一括確認:
 
 ```powershell
-# Secret 登録（content 値のみ）
-gh secret set VITE_GOOGLE_SITE_VERIFICATION -R syunnjack/task-dashboard -b"YOUR_TOKEN"
-
-# 再デプロイ
-gh workflow run "Deploy to GitHub Pages" -R syunnjack/task-dashboard
-
-# 確認
-$html = (Invoke-WebRequest -Uri "https://darekore.jp/" -UseBasicParsing).Content
-"site-verification: $($html -match 'google-site-verification')"
+.\scripts\site-analytics\check-sites.ps1
 ```
+
+---
+
+## 手順 1: darekore.jp — Search Console（★ HTML ファイル方式が最短）
+
+Secret 不要。`public/googleXXXX.html` を push するだけ。
+
+```powershell
+cd C:\Users\syunn\source\repos\task-dashboard
+# Search Console からダウンロードした googleXXXX.html を public\ に配置
+git add public/google*.html
+git commit -m "Add Search Console verification file"
+git push origin main
+```
+
+Search Console → 確認 → サイトマップ `https://darekore.jp/sitemap.xml` 送信
 
 詳細: `patches/task-dashboard/SETUP-SEARCH-CONSOLE.md`
 
@@ -24,29 +40,34 @@ $html = (Invoke-WebRequest -Uri "https://darekore.jp/" -UseBasicParsing).Content
 
 ## 手順 2: machi-list.jp — 独自ドメイン公開
 
-**状態:** GitHub Actions デプロイ ✅ / DNS パーキング ❌
-
-Render 公開（GitHub Pages 不使用）:
+**最短:** GitHub Pages + DNS（デプロイは既に成功済み）
 
 ```powershell
-cd C:\Users\syunn\source\repos\machi-list
-curl.exe -L -o render.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/machi-list/0002-Switch-to-Render-custom-domain.patch"
-git am render.patch
-git push origin main
+# お名前.com: 150.95.255.38 削除 → GitHub Pages A レコード 4 つ追加
+# 詳細: patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md
 ```
 
-1. Render Blueprint で `render.yaml` をデプロイ
-2. Environment: `GOOGLE_ANALYTICS_MEASUREMENT_ID`, `GOOGLE_SITE_VERIFICATION`
-3. お名前.com: `150.95.255.38` 削除 → Render の A/CNAME を設定
-4. GitHub Pages → Source: None
+**Render 移行:** パッチ 0002 + `DEPLOY-CUSTOM-DOMAIN.md`
 
-詳細: `patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md`
+Secrets 設定後 Re-run:
+
+| Secret | 値 |
+|--------|-----|
+| `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 |
+| `GOOGLE_SITE_VERIFICATION` | GSC content |
+| `INDEXNOW_KEY` | `machilistindex2026` |
 
 ---
 
 ## 手順 3: goalpilot.jp — Search Console サイトマップ
 
-**状態:** GA4 ✅ / 確認タグ ✅ / sitemap ✅
+タグは live。ブラウザで:
+
+1. https://search.google.com/search-console
+2. `https://goalpilot.jp/` → 所有権確認（HTML タグ）
+3. サイトマップ → `https://goalpilot.jp/sitemap.xml`
+
+任意（robots/canonical 改善）:
 
 ```powershell
 cd C:\Users\syunn\source\repos\goal-pilot-app
@@ -55,13 +76,9 @@ git am gp.patch
 git push origin main
 ```
 
-Search Console → サイトマップ → `https://goalpilot.jp/sitemap.xml`
-
 ---
 
-## 手順 4: busselect.jp — GA4 + DNS
-
-**状態:** コード準備済み / DNS パーキング ❌
+## 手順 4: busselect.jp — パッチ + DNS
 
 ```powershell
 cd C:\Users\syunn\source\repos\kousokubus-benri
@@ -70,4 +87,13 @@ git am bs.patch
 git push origin main
 ```
 
-詳細: パッチ内 `docs/SETUP-ANALYTICS.md`
+お名前.com: パーキング解除 → Site Creator DNS 設定
+
+---
+
+## パッチ一括適用（任意）
+
+```powershell
+cd C:\Users\syunn\source\repos\rakuten02
+.\scripts\site-analytics\apply-patches.ps1
+```
