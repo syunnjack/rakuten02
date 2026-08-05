@@ -2,7 +2,30 @@
 
 GA4（`G-5P2QCWYG8V`）は反映済み。**Search Console タグだけ未反映**です。
 
-## 方法 A: GitHub Secret（推奨・恒久）
+## 方法 D: HTML ファイル（最も簡単・Secret 不要）★推奨
+
+コード変更・Secret 登録なしで確認できます。
+
+1. Search Console → プロパティ追加 `https://darekore.jp/`
+2. 確認方法: **HTML ファイル**
+3. `googleXXXXXXXX.html` をダウンロード
+4. task-dashboard の `public/` にそのファイルを置く
+
+```powershell
+cd C:\Users\syunn\source\repos\task-dashboard
+# ダウンロードした googleXXXX.html を public\ にコピー
+git add public/google*.html
+git commit -m "Add Search Console verification file"
+git push origin main
+```
+
+5. 2〜3 分後、Search Console で **確認** ボタン
+
+確認 URL 例: `https://darekore.jp/googleXXXXXXXX.html`
+
+---
+
+## 方法 A: GitHub Secret（HTML タグ方式）
 
 ### 1. Search Console でトークン取得
 
