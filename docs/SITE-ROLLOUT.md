@@ -116,7 +116,12 @@ git am bs.patch
 git push origin main
 ```
 
+0001 を既に試して失敗した場合: `git am --abort` してから 0002 を適用。
+
 </details>
+
+> busselect.jp の「Site Creator」は**OpenAI製**（vinext）で、**Xserverではない**。
+> Xserverアカウント横断調査の結果は `docs/XSERVER-ACCOUNT-AUDIT.md` 参照(実際にXserverを使うのは goalpilot.jp のみ)。
 
 ---
 
