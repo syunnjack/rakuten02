@@ -13,7 +13,7 @@
 | darekore | darekore.jp | GSC 確認待ち |
 | goalpilot | goalpilot.jp | サイトマップ送信待ち |
 | machi-list | machi-list.jp | **DNS 変更待ち** |
-| busselect | busselect.jp | パッチ + DNS 待ち |
+| busselect | busselect.jp | **Site Creator env + DNS 待ち**（パッチ 0002 適用済） |
 
 手順: `docs/SITE-ROLLOUT.md`
 
@@ -53,5 +53,5 @@
 1. machi-list DNS（最優先）
 2. darekore / goalpilot Search Console
 3. hey-douga-guide PR マージ（GitHub UI）
-4. busselect パッチ
+4. busselect Site Creator env + DNS → `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`
 5. free-sample-hub セットアップ

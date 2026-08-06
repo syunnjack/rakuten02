@@ -83,16 +83,11 @@ $b | Format-Table -AutoSize
 if ($b.Http -eq "FAIL") {
   Write-Host @"
 
-【未完了】パッチ適用 + DNS 変更（rakuten02 ではなく kousokubus-benri）:
-cd C:\Users\syunn\rakuten02
-git am --abort
-cd C:\Users\syunn
-git clone https://github.com/syunnjack/kousokubus-benri.git
-cd kousokubus-benri
-curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
-git am bs.patch
-git push origin main
-詳細: patches/kousokubus-benri/APPLY.md
+【未完了】Site Creator env + DNS（パッチ 0002 適用済）:
+詳細: patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md
+1) ChatGPT Sites → Environment variables (GA4 + GSC)
+2) GitHub Secret INDEXNOW_KEY = busselectindex2026
+3) お名前.com: 150.95.255.38 削除 → Site Creator Add domain
 "@ -ForegroundColor Yellow
 }
 

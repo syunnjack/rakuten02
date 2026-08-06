@@ -53,17 +53,38 @@ git am bs.patch
 git push origin main
 ```
 
-### 4. GitHub Secrets（リポジトリ Settings → Secrets）
+**パッチ 0002 適用済み**（2026-08-06 確認）。残り: Site Creator 環境変数 + DNS + GitHub Secret。
+
+**次の手順:** [`DEPLOY-SITE-CREATOR-DNS.md`](DEPLOY-SITE-CREATOR-DNS.md)
+
+---
+
+## 完了済み
+
+- [x] パッチ 0002 適用（`git am` → `git push origin main`）
+
+## 残り（ユーザー作業）
+
+### 1. Site Creator 環境変数（GA4 / GSC）
+
+ChatGPT → Sites → busselect → Settings → Environment variables
+
+| 変数 | 値 |
+|------|-----|
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 測定 ID |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console meta `content` |
+
+### 2. GitHub Secret（IndexNow のみ）
+
+https://github.com/syunnjack/kousokubus-benri/settings/secrets/actions
 
 | Secret | 値 |
 |--------|-----|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 測定 ID |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console 確認トークン |
-| `INDEXNOW_KEY` | `busselectindex2026`（任意・デフォルトと同じ） |
+| `INDEXNOW_KEY` | `busselectindex2026`（省略可） |
 
-### 5. DNS（お名前.com）
+### 3. DNS（お名前.com）
 
-`busselect.jp` が **150.95.255.38（パーキング）** の場合、Site Creator / ホスティング側の指示に従い A レコード等を変更。
+`150.95.255.38` パーキング A レコード削除 → Site Creator の Add domain 指示に従う
 
 ---
 
