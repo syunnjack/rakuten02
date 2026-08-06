@@ -34,7 +34,9 @@
     "ga4": "G-02C2YQ4WYE",
     "searchConsole": "tag-live-unverified",
     "patch": "patches/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch",
-    "note": "Search Console でサイトマップ送信のみ"
+    "note": "Search Console でサイトマップ送信のみ",
+    "hostingProvider": "xserver",
+    "xserverAccount": "xs501620"
   },
   {
     "id": "rakuafi-tool",
@@ -84,6 +86,7 @@
     "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
     "patchNote": "0001 fails on current layout.tsx — use 0002",
     "indexNowKey": "busselectindex2026",
-    "dnsNote": "150.95.255.38 パーキング → Site Creator DNS へ変更"
+    "dnsNote": "150.95.255.38 パーキング → OpenAI Site Creator（vinext、Xserverではない）DNS へ変更",
+    "hostingProvider": "openai-site-creator-vinext"
   }
 ]
