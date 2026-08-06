@@ -13,7 +13,7 @@
 | darekore | darekore.jp | GSC 確認待ち |
 | goalpilot | goalpilot.jp | サイトマップ送信待ち |
 | machi-list | machi-list.jp | **DNS 変更待ち** |
-| busselect | busselect.jp | **Site Creator env + DNS 待ち**（パッチ 0002 適用済） |
+| busselect | busselect.jp | **Site Creator env + DNS 待ち**（パッチ 0002 適用済。Site Creator は OpenAI製、**Xserverではない**） |
 
 手順: `docs/SITE-ROLLOUT.md`
 
@@ -38,6 +38,10 @@
 - 詳細: `docs/HANDOFF.md` セクション C
 
 ---
+
+## Xserver アカウント調査（2026-08-06）
+
+実Xserverアカウントは `xs501620`（goalpilot.jp のみ）。詳細: `docs/XSERVER-ACCOUNT-AUDIT.md`
 
 ## エージェント作業ログ（本セッション）
 
