@@ -75,11 +75,27 @@ GitHub Secrets 設定 → Actions **Deploy static site** を Re-run:
 **0001 が失敗する場合は 0002 を使用**（layout.tsx 更新済みのため）
 
 ```powershell
-cd C:\Users\syunn\source\repos\kousokubus-benri
+cd C:\Users\syunn\rakuten02
+git am --abort
+```
+
+### 2. busselect リポジトリを clone（未 clone の場合）
+
+```powershell
+cd C:\Users\syunn
+git clone https://github.com/syunnjack/kousokubus-benri.git
+cd kousokubus-benri
+```
+
+### 3. パッチ適用（**kousokubus-benri の中で**）
+
+```powershell
 curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
 git am bs.patch
 git push origin main
 ```
+
+> **注意:** `rakuten02` ではなく `kousokubus-benri` で実行してください。
 
 0001 を既に試して失敗した場合: `git am --abort` してから 0002 を適用。
 

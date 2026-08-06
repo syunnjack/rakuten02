@@ -34,7 +34,7 @@ if ($d.Gsc -ne "Y") {
    B) HTML ファイル → googleXXXX.html をダウンロード
 
 --- 方法A: index.html に直接追加（GA4 と同じやり方）---
-cd C:\Users\syunn\source\repos\task-dashboard
+cd C:\Users\syunn\task-dashboard
 curl.exe -L -o sc.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/task-dashboard/0003-Add-Search-Console-meta-to-index-html.patch"
 git am sc.patch
 # index.html の REPLACE_WITH_GSC_TOKEN を Search Console の content 値に置換
@@ -84,7 +84,7 @@ if ($b.Http -eq "FAIL") {
   Write-Host @"
 
 【未完了】パッチ適用 + DNS 変更:
-cd C:\Users\syunn\source\repos\kousokubus-benri
+cd C:\Users\syunn\kousokubus-benri
 curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch"
 git am bs.patch && git push origin main
 "@ -ForegroundColor Yellow
