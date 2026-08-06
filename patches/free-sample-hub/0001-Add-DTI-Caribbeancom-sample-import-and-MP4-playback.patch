@@ -1,0 +1,746 @@
+From f1093c16b6842d56d1190562826e692e3962120e Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 6 Aug 2026 05:42:10 +0000
+Subject: [PATCH] Add DTI Caribbeancom sample import and MP4 playback
+
+- Extend sample_items with source, site_name, actress, description, sample_media_type
+- Add DtiRssClient and CaribbeancomSampleResolver for DTI RSS/CSV workflows
+- Add samples:sync-dti and samples:import-csv artisan commands
+- Support MP4 video playback in the sample hub UI
+- Include CSV seed data for movie_id 224498 (080626-001)
+---
+ .env.example                                  |   5 +
+ README.md                                     |  80 ++++++------
+ app/Console/Commands/ImportMovieCsv.php       | 122 ++++++++++++++++++
+ app/Console/Commands/SyncDtiSamples.php       |  75 +++++++++++
+ app/Console/Commands/SyncSamples.php          |   4 +-
+ app/Http/Controllers/SampleController.php     |   1 +
+ app/Models/SampleItem.php                     |   5 +-
+ app/Providers/AppServiceProvider.php          |   5 +
+ app/Services/CaribbeancomSampleResolver.php   |  66 ++++++++++
+ app/Services/DtiRssClient.php                 |  77 +++++++++++
+ config/services.php                           |   4 +
+ ...0_add_dti_fields_to_sample_items_table.php |  34 +++++
+ database/seeders/data/dti-movies.csv          |   2 +
+ resources/views/welcome.blade.php             |  37 ++++--
+ 14 files changed, 462 insertions(+), 55 deletions(-)
+ create mode 100644 app/Console/Commands/ImportMovieCsv.php
+ create mode 100644 app/Console/Commands/SyncDtiSamples.php
+ create mode 100644 app/Services/CaribbeancomSampleResolver.php
+ create mode 100644 app/Services/DtiRssClient.php
+ create mode 100644 database/migrations/2026_08_06_160000_add_dti_fields_to_sample_items_table.php
+ create mode 100644 database/seeders/data/dti-movies.csv
+
+diff --git a/.env.example b/.env.example
+index c0660ea..e65affb 100644
+--- a/.env.example
++++ b/.env.example
+@@ -63,3 +63,8 @@ AWS_BUCKET=
+ AWS_USE_PATH_STYLE_ENDPOINT=false
+ 
+ VITE_APP_NAME="${APP_NAME}"
++
++DMM_API_ID=
++DMM_AFFILIATE_ID=
++DTI_AFFILIATE_ID=
++GA4_MEASUREMENT_ID=
+diff --git a/README.md b/README.md
+index 0165a77..dcbc604 100644
+--- a/README.md
++++ b/README.md
+@@ -1,59 +1,57 @@
+-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
++# 無料サンプル動画まとめ
+ 
+-<p align="center">
+-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+-</p>
++FANZA・カリビアンコム(DTI CASH)の無料サンプル動画を、その場で再生できる形でまとめる Laravel アプリです。
+ 
+-## About Laravel
++## セットアップ
+ 
+-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
++```bash
++composer install
++cp .env.example .env
++php artisan key:generate
++php artisan migrate
++```
+ 
+-- [Simple, fast routing engine](https://laravel.com/docs/routing).
+-- [Powerful dependency injection container](https://laravel.com/docs/container).
+-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+-- [Robust background job processing](https://laravel.com/docs/queues).
+-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
++## 環境変数
+ 
+-Laravel is accessible, powerful, and provides tools required for large, robust applications.
++| 変数 | 用途 |
++| --- | --- |
++| `DMM_API_ID` / `DMM_AFFILIATE_ID` | FANZA サンプル同期 (`samples:sync`) |
++| `DTI_AFFILIATE_ID` | DTI RSS 同期 (`samples:sync-dti`) |
++| `GA4_MEASUREMENT_ID` | Google Analytics 4 |
+ 
+-## Learning Laravel
++## データ同期
+ 
+-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
++FANZA 人気作品(iframe サンプル):
+ 
+-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
++```bash
++php artisan samples:sync
++```
+ 
+-## Laravel Sponsors
++DTI RSS からカリビアンコム作品(MP4 サンプル):
+ 
+-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
++```bash
++php artisan samples:sync-dti
++# サンプルURLの存在確認を行う場合
++php artisan samples:sync-dti --verify-sample
++```
+ 
+-### Premium Partners
++DTI アフィリエイト管理画面などからエクスポートした CSV を取り込む:
+ 
+-- **[Vehikl](https://vehikl.com)**
+-- **[Tighten Co.](https://tighten.co)**
+-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+-- **[64 Robots](https://64robots.com)**
+-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+-- **[Redberry](https://redberry.international/laravel-development)**
+-- **[Active Logic](https://activelogic.com)**
++```bash
++php artisan samples:import-csv database/seeders/data/dti-movies.csv
++```
+ 
+-## Contributing
++### CSV 形式
+ 
+-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
++ヘッダー例:
+ 
+-## Code of Conduct
++`movie_id,site_id,site_name,title,actress,description,release_date,sample_url,aff_link,original_id,sample_movie_url_2,provider_name`
+ 
+-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
++- `sample_movie_url_2` … MP4 サンプル URL (未設定時は `sample_url` から自動推定)
++- `aff_link` … アフィリエイトリンク
+ 
+-## Security Vulnerabilities
++## ローカル起動
+ 
+-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+-
+-## License
+-
+-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
++```bash
++php artisan serve
++```
+diff --git a/app/Console/Commands/ImportMovieCsv.php b/app/Console/Commands/ImportMovieCsv.php
+new file mode 100644
+index 0000000..0f9ef12
+--- /dev/null
++++ b/app/Console/Commands/ImportMovieCsv.php
+@@ -0,0 +1,122 @@
++<?php
++
++namespace App\Console\Commands;
++
++use App\Models\SampleItem;
++use App\Services\CaribbeancomSampleResolver;
++use App\Services\ContentSafetyFilter;
++use Illuminate\Console\Command;
++
++class ImportMovieCsv extends Command
++{
++    protected $signature = 'samples:import-csv {path : Path to a CSV file exported from DTI affiliate tools}';
++
++    protected $description = 'Import movie rows from a DTI-style CSV (movie_id,site_id,site_name,...)';
++
++    public function handle(): int
++    {
++        $path = $this->argument('path');
++
++        if (! is_readable($path)) {
++            $this->error("Cannot read CSV file: {$path}");
++
++            return self::FAILURE;
++        }
++
++        $handle = fopen($path, 'r');
++
++        if ($handle === false) {
++            $this->error("Cannot open CSV file: {$path}");
++
++            return self::FAILURE;
++        }
++
++        $header = fgetcsv($handle);
++
++        if ($header === false) {
++            fclose($handle);
++            $this->error('CSV file is empty.');
++
++            return self::FAILURE;
++        }
++
++        $header = array_map(fn ($column) => trim((string) $column), $header);
++        $imported = 0;
++
++        while (($row = fgetcsv($handle)) !== false) {
++            if (count($row) !== count($header)) {
++                continue;
++            }
++
++            $record = array_combine($header, $row);
++
++            if ($record === false) {
++                continue;
++            }
++
++            if ($this->importRow($record)) {
++                $imported++;
++            }
++        }
++
++        fclose($handle);
++
++        $this->info("Imported {$imported} sample item(s).");
++
++        return self::SUCCESS;
++    }
++
++    /**
++     * @param array<string, string|null> $row
++     */
++    private function importRow(array $row): bool
++    {
++        $movieId = trim((string) ($row['movie_id'] ?? ''));
++
++        if ($movieId === '') {
++            return false;
++        }
++
++        $title = trim((string) ($row['title'] ?? ''));
++        $description = trim((string) ($row['description'] ?? ''));
++        $actress = trim((string) ($row['actress'] ?? '')) ?: null;
++        $siteName = trim((string) ($row['site_name'] ?? '')) ?: null;
++        $pageUrl = trim((string) ($row['sample_url'] ?? ''));
++        $affiliateUrl = trim((string) ($row['aff_link'] ?? ''));
++        $sampleUrl = trim((string) ($row['sample_movie_url_2'] ?? ''));
++
++        if ($sampleUrl === '' && $pageUrl !== '') {
++            $sampleUrl = CaribbeancomSampleResolver::sampleMp4Url($pageUrl) ?? '';
++        }
++
++        if ($title === '' || $sampleUrl === '' || $affiliateUrl === '') {
++            return false;
++        }
++
++        if (! ContentSafetyFilter::isSafe($title, $description, (string) $actress)) {
++            return false;
++        }
++
++        SampleItem::updateOrCreate(
++            ['content_id' => $movieId],
++            [
++                'source' => 'dti',
++                'title' => $title,
++                'maker' => $siteName,
++                'site_name' => $siteName,
++                'actress' => $actress,
++                'description' => mb_substr($description, 0, 500),
++                'genre' => null,
++                'image_url' => null,
++                'sample_url' => $sampleUrl,
++                'sample_media_type' => 'mp4',
++                'url' => $pageUrl !== '' ? $pageUrl : CaribbeancomSampleResolver::officialPageUrl($affiliateUrl),
++                'affiliate_url' => $affiliateUrl,
++                'review_average' => null,
++                'review_count' => 0,
++            ]
++        );
++
++        return true;
++    }
++}
+diff --git a/app/Console/Commands/SyncDtiSamples.php b/app/Console/Commands/SyncDtiSamples.php
+new file mode 100644
+index 0000000..3d26f5b
+--- /dev/null
++++ b/app/Console/Commands/SyncDtiSamples.php
+@@ -0,0 +1,75 @@
++<?php
++
++namespace App\Console\Commands;
++
++use App\Models\SampleItem;
++use App\Services\CaribbeancomSampleResolver;
++use App\Services\ContentSafetyFilter;
++use App\Services\DtiRssClient;
++use Illuminate\Console\Command;
++
++class SyncDtiSamples extends Command
++{
++    protected $signature = 'samples:sync-dti {--verify-sample : HEAD-check sample MP4 URLs before storing}';
++
++    protected $description = 'Fetch DTI RSS movie items for Caribbeancom and store playable sample MP4 URLs';
++
++    public function handle(DtiRssClient $client): int
++    {
++        $items = $client->fetchMovieItems();
++        $seen = [];
++        $verifySample = (bool) $this->option('verify-sample');
++
++        foreach ($items as $item) {
++            $pageUrl = $item['pageUrl'];
++
++            if ($pageUrl === null) {
++                continue;
++            }
++
++            $sampleUrl = CaribbeancomSampleResolver::sampleMp4Url($pageUrl);
++
++            if ($sampleUrl === null) {
++                continue;
++            }
++
++            if ($verifySample && ! CaribbeancomSampleResolver::sampleMp4Exists($pageUrl)) {
++                continue;
++            }
++
++            if (! ContentSafetyFilter::isSafe($item['title'], $item['description'], (string) $item['actress'])) {
++                continue;
++            }
++
++            $seen[] = $item['movieId'];
++
++            SampleItem::updateOrCreate(
++                ['content_id' => $item['movieId']],
++                [
++                    'source' => 'dti',
++                    'title' => $item['title'],
++                    'maker' => $item['siteName'],
++                    'site_name' => $item['siteName'],
++                    'actress' => $item['actress'],
++                    'description' => mb_substr($item['description'], 0, 500),
++                    'genre' => null,
++                    'image_url' => null,
++                    'sample_url' => $sampleUrl,
++                    'sample_media_type' => 'mp4',
++                    'url' => $pageUrl,
++                    'affiliate_url' => $item['affiliateUrl'],
++                    'review_average' => null,
++                    'review_count' => 0,
++                ]
++            );
++        }
++
++        if (! empty($seen)) {
++            SampleItem::where('source', 'dti')->whereNotIn('content_id', $seen)->delete();
++        }
++
++        $this->info('Synced ' . count($seen) . ' DTI sample items.');
++
++        return self::SUCCESS;
++    }
++}
+diff --git a/app/Console/Commands/SyncSamples.php b/app/Console/Commands/SyncSamples.php
+index b2109a7..d4821d3 100644
+--- a/app/Console/Commands/SyncSamples.php
++++ b/app/Console/Commands/SyncSamples.php
+@@ -46,11 +46,13 @@ public function handle(DmmClient $client): int
+                 SampleItem::updateOrCreate(
+                     ['content_id' => $contentId],
+                     [
++                        'source' => 'fanza',
+                         'title' => $title,
+                         'maker' => $item['iteminfo']['maker'][0]['name'] ?? null,
+                         'genre' => $genre,
+                         'image_url' => $item['imageURL']['large'] ?? ($item['imageURL']['small'] ?? null),
+                         'sample_url' => $sampleUrl,
++                        'sample_media_type' => 'iframe',
+                         'url' => $item['URL'] ?? ($item['affiliateURL'] ?? ''),
+                         'affiliate_url' => $item['affiliateURL'] ?? ($item['URL'] ?? ''),
+                         'review_average' => $item['review']['average'] ?? null,
+@@ -61,7 +63,7 @@ public function handle(DmmClient $client): int
+         }
+ 
+         if (! empty($seen)) {
+-            SampleItem::whereNotIn('content_id', $seen)->delete();
++            SampleItem::where('source', 'fanza')->whereNotIn('content_id', $seen)->delete();
+         }
+ 
+         $this->info('Synced ' . count($seen) . ' sample items.');
+diff --git a/app/Http/Controllers/SampleController.php b/app/Http/Controllers/SampleController.php
+index c43d85c..4c7b7d4 100644
+--- a/app/Http/Controllers/SampleController.php
++++ b/app/Http/Controllers/SampleController.php
+@@ -9,6 +9,7 @@ class SampleController extends Controller
+     public function index()
+     {
+         $items = SampleItem::orderByDesc('review_count')
++            ->orderByDesc('updated_at')
+             ->limit(48)
+             ->get();
+ 
+diff --git a/app/Models/SampleItem.php b/app/Models/SampleItem.php
+index 16b7ece..9881f74 100644
+--- a/app/Models/SampleItem.php
++++ b/app/Models/SampleItem.php
+@@ -7,7 +7,8 @@
+ class SampleItem extends Model
+ {
+     protected $fillable = [
+-        'content_id', 'title', 'maker', 'genre', 'image_url',
+-        'sample_url', 'url', 'affiliate_url', 'review_average', 'review_count',
++        'content_id', 'source', 'title', 'maker', 'site_name', 'actress', 'description',
++        'genre', 'image_url', 'sample_url', 'sample_media_type', 'url', 'affiliate_url',
++        'review_average', 'review_count',
+     ];
+ }
+diff --git a/app/Providers/AppServiceProvider.php b/app/Providers/AppServiceProvider.php
+index c6ec220..db6aa1f 100644
+--- a/app/Providers/AppServiceProvider.php
++++ b/app/Providers/AppServiceProvider.php
+@@ -3,6 +3,7 @@
+ namespace App\Providers;
+ 
+ use App\Services\DmmClient;
++use App\Services\DtiRssClient;
+ use Illuminate\Support\ServiceProvider;
+ 
+ class AppServiceProvider extends ServiceProvider
+@@ -16,6 +17,10 @@ public function register(): void
+             config('services.dmm.api_id'),
+             config('services.dmm.affiliate_id'),
+         ));
++
++        $this->app->singleton(DtiRssClient::class, fn () => new DtiRssClient(
++            config('services.dti.affiliate_id'),
++        ));
+     }
+ 
+     /**
+diff --git a/app/Services/CaribbeancomSampleResolver.php b/app/Services/CaribbeancomSampleResolver.php
+new file mode 100644
+index 0000000..924ebef
+--- /dev/null
++++ b/app/Services/CaribbeancomSampleResolver.php
+@@ -0,0 +1,66 @@
++<?php
++
++namespace App\Services;
++
++class CaribbeancomSampleResolver
++{
++    public static function siteName(string $affiliateUrl): ?string
++    {
++        if (str_contains($affiliateUrl, 'caribbeancom')) {
++            return 'カリビアンコム';
++        }
++
++        return null;
++    }
++
++    public static function officialPageUrl(string $affiliateUrl): ?string
++    {
++        if (! preg_match('#/moviepages/([^/]+)/index\.html#', $affiliateUrl, $matches)) {
++            return null;
++        }
++
++        $movieCode = $matches[1];
++
++        if (! str_contains($affiliateUrl, 'caribbeancom') && ! preg_match('/^\d{6}-\d{3}$/', $movieCode)) {
++            return null;
++        }
++
++        return "http://www.caribbeancom.com/moviepages/{$movieCode}/index.html";
++    }
++
++    public static function sampleMp4Url(string $pageUrl): ?string
++    {
++        if (! preg_match('#/moviepages/([^/]+)/index\.html#', $pageUrl, $matches)) {
++            return null;
++        }
++
++        return "http://smovie.caribbeancom.com/sample/movies/{$matches[1]}/sample_m.mp4";
++    }
++
++    public static function sampleMp4Exists(string $pageUrl): bool
++    {
++        $sampleUrl = self::sampleMp4Url($pageUrl);
++
++        if ($sampleUrl === null) {
++            return false;
++        }
++
++        $context = stream_context_create([
++            'http' => [
++                'method' => 'HEAD',
++                'timeout' => 10,
++                'ignore_errors' => true,
++            ],
++        ]);
++
++        $headers = @get_headers($sampleUrl, true, $context);
++
++        if ($headers === false) {
++            return false;
++        }
++
++        $statusLine = is_array($headers[0] ?? null) ? $headers[0][0] : ($headers[0] ?? '');
++
++        return str_contains($statusLine, '200');
++    }
++}
+diff --git a/app/Services/DtiRssClient.php b/app/Services/DtiRssClient.php
+new file mode 100644
+index 0000000..88e9d69
+--- /dev/null
++++ b/app/Services/DtiRssClient.php
+@@ -0,0 +1,77 @@
++<?php
++
++namespace App\Services;
++
++class DtiRssClient
++{
++    public function __construct(private readonly string $affiliateId)
++    {
++    }
++
++    /**
++     * @return array<int, array{
++     *     movieId: string,
++     *     title: string,
++     *     description: string,
++     *     actress: ?string,
++     *     affiliateUrl: string,
++     *     pageUrl: ?string,
++     *     siteName: ?string,
++     *     publishedAt: ?string
++     * }>
++     */
++    public function fetchMovieItems(): array
++    {
++        $url = "https://ad2widget.dtiserv2.com/rss?aid={$this->affiliateId}";
++        $context = stream_context_create(['http' => ['timeout' => 20]]);
++        $raw = @file_get_contents($url, false, $context);
++
++        if ($raw === false) {
++            return [];
++        }
++
++        $xml = @simplexml_load_string($raw);
++
++        if ($xml === false) {
++            return [];
++        }
++
++        $namespaces = $xml->getNamespaces(true);
++        $dtiNs = $namespaces['dtiaff'] ?? 'http://pixel-vault.com/ns/1.0';
++        $items = [];
++
++        foreach ($xml->channel->item as $item) {
++            $movieNode = $item->children($dtiNs)->movie ?? null;
++
++            if ($movieNode === null) {
++                continue;
++            }
++
++            $movieId = trim((string) ($movieNode->movie_id ?? ''));
++
++            if ($movieId === '') {
++                continue;
++            }
++
++            $affiliateUrl = trim((string) $item->link);
++            $pageUrl = CaribbeancomSampleResolver::officialPageUrl($affiliateUrl);
++
++            if ($pageUrl === null) {
++                continue;
++            }
++
++            $items[] = [
++                'movieId' => $movieId,
++                'title' => trim((string) $item->title),
++                'description' => trim((string) $item->description),
++                'actress' => trim((string) ($movieNode->actor_name ?? '')) ?: null,
++                'affiliateUrl' => $affiliateUrl,
++                'pageUrl' => $pageUrl,
++                'siteName' => CaribbeancomSampleResolver::siteName($affiliateUrl),
++                'publishedAt' => trim((string) $item->pubDate) ?: null,
++            ];
++        }
++
++        return $items;
++    }
++}
+diff --git a/config/services.php b/config/services.php
+index 66e43c9..591d958 100644
+--- a/config/services.php
++++ b/config/services.php
+@@ -40,6 +40,10 @@
+         'affiliate_id' => env('DMM_AFFILIATE_ID'),
+     ],
+ 
++    'dti' => [
++        'affiliate_id' => env('DTI_AFFILIATE_ID'),
++    ],
++
+     'ga4' => [
+         'id' => env('GA4_MEASUREMENT_ID'),
+     ],
+diff --git a/database/migrations/2026_08_06_160000_add_dti_fields_to_sample_items_table.php b/database/migrations/2026_08_06_160000_add_dti_fields_to_sample_items_table.php
+new file mode 100644
+index 0000000..c01d732
+--- /dev/null
++++ b/database/migrations/2026_08_06_160000_add_dti_fields_to_sample_items_table.php
+@@ -0,0 +1,34 @@
++<?php
++
++use Illuminate\Database\Migrations\Migration;
++use Illuminate\Database\Schema\Blueprint;
++use Illuminate\Support\Facades\Schema;
++
++return new class extends Migration
++{
++    public function up(): void
++    {
++        Schema::table('sample_items', function (Blueprint $table) {
++            $table->string('source')->default('fanza')->after('content_id');
++            $table->string('site_name')->nullable()->after('maker');
++            $table->string('actress')->nullable()->after('site_name');
++            $table->text('description')->nullable()->after('actress');
++            $table->string('sample_media_type')->default('iframe')->after('sample_url');
++            $table->index('source');
++        });
++    }
++
++    public function down(): void
++    {
++        Schema::table('sample_items', function (Blueprint $table) {
++            $table->dropIndex(['source']);
++            $table->dropColumn([
++                'source',
++                'site_name',
++                'actress',
++                'description',
++                'sample_media_type',
++            ]);
++        });
++    }
++};
+diff --git a/database/seeders/data/dti-movies.csv b/database/seeders/data/dti-movies.csv
+new file mode 100644
+index 0000000..4fcf109
+--- /dev/null
++++ b/database/seeders/data/dti-movies.csv
+@@ -0,0 +1,2 @@
++movie_id,site_id,site_name,title,actress,description,release_date,sample_url,aff_link,original_id,sample_movie_url_2,provider_name
++224498,2468,カリビアンコム,タイムファックバンディット 時間よ止まれ ~高級レストラン編~,野々宮すず 笹宮えれな,高級レストラン内で「ほんとに止まったよ！」と大はしゃぎする男性。男性の手には呼び鈴のような時間停止装置を手にして、動かないシェフの野々宮すずちゃんとウェイトレスの笹宮えれなちゃんの周りをグルグル回る。男性はもう一度時間停止装置を押すと彼女たちは動き始める。ヨダレが止まらないほど興奮している男性はニヤニヤしながらウェイトレスを舐めるようにボディラインを凝視しながら食べ物をオーダー。その後装置のボタンを押すとやっぱりウェイトレス・えれなちゃんの動きが止まった。獣の表情に豹変した男性はその後レストラン内で大暴走しちゃいます！,2026/08/06,http://www.caribbeancom.com/moviepages/080626-001/index.html,https://clear-tv.com/Direct/2240-6-162667/moviepages/080626-001/index.html,38290,http://smovie.caribbeancom.com/sample/movies/080626-001/sample_m.mp4,,
+diff --git a/resources/views/welcome.blade.php b/resources/views/welcome.blade.php
+index 36a5357..ba50b52 100644
+--- a/resources/views/welcome.blade.php
++++ b/resources/views/welcome.blade.php
+@@ -4,13 +4,13 @@
+   <meta name="google-site-verification" content="M1R62--qkl8z46EZs1wOW8BZ5nlyCiAfI99GzDw8qVs" />
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+-  <title>無料サンプル動画まとめ｜購入前にその場で試聴できるFANZA人気作品</title>
+-  <meta name="description" content="FANZAの無料サンプル動画を、その場で再生できる形でまとめました。購入前に雰囲気を確認してから選べます。18歳未満閲覧禁止。">
++  <title>無料サンプル動画まとめ｜購入前にその場で試聴できる人気作品</title>
++  <meta name="description" content="FANZA・カリビアンコムなどの無料サンプル動画を、その場で再生できる形でまとめました。購入前に雰囲気を確認してから選べます。18歳未満閲覧禁止。">
+   <link rel="canonical" href="{{ url()->current() }}">
+   <meta property="og:site_name" content="無料サンプル動画まとめ">
+   <meta property="og:type" content="website">
+-  <meta property="og:title" content="無料サンプル動画まとめ｜購入前にその場で試聴できるFANZA人気作品">
+-  <meta property="og:description" content="FANZAの無料サンプル動画をその場で再生できる形でまとめたサイトです。">
++  <meta property="og:title" content="無料サンプル動画まとめ｜購入前にその場で試聴できる人気作品">
++  <meta property="og:description" content="FANZA・カリビアンコムなどの無料サンプル動画をその場で再生できる形でまとめたサイトです。">
+   <script type="application/ld+json">{"@@context":"https://schema.org","@@type":"WebSite","name":"無料サンプル動画まとめ","url":"{{ url('/') }}"}</script>
+ 
+   @if(config('services.ga4.id'))
+@@ -51,7 +51,8 @@ function gtag(){dataLayer.push(arguments);}
+     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
+     .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+     .card .player { position:relative; width:100%; aspect-ratio:560/360; background:#000; }
+-    .card .player iframe { width:100%; height:100%; border:0; }
++    .card .player iframe,
++    .card .player video { width:100%; height:100%; border:0; object-fit:contain; background:#000; }
+     .card .free-badge { position:absolute; top:8px; left:8px; background:var(--accent); color:#0b1613; font-weight:900; font-size:.72rem; padding:4px 10px; border-radius:20px; z-index:2; }
+     .card .body { padding:14px; display:flex; flex-direction:column; gap:6px; }
+     .card .title { font-size:.86rem; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.6em; }
+@@ -67,7 +68,7 @@ function gtag(){dataLayer.push(arguments);}
+     <section>
+       <span class="badge">18+</span>
+       <h1>年齢確認</h1>
+-      <p>このサイトはアダルト動画(FANZAアフィリエイト)の無料サンプル再生を扱います。18歳未満の方はご利用いただけません。</p>
++      <p>このサイトはアダルト動画(FANZA・DTIアフィリエイト)の無料サンプル再生を扱います。18歳未満の方はご利用いただけません。</p>
+       <button onclick="document.getElementById('age-gate').style.display='none'">18歳以上です</button>
+       <a class="exit" href="https://www.google.com/">退出する</a>
+     </section>
+@@ -82,7 +83,7 @@ function gtag(){dataLayer.push(arguments);}
+     <section class="hero" id="top">
+       <p class="eyebrow">FREE SAMPLE PLAYER HUB</p>
+       <h1 class="main">購入前に、<br><em>その場で試聴</em>できる。</h1>
+-      <p class="lead">FANZA公式アフィリエイトAPIから取得した人気作品のうち、無料サンプル動画を再生できるものだけを集めました。ページを離れずにその場で雰囲気を確認できます。</p>
++      <p class="lead">FANZA公式APIとDTI CASH(RSS/CSV)から取得した作品のうち、無料サンプル動画を再生できるものだけを集めました。ページを離れずにその場で雰囲気を確認できます。</p>
+       @if($lastUpdated)
+       <p class="updated">最終更新: <b>{{ \Illuminate\Support\Carbon::parse($lastUpdated)->timezone('Asia/Tokyo')->format('Y/m/d H:i') }}</b>(自動更新)</p>
+       @endif
+@@ -97,13 +98,27 @@ function gtag(){dataLayer.push(arguments);}
+           <div class="card">
+             <div class="player">
+               <span class="free-badge">無料サンプル</span>
+-              <iframe src="{{ $item->sample_url }}" loading="lazy" allowfullscreen title="{{ $item->title }}"></iframe>
++              @if($item->sample_media_type === 'mp4')
++                <video src="{{ $item->sample_url }}" controls preload="metadata" playsinline title="{{ $item->title }}"></video>
++              @else
++                <iframe src="{{ $item->sample_url }}" loading="lazy" allowfullscreen title="{{ $item->title }}"></iframe>
++              @endif
+             </div>
+             <div class="body">
+               <div class="title">{{ $item->title }}</div>
+-              <div class="meta">{{ $item->maker }}{{ $item->review_count ? ' ／ ★'.number_format($item->review_average,1).' ('.$item->review_count.')' : '' }}</div>
++              <div class="meta">
++                {{ $item->site_name ?? $item->maker }}
++                @if($item->actress)
++                  ／ {{ $item->actress }}
++                @endif
++                @if($item->review_count)
++                  ／ ★{{ number_format($item->review_average, 1) }} ({{ $item->review_count }})
++                @endif
++              </div>
+             </div>
+-            <a class="go" href="{{ $item->affiliate_url }}" target="_blank" rel="sponsored noopener">FANZAで全編を見る</a>
++            <a class="go" href="{{ $item->affiliate_url }}" target="_blank" rel="sponsored noopener">
++              {{ $item->source === 'dti' ? '公式ページで全編を見る' : 'FANZAで全編を見る' }}
++            </a>
+           </div>
+           @endforeach
+         </div>
+@@ -113,7 +128,7 @@ function gtag(){dataLayer.push(arguments);}
+ 
+   <footer>
+     <div class="wrap">
+-      <p>本サイトはFANZAアフィリエイトプログラムを利用し、DMM.com公式APIから取得したサンプル動画・レビュー情報をもとに構成しています。詳細は必ずリンク先の公式ページでご確認ください。</p>
++      <p>本サイトはFANZAアフィリエイト・DTI CASHアフィリエイトを利用し、各ASP/APIから取得したサンプル動画情報をもとに構成しています。詳細は必ずリンク先の公式ページでご確認ください。</p>
+       <p>本サイトが紹介するリンクには広告(アフィリエイトリンク)を含みます。</p>
+       <p>&copy; {{ date('Y') }} 無料サンプル動画まとめ</p>
+     </div>
+-- 
+2.43.0
+
