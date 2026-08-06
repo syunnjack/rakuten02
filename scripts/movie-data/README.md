@@ -32,6 +32,26 @@ php artisan samples:import-csv database/seeders/data/dti-movies.csv
 
 ## 取り込み対象 (2026/08/06)
 
+最新バッチ: `_var3_tmp_162667 (5).csv` — **424行**
+
+| サイト | 件数 | サンプル HEAD OK |
+| --- | ---: | ---: |
+| カリビアンコム | 190 | 190 |
+| カリビアンコムプレミアム | 166 | 166 |
+| HEYZO | 68 | 52 (16件はサンプル未公開) |
+
+出力: `scripts/movie-data/dti-movies.csv`
+
+### URL 推定ルール
+
+| サイト | パターン |
+| --- | --- |
+| カリビアンコム | `http://smovie.caribbeancom.com/sample/movies/{code}/sample_m.mp4` |
+| カリビアンコムプレミアム | `https://smovie.caribbeancompr.com/sample/movies/{code}/480p.mp4` |
+| HEYZO | `https://www.heyzo.com/contents/3000/{id}/heyzo_hd_{id}_sample.mp4` |
+
+### 先頭行の例
+
 | 項目 | 値 |
 | --- | --- |
 | movie_id | 224498 |

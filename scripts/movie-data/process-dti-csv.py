@@ -29,6 +29,28 @@ HEADERS = [
 MOVIE_CODE_RE = re.compile(r"/moviepages/([^/]+)/index\.html")
 
 
+def derive_sample_url(sample_url: str) -> str | None:
+    if not sample_url:
+        return None
+
+    match = MOVIE_CODE_RE.search(sample_url)
+    if not match:
+        return None
+
+    code = match.group(1)
+
+    if "caribbeancompr.com" in sample_url:
+        return f"https://smovie.caribbeancompr.com/sample/movies/{code}/480p.mp4"
+
+    if "heyzo.com" in sample_url:
+        return f"https://www.heyzo.com/contents/3000/{code}/heyzo_hd_{code}_sample.mp4"
+
+    if "caribbeancom.com" in sample_url:
+        return f"http://smovie.caribbeancom.com/sample/movies/{code}/sample_m.mp4"
+
+    return None
+
+
 @dataclass
 class MovieRow:
     movie_id: str
@@ -55,12 +77,9 @@ class MovieRow:
         notes: list[str] = []
 
         if not self.sample_movie_url_2 and self.sample_url:
-            match = MOVIE_CODE_RE.search(self.sample_url)
-            if match:
-                code = match.group(1)
-                self.sample_movie_url_2 = (
-                    f"http://smovie.caribbeancom.com/sample/movies/{code}/sample_m.mp4"
-                )
+            derived = derive_sample_url(self.sample_url)
+            if derived:
+                self.sample_movie_url_2 = derived
                 notes.append("sample_movie_url_2 derived from sample_url")
 
         if not self.provider_name and self.site_name:
