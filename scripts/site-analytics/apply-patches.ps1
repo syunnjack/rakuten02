@@ -30,7 +30,7 @@ $jobs = @(
   @{
     Name = "kousokubus-benri (busselect)"
     Dir  = "kousokubus-benri"
-    Patch = "$patchBase/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch"
+    Patch = "$patchBase/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
     Optional = $true
   }
 )

@@ -27,10 +27,10 @@
 | サイト | ドメイン | 公開 | GA4 | GSC | ブロッカー |
 |--------|----------|------|-----|-----|------------|
 | 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし（完了） |
-| ダレコレ | darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」クリック** |
-| GoalPilot | goalpilot.jp | ✅ | ✅ | メタ live | **サイトマップ送信** |
-| 町リスト | machi-list.jp | ❌ | 準備済 | 準備済 | **お名前.com DNS**（150.95.255.38 パーキング） |
-| バスセレクト | busselect.jp | ❌ | 未 | 未 | **パッチ未適用 + DNS** |
+| ダレコレ | darekore.jp | ✅ | ✅ | ✅ check-sites 全Y | **Search Console でサイトマップ送信** |
+| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ メタ live | **Search Console でサイトマップ送信** |
+| 町リスト | machi-list.jp | ❌ | 準備済 | 準備済 | **お名前.com DNS**（Deploy workflow success 済） |
+| バスセレクト | busselect.jp | ❌ | 未 | 未 | **パッチ 0002 適用 + DNS** |
 
 ### DNS 未設定（お名前.com）
 

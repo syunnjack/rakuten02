@@ -71,7 +71,9 @@
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
     "status": "patch-ready-dns-parked",
-    "patch": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
+    "patch": "patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch",
+    "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
+    "patchNote": "0001 fails on current layout.tsx — use 0002",
     "indexNowKey": "busselectindex2026",
     "dnsNote": "150.95.255.38 パーキング → Site Creator DNS へ変更"
   }

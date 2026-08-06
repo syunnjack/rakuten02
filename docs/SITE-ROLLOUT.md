@@ -95,7 +95,9 @@ git am bs.patch
 git push origin main
 ```
 
-> **注意:** `rakuten02` ではなく `kousokubus-benri` で実行してください。
+> **注意:** `rakuten02` ではなく `kousokubus-benri` で実行してください。  
+> rakuten02 に誤って `git am` した場合は `git am --abort` のみ（push 不要）。  
+> 詳細: `patches/kousokubus-benri/APPLY.md`
 
 0001 を既に試して失敗した場合: `git am --abort` してから 0002 を適用。
 
