@@ -58,6 +58,9 @@ php artisan dti:import-csv database/seeders/data/dti-movies.csv --verify-sample
 
 詳細: `patches/hey-douga-guide/README.md`
 
+全体ステータス: `patches/STATUS.md`  
+hey-douga-guide PR マージ手順: `patches/hey-douga-guide/MERGE-PR.md`
+
 ## 取り込み対象 (2026/08/06)
 
 最新バッチ: `_var3_tmp_162667 (5).csv` — **424行**
