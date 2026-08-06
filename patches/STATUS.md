@@ -12,8 +12,8 @@
 | shudenhotel | shudenhotel.jp | ✅ 完了 |
 | darekore | darekore.jp | GSC 確認待ち |
 | goalpilot | goalpilot.jp | サイトマップ送信待ち |
-| machi-list | machi-list.jp | **DNS 変更待ち** |
-| busselect | busselect.jp | **Site Creator env + DNS 待ち**（パッチ 0002 適用済） |
+| machi-list | machi-list.jp | **HTTPS + Secrets 仕上げ**（DNS 反映済） |
+| busselect | busselect.jp | Site Creator env + DNS 待ち |
 
 手順: `docs/SITE-ROLLOUT.md`
 
@@ -50,8 +50,8 @@
 
 ## ユーザー PowerShell 待ち
 
-1. machi-list DNS（最優先）
+1. machi-list **HTTPS + Secrets** → `patches/machi-list/POST-DNS-GITHUB-PAGES.md`
 2. darekore / goalpilot Search Console
-3. hey-douga-guide PR マージ（GitHub UI）
+3. hey-douga-guide **本番 migrate/import**（PR #1 マージ済）
 4. busselect Site Creator env + DNS → `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`
 5. free-sample-hub セットアップ
