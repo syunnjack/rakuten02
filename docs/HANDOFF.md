@@ -39,7 +39,14 @@
 **machi-list 最短手順:** `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`  
 （GitHub Pages A レコード 4 つ。Render 移行は任意）
 
-**busselect:** パッチ適用済 → Site Creator 環境変数 + DNS（`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`）
+**busselect:** パッチ適用済 → Site Creator 環境変数 + DNS（`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`。
+この「Site Creator」は**OpenAI製**（vinext）で、**Xserverではない**点に注意）
+
+### Xserver アカウント調査（2026-08-06 完了）
+
+実際にXserverを使っているのは **goalpilot.jp のみ**（アカウント `xs501620`）。busselect.jp の
+「Site Creator」はOpenAI製の別サービスで無関係。旧アカウント `phg28776` / `phrr806413` は
+5リポジトリいずれにも痕跡なし。詳細: `docs/XSERVER-ACCOUNT-AUDIT.md`
 
 ### 確認コマンド（PowerShell）
 
@@ -70,26 +77,18 @@ cd C:\Users\syunn\rakuten02
 
 ---
 
-## C. ランキングサイト（41 リポジトリ）
+## C. ランキングサイト（41 リポジトリ）— 2026-08-06 スタック調査完了
 
-AI が Aug 5–6 に作成。例:
+AI が Aug 5–6 に作成。41件全件クローンして実測（`duga-video-ranking`は旧ドキュメントの誤りでAstroではなくLaravel/PHP）:
 
-- PHP: `netorare-ranking`, `gyaru-ranking`, `onsen-ranking` …
-- Astro: `play-withca-ranking`, `play-withladies-ranking`, `duga-video-ranking` …
+- **PHP（Laravel）26件**: `netorare-ranking`, `gyaru-ranking`, `duga-video-ranking` …
+- **Astro（SSR、`@astrojs/vercel`組み込み済み）15件**: `play-withca-ranking`, `play-withladies-ranking`, `gyakyu-netorare-ranking` …
 
-**現状:** GitHub にコードのみ。**GitHub Pages 未設定**（`syunnjack.github.io/*` → 404）。**独自ドメイン未割当**。
+**現状:** GitHub にコードのみ。**デプロイ設定ゼロ**（CNAME/vercel.json/wrangler.toml いずれも未設置）。**独自ドメイン未割当**。
 
-**次フェーズ（未着手）:**
+**デプロイ方針（確定・提案）:** Astro → **Vercel**（コード変更不要）、PHP/Laravel → **Render**（shudenhotel/machi-listと同じ運用実績）
 
-1. ドメイン一覧の確定（どの repo にどのドメインか）
-2. Astro → Vercel/Cloudflare Pages、PHP → Render 等のデプロイ方針
-3. `scripts/site-analytics/` キットの横展開（GA4/GSC/sitemap）
-
-一覧取得:
-
-```powershell
-gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ranking$"))'
-```
+**未確定（ユーザー判断待ち）:** 41件分のドメイン取得の要否・パイロット展開の是非。詳細: `docs/RANKING-SITES.md`（生データ: `docs/ranking-audit-raw.tsv`）
 
 ---
 
