@@ -50,13 +50,13 @@
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-render",
-    "status": "dns-parked-deploy-ready",
-    "patch": "patches/machi-list/0001-Add-GA4-Search-Console-sitemap-and-IndexNow-support.patch",
-    "patch2": "patches/machi-list/0002-Switch-to-Render-custom-domain.patch",
+    "status": "dns-live-https-secrets-pending",
+    "dnsVerified": "2026-08-06",
     "deployDoc": "patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md",
+    "postDnsDoc": "patches/machi-list/POST-DNS-GITHUB-PAGES.md",
     "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "150.95.255.38 パーキング → Render DNS へ変更",
+    "dnsNote": "DNS 反映済 → GitHub Pages HTTPS + Secrets 待ち",
     "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION"

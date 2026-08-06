@@ -29,15 +29,20 @@
 | 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし（完了） |
 | ダレコレ | darekore.jp | ✅ | ✅ | ✅ check-sites 全Y | **Search Console でサイトマップ送信** |
 | GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ メタ live | **Search Console でサイトマップ送信** |
-| 町リスト | machi-list.jp | ❌ | 準備済 | 準備済 | **お名前.com DNS**（Deploy workflow success 済） |
+| 町リスト | machi-list.jp | 🟡 HTTP | 未 | 未 | **GitHub Pages HTTPS + Secrets + 再デプロイ** |
 | バスセレクト | busselect.jp | ❌ | 準備済 | 準備済 | **Site Creator 環境変数 + DNS**（パッチ 0002 適用済） |
 
-### DNS 未設定（お名前.com）
+### DNS 状況（エージェント確認 2026-08-06 13:35 UTC）
 
-`machi-list.jp` / `busselect.jp` → 両方 **150.95.255.38（パーキング）**
+| ドメイン | DNS | 公開 |
+|----------|-----|------|
+| machi-list.jp | ✅ GitHub Pages A レコード | 🟡 HTTP 200（HTTPS 証明書待ち） |
+| busselect.jp | ❌ 150.95.255.38 パーキング | 未公開 |
 
-**machi-list 最短手順:** `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`  
-（GitHub Pages A レコード 4 つ。Render 移行は任意）
+**machi-list 仕上げ:** `patches/machi-list/POST-DNS-GITHUB-PAGES.md`  
+（GitHub Pages → Enforce HTTPS、Secrets、Deploy 再実行）
+
+**machi-list 初回 DNS:** `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`
 
 **busselect:** パッチ適用済 → Site Creator 環境変数 + DNS（`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`）
 
@@ -63,7 +68,7 @@ cd C:\Users\syunn\rakuten02
 | リポジトリ | 状態 | 次 |
 |------------|------|-----|
 | **rakuten02** | パッチ master 同梱、PR #15–18 マージ済 | — |
-| **hey-douga-guide** | ローカル表示・RSS 同期 OK | [GitHub PR マージ](hey-douga-guide/MERGE-PR.md) |
+| **hey-douga-guide** | ✅ PR #1 マージ済（2026-08-06） | 本番サーバーで migrate + import（`MERGE-PR.md`） |
 | **free-sample-hub** | 未セットアップ | [SETUP.md](free-sample-hub/SETUP.md) |
 
 詳細: `patches/DEPLOY-WINDOWS.md` / `patches/STATUS.md`
@@ -97,9 +102,9 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 
 | 優先 | 作業 | 担当 | 所要 |
 |------|------|------|------|
-| 1 | machi-list.jp DNS 変更 | ユーザー @ お名前.com | 5分 |
+| 1 | machi-list **HTTPS + Secrets + 再デプロイ** | ユーザー @ GitHub Pages / Actions | 10分 |
 | 2 | darekore / goalpilot Search Console | ユーザー @ ブラウザ | 各2分 |
-| 3 | hey-douga-guide PR マージ | ユーザー @ GitHub | 2分 |
+| 3 | hey-douga-guide **本番 migrate/import** | ユーザー PowerShell（本番） | 10分 |
 | 4 | busselect **Site Creator env + DNS** | ユーザー @ ChatGPT Sites + お名前.com | 15分 |
 | 5 | free-sample-hub セットアップ | ユーザー PowerShell | 20分 |
 | 6 | ランキングサイト デプロイ計画 | 要相談 | — |

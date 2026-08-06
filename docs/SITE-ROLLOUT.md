@@ -11,10 +11,10 @@
 | shudenhotel.jp | ✅ | ✅ | ✅ | **完了** |
 | darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」→ サイトマップ送信** |
 | goalpilot.jp | ✅ | ✅ | メタ live | **Search Console でサイトマップ送信** |
-| machi-list.jp | ❌ DNS | 準備済 | 準備済 | **お名前.com DNS 変更**（パーキング解除） |
+| machi-list.jp | 🟡 HTTP | 未 | 未 | **GitHub Pages HTTPS + Secrets + 再デプロイ** |
 | busselect.jp | ❌ DNS | 準備済 | 準備済 | **Site Creator env + お名前.com DNS**（パッチ 0002 適用済） |
 
-DNS 確認: `machi-list.jp` / `busselect.jp` → いずれも `150.95.255.38`（お名前.com パーキング）
+DNS: `machi-list.jp` → GitHub Pages A レコード ✅ / `busselect.jp` → **150.95.255.38** パーキング ❌
 
 一括確認:
 
@@ -36,27 +36,20 @@ DNS 確認: `machi-list.jp` / `busselect.jp` → いずれも `150.95.255.38`（
 
 ---
 
-## 手順 2: machi-list.jp — 独自ドメイン公開 ★最優先
+## 手順 2: machi-list.jp — HTTPS + Secrets 仕上げ
 
-**最短:** GitHub Pages + DNS（コード・ワークフローは repo 準備済み）
+**DNS 反映済**（2026-08-06）。`http://machi-list.jp/` は 200 OK。  
+**残り:** GitHub Pages Enforce HTTPS + Secrets + 再デプロイ
 
-```powershell
-# お名前.com:
-# 1. @ A 150.95.255.38 を削除
-# 2. GitHub Pages A レコード 4 つ追加
-# 詳細: patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md
-```
+詳細: **`patches/machi-list/POST-DNS-GITHUB-PAGES.md`**
 
-GitHub Secrets 設定 → Actions **Deploy static site** を Re-run:
+1. https://github.com/syunnjack/machi-list/settings/pages  
+   Custom domain `machi-list.jp` → DNS Check OK → **Enforce HTTPS ON**
+2. https://github.com/syunnjack/machi-list/settings/secrets/actions  
+   `GOOGLE_ANALYTICS_MEASUREMENT_ID` / `GOOGLE_SITE_VERIFICATION` / `INDEXNOW_KEY`
+3. Actions → **Deploy static site** → Run workflow
 
-| Secret | 用途 |
-|--------|------|
-| `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 |
-| `GOOGLE_SITE_VERIFICATION` | GSC content |
-| `INDEXNOW_KEY` | `machilistindex2026` |
-
-**Render 移行（任意・非推奨 unless 方針変更）:** `patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md`  
-※ PR #10 は GitHub Pages 方針に統合済みのためクローズ。
+初回 DNS 手順（参考・完了済）: `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`
 
 ---
 
