@@ -1,16 +1,20 @@
 # 全サイト ロールアウト手順（1→4）
 
-最終確認: 2026-08-05
+最終確認: **2026-08-06**（引き継ぎ更新）
+
+マスター台帳: `docs/HANDOFF.md`
 
 ## 現状スナップショット
 
 | サイト | 公開 | GA4 | GSC | 次のアクション |
 |--------|------|-----|-----|----------------|
-| shudenhotel.jp | ✅ | ✅ | ✅ | 完了 |
-| darekore.jp | ✅ | ✅ | ❌ | **HTML ファイルで Search Console 確認** |
-| goalpilot.jp | ✅ | ✅ | ✅ | Search Console でサイトマップ送信 |
-| machi-list.jp | ❌ DNS | ❓ | ❓ | **お名前.com DNS 変更** |
+| shudenhotel.jp | ✅ | ✅ | ✅ | **完了** |
+| darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」→ サイトマップ送信** |
+| goalpilot.jp | ✅ | ✅ | メタ live | **Search Console でサイトマップ送信** |
+| machi-list.jp | ❌ DNS | 準備済 | 準備済 | **お名前.com DNS 変更**（パーキング解除） |
 | busselect.jp | ❌ DNS | ❌ | ❌ | パッチ適用 + DNS |
+
+DNS 確認: `machi-list.jp` / `busselect.jp` → いずれも `150.95.255.38`（お名前.com パーキング）
 
 一括確認:
 
@@ -20,42 +24,39 @@
 
 ---
 
-## 手順 1: darekore.jp — Search Console（★ HTML ファイル方式が最短）
+## 手順 1: darekore.jp — Search Console
 
-Secret 不要。`public/googleXXXX.html` を push するだけ。
+**メタタグは本番に反映済み**（2026-08-05 以降）。ブラウザのみ:
 
-```powershell
-cd C:\Users\syunn\source\repos\task-dashboard
-# Search Console からダウンロードした googleXXXX.html を public\ に配置
-git add public/google*.html
-git commit -m "Add Search Console verification file"
-git push origin main
-```
+1. https://search.google.com/search-console
+2. プロパティ `https://darekore.jp/` → **所有権の確認**（HTML タグ方式）
+3. サイトマップ → `https://darekore.jp/sitemap.xml` 送信
 
-Search Console → 確認 → サイトマップ `https://darekore.jp/sitemap.xml` 送信
-
-詳細: `patches/task-dashboard/SETUP-SEARCH-CONSOLE.md`
+（HTML ファイル方式も可: `patches/task-dashboard/SETUP-SEARCH-CONSOLE.md`）
 
 ---
 
-## 手順 2: machi-list.jp — 独自ドメイン公開
+## 手順 2: machi-list.jp — 独自ドメイン公開 ★最優先
 
-**最短:** GitHub Pages + DNS（デプロイは既に成功済み）
+**最短:** GitHub Pages + DNS（コード・ワークフローは repo 準備済み）
 
 ```powershell
-# お名前.com: 150.95.255.38 削除 → GitHub Pages A レコード 4 つ追加
+# お名前.com:
+# 1. @ A 150.95.255.38 を削除
+# 2. GitHub Pages A レコード 4 つ追加
 # 詳細: patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md
 ```
 
-**Render 移行:** パッチ 0002 + `DEPLOY-CUSTOM-DOMAIN.md`
+GitHub Secrets 設定 → Actions **Deploy static site** を Re-run:
 
-Secrets 設定後 Re-run:
-
-| Secret | 値 |
-|--------|-----|
+| Secret | 用途 |
+|--------|------|
 | `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 |
 | `GOOGLE_SITE_VERIFICATION` | GSC content |
 | `INDEXNOW_KEY` | `machilistindex2026` |
+
+**Render 移行（任意・非推奨 unless 方針変更）:** `patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md`  
+※ PR #10 は GitHub Pages 方針に統合済みのためクローズ。
 
 ---
 
@@ -66,15 +67,6 @@ Secrets 設定後 Re-run:
 1. https://search.google.com/search-console
 2. `https://goalpilot.jp/` → 所有権確認（HTML タグ）
 3. サイトマップ → `https://goalpilot.jp/sitemap.xml`
-
-任意（robots/canonical 改善）:
-
-```powershell
-cd C:\Users\syunn\source\repos\goal-pilot-app
-curl.exe -L -o gp.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch"
-git am gp.patch
-git push origin main
-```
 
 ---
 
@@ -94,6 +86,16 @@ git push origin main
 ## パッチ一括適用（任意）
 
 ```powershell
-cd C:\Users\syunn\source\repos\rakuten02
+cd C:\Users\syunn\rakuten02
 .\scripts\site-analytics\apply-patches.ps1
 ```
+
+---
+
+## 別トラック: DTI 動画サイト
+
+hey-douga-guide / free-sample-hub → `patches/DEPLOY-WINDOWS.md` / `docs/HANDOFF.md` セクション B
+
+## 別トラック: ランキングサイト（41 repo）
+
+未デプロイ → `docs/HANDOFF.md` セクション C
