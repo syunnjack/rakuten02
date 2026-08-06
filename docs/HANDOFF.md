@@ -27,10 +27,10 @@
 | サイト | ドメイン | 公開 | GA4 | GSC | ブロッカー |
 |--------|----------|------|-----|-----|------------|
 | 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし（完了） |
-| ダレコレ | darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」クリック** |
-| GoalPilot | goalpilot.jp | ✅ | ✅ | メタ live | **サイトマップ送信** |
-| 町リスト | machi-list.jp | ❌ | 準備済 | 準備済 | **お名前.com DNS**（150.95.255.38 パーキング） |
-| バスセレクト | busselect.jp | ❌ | 未 | 未 | **パッチ未適用 + DNS** |
+| ダレコレ | darekore.jp | ✅ | ✅ | ✅ check-sites 全Y | **Search Console でサイトマップ送信** |
+| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ メタ live | **Search Console でサイトマップ送信** |
+| 町リスト | machi-list.jp | ❌ | 準備済 | 準備済 | **お名前.com DNS**（Deploy workflow success 済） |
+| バスセレクト | busselect.jp | ❌ | 準備済 | 準備済 | **Site Creator 環境変数 + DNS**（パッチ 0002 適用済） |
 
 ### DNS 未設定（お名前.com）
 
@@ -39,7 +39,7 @@
 **machi-list 最短手順:** `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`  
 （GitHub Pages A レコード 4 つ。Render 移行は任意）
 
-**busselect:** パッチ適用 → Site Creator DNS（`docs/SITE-ROLLOUT.md` 手順 4）
+**busselect:** パッチ適用済 → Site Creator 環境変数 + DNS（`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`）
 
 ### 確認コマンド（PowerShell）
 
@@ -98,7 +98,7 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 | 1 | machi-list.jp DNS 変更 | ユーザー @ お名前.com | 5分 |
 | 2 | darekore / goalpilot Search Console | ユーザー @ ブラウザ | 各2分 |
 | 3 | hey-douga-guide PR マージ | ユーザー @ GitHub | 2分 |
-| 4 | busselect **パッチ 0002** + DNS | ユーザー PowerShell + DNS | 15分 |
+| 4 | busselect **Site Creator env + DNS** | ユーザー @ ChatGPT Sites + お名前.com | 15分 |
 | 5 | free-sample-hub セットアップ | ユーザー PowerShell | 20分 |
 | 6 | ランキングサイト デプロイ計画 | 要相談 | — |
 
@@ -113,6 +113,7 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 | DTI ステータス | `patches/STATUS.md` |
 | Windows 手順 | `patches/DEPLOY-WINDOWS.md` |
 | machi-list DNS | `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md` |
+| busselect DNS + Secrets | `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md` |
 
 ---
 

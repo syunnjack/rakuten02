@@ -12,7 +12,7 @@
 | darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」→ サイトマップ送信** |
 | goalpilot.jp | ✅ | ✅ | メタ live | **Search Console でサイトマップ送信** |
 | machi-list.jp | ❌ DNS | 準備済 | 準備済 | **お名前.com DNS 変更**（パーキング解除） |
-| busselect.jp | ❌ DNS | ❌ | ❌ | パッチ適用 + DNS |
+| busselect.jp | ❌ DNS | 準備済 | 準備済 | **Site Creator env + お名前.com DNS**（パッチ 0002 適用済） |
 
 DNS 確認: `machi-list.jp` / `busselect.jp` → いずれも `150.95.255.38`（お名前.com パーキング）
 
@@ -70,20 +70,53 @@ GitHub Secrets 設定 → Actions **Deploy static site** を Re-run:
 
 ---
 
-## 手順 4: busselect.jp — パッチ + DNS
+## 手順 4: busselect.jp — Site Creator env + DNS
 
-**0001 が失敗する場合は 0002 を使用**（layout.tsx 更新済みのため）
+**パッチ 0002: 適用済**（2026-08-06）。残り 2 ステップ:
+
+詳細: **`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`**
+
+### 1. Site Creator 環境変数（GA4 / GSC）
+
+ChatGPT → Sites → busselect → Settings → Environment variables
+
+| 変数 | 値 |
+|------|-----|
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 測定 ID |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console meta `content` |
+
+→ 保存後 **再デプロイ**
+
+### 2. GitHub Secret（IndexNow）
+
+https://github.com/syunnjack/kousokubus-benri/settings/secrets/actions  
+`INDEXNOW_KEY` = `busselectindex2026`（省略可）
+
+### 3. お名前.com DNS
+
+- **削除:** `@ A 150.95.255.38`（パーキング）
+- **追加:** Site Creator → Add domain → `busselect.jp` → 表示された DNS レコード
+
+### 確認
 
 ```powershell
-cd C:\Users\syunn\source\repos\kousokubus-benri
+cd C:\Users\syunn\rakuten02
+.\scripts\site-analytics\check-sites.ps1
+```
+
+---
+
+<details>
+<summary>パッチ適用手順（参考・完了済）</summary>
+
+```powershell
+cd C:\Users\syunn\kousokubus-benri
 curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
 git am bs.patch
 git push origin main
 ```
 
-0001 を既に試して失敗した場合: `git am --abort` してから 0002 を適用。
-
-お名前.com: パーキング解除 → Site Creator DNS 設定
+</details>
 
 ---
 
