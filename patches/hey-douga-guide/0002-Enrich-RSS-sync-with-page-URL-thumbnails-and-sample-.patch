@@ -1,0 +1,86 @@
+From a0b02ae88d7626e30635727fcd08ca2639b42479 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 6 Aug 2026 05:55:13 +0000
+Subject: [PATCH] Enrich RSS sync with page URL, thumbnails, and sample MP4
+
+---
+ app/Console/Commands/SyncDti.php   | 14 +++++++++++++-
+ app/Services/DtiSampleResolver.php | 23 +++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/app/Console/Commands/SyncDti.php b/app/Console/Commands/SyncDti.php
+index d5ff9ce..3877898 100644
+--- a/app/Console/Commands/SyncDti.php
++++ b/app/Console/Commands/SyncDti.php
+@@ -5,6 +5,7 @@
+ use App\Models\DtiItem;
+ use App\Services\ContentSafetyFilter;
+ use App\Services\DtiRssClient;
++use App\Services\DtiSampleResolver;
+ use Illuminate\Console\Command;
+ 
+ class SyncDti extends Command
+@@ -25,14 +26,25 @@ public function handle(DtiRssClient $client): int
+ 
+             $seen[] = $item['guid'];
+ 
++            $affiliateUrl = $item['affiliateUrl'];
++            $pageUrl = DtiSampleResolver::officialPageUrl($affiliateUrl) ?? null;
++            $sampleMp4Url = $pageUrl ? DtiSampleResolver::sampleMp4Url($pageUrl) : null;
++            $imageUrl = $pageUrl ? DtiSampleResolver::thumbnailUrl($pageUrl) : null;
++            $siteName = DtiSampleResolver::siteName($affiliateUrl);
++
+             DtiItem::updateOrCreate(
+                 ['guid' => $item['guid']],
+                 [
+                     'source' => 'rss',
++                    'site_name' => $siteName,
+                     'title' => $item['title'],
+                     'description' => $item['description'],
+                     'actor_name' => $item['actorName'],
+-                    'affiliate_url' => $item['affiliateUrl'],
++                    'affiliate_url' => $affiliateUrl,
++                    'page_url' => $pageUrl,
++                    'sample_mp4_url' => $sampleMp4Url,
++                    'image_url' => $imageUrl,
++                    'sample_media_type' => $sampleMp4Url ? 'mp4' : 'link',
+                     'published_at' => $item['publishedAt'] ? date('Y-m-d H:i:s', strtotime($item['publishedAt'])) : null,
+                 ]
+             );
+diff --git a/app/Services/DtiSampleResolver.php b/app/Services/DtiSampleResolver.php
+index 191f565..0493639 100644
+--- a/app/Services/DtiSampleResolver.php
++++ b/app/Services/DtiSampleResolver.php
+@@ -30,6 +30,29 @@ public static function movieCode(string $pageUrl): ?string
+         return $matches[1];
+     }
+ 
++    public static function officialPageUrl(string $affiliateUrl): ?string
++    {
++        $code = self::movieCode($affiliateUrl);
++
++        if ($code === null) {
++            return null;
++        }
++
++        if (str_contains($affiliateUrl, 'caribbeancompr.com')) {
++            return "http://www.caribbeancompr.com/moviepages/{$code}/index.html";
++        }
++
++        if (str_contains($affiliateUrl, 'heyzo.com')) {
++            return "http://www.heyzo.com/moviepages/{$code}/index.html";
++        }
++
++        if (str_contains($affiliateUrl, 'caribbeancom.com')) {
++            return "http://www.caribbeancom.com/moviepages/{$code}/index.html";
++        }
++
++        return null;
++    }
++
+     public static function sampleMp4Url(string $pageUrl): ?string
+     {
+         $code = self::movieCode($pageUrl);
+-- 
+2.43.0
+

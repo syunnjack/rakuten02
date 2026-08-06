@@ -1,7 +1,7 @@
 From f1093c16b6842d56d1190562826e692e3962120e Mon Sep 17 00:00:00 2001
 From: Cursor Agent <cursoragent@cursor.com>
 Date: Thu, 6 Aug 2026 05:42:10 +0000
-Subject: [PATCH] Add DTI Caribbeancom sample import and MP4 playback
+Subject: [PATCH 1/2] Add DTI Caribbeancom sample import and MP4 playback
 
 - Extend sample_items with source, site_name, actress, description, sample_media_type
 - Add DtiRssClient and CaribbeancomSampleResolver for DTI RSS/CSV workflows
