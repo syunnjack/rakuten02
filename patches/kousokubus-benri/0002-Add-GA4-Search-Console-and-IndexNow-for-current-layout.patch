@@ -1,0 +1,142 @@
+From b4f92e6a6afb65379bbba256f0768f350de6aa75 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 6 Aug 2026 06:53:52 +0000
+Subject: [PATCH] Add GA4, Search Console, and IndexNow for busselect.jp
+
+---
+ .github/workflows/indexnow.yml | 33 +++++++++++++++++++++++++++++++++
+ app/layout.tsx                 | 19 ++++++++++++++++++-
+ busselectindex2026.txt         |  1 +
+ docs/SETUP-ANALYTICS.md        | 34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 86 insertions(+), 1 deletion(-)
+ create mode 100644 .github/workflows/indexnow.yml
+ create mode 100644 busselectindex2026.txt
+ create mode 100644 docs/SETUP-ANALYTICS.md
+
+diff --git a/.github/workflows/indexnow.yml b/.github/workflows/indexnow.yml
+new file mode 100644
+index 0000000..f76a538
+--- /dev/null
++++ b/.github/workflows/indexnow.yml
+@@ -0,0 +1,33 @@
++name: IndexNow
++
++on:
++  push:
++    branches:
++      - main
++  workflow_dispatch:
++
++jobs:
++  submit:
++    runs-on: ubuntu-latest
++    steps:
++      - name: Wait for deployment
++        run: |
++          set +e
++          for i in $(seq 1 30); do
++            if curl -fsS https://busselect.jp/sitemap.xml | grep -q '<url>'; then
++              echo "Deployment ready"
++              exit 0
++            fi
++            echo "Waiting for deployment... ($i/30)"
++            sleep 20
++          done
++          echo "Timed out waiting for deployment; submitting URLs anyway"
++
++      - name: Submit URLs to IndexNow
++        env:
++          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
++        run: |
++          KEY="${INDEXNOW_KEY:-busselectindex2026}"
++          curl -fsS -X POST "https://api.indexnow.org/indexnow" \
++            -H "Content-Type: application/json; charset=utf-8" \
++            -d "{\"host\":\"busselect.jp\",\"key\":\"${KEY}\",\"keyLocation\":\"https://busselect.jp/${KEY}.txt\",\"urlList\":[\"https://busselect.jp/\",\"https://busselect.jp/routes\"]}"
+diff --git a/app/layout.tsx b/app/layout.tsx
+index c391be3..c3f01d9 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -1,6 +1,10 @@
+ import type { Metadata } from "next";
++import Script from "next/script";
+ import "./globals.css";
+ 
++const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID;
++const gscToken = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
++
+ export const metadata: Metadata = {
+   metadataBase: new URL("https://busselect.jp"),
+   title: { default: "NOLU | 高速バスを、価格だけで選ばない。", template: "%s | NOLU" },
+@@ -8,8 +12,21 @@ export const metadata: Metadata = {
+   alternates: { canonical: "/" },
+   openGraph: { title: "NOLU by BUSSELECT", description: "高速バスを、価格だけで選ばない。", locale: "ja_JP", type: "website", url: "/" },
+   robots: { index: true, follow: true },
++  ...(gscToken ? { verification: { google: gscToken } } : {}),
+ };
+ 
+ export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+-  return <html lang="ja"><body>{children}</body></html>;
++  return (
++    <html lang="ja">
++      <head>
++        {gaId ? (
++          <>
++            <Script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
++            <Script id="ga4-init">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');`}</Script>
++          </>
++        ) : null}
++      </head>
++      <body>{children}</body>
++    </html>
++  );
+ }
+diff --git a/busselectindex2026.txt b/busselectindex2026.txt
+new file mode 100644
+index 0000000..22a6da5
+--- /dev/null
++++ b/busselectindex2026.txt
+@@ -0,0 +1 @@
++busselectindex2026
+diff --git a/docs/SETUP-ANALYTICS.md b/docs/SETUP-ANALYTICS.md
+new file mode 100644
+index 0000000..bb8cae3
+--- /dev/null
++++ b/docs/SETUP-ANALYTICS.md
+@@ -0,0 +1,34 @@
++# busselect.jp — 公開・Analytics 設定
++
++## パッチ適用（0002 推奨 — 現行 layout.tsx 対応）
++
++```powershell
++cd C:\Users\syunn\source\repos\kousokubus-benri
++curl.exe -L -o busselect-seo.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
++git am busselect-seo.patch
++git push origin main
++```
++
++0001 が失敗する場合は 0002 を使用してください（リポジトリ更新により layout が変更済み）。
++
++## 環境変数
++
++| 変数 | 用途 |
++|------|------|
++| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 |
++| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console |
++
++GitHub Secret: `INDEXNOW_KEY` = `busselectindex2026`
++
++## DNS
++
++お名前.com: `150.95.255.38` パーキング削除 → Site Creator / vinext 指定 DNS
++
++## 公開後
++
++```powershell
++Invoke-WebRequest https://busselect.jp/sitemap.xml -UseBasicParsing
++Invoke-WebRequest https://busselect.jp/busselectindex2026.txt -UseBasicParsing
++```
++
++Search Console → `https://busselect.jp/sitemap.xml` 送信
+-- 
+2.43.0
+
