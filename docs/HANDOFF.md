@@ -52,7 +52,9 @@ cd C:\Users\syunn\rakuten02
 ### エージェント実施済み
 
 - PR #10（machi-list Render 案）→ **クローズ**（GitHub Pages 方針に統合済みのため）
+- PR #21 → **マージ済**（busselect APPLY / DEPLOY-SITE-CREATOR-DNS ガイド）
 - `docs/SITE-ROLLOUT.md` 更新（本ファイルと同期）
+- お名前.com 一括 DNS 手順: `patches/ONAMAE-DNS-BATCH.md`
 
 ---
 
@@ -114,6 +116,7 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 | Windows 手順 | `patches/DEPLOY-WINDOWS.md` |
 | machi-list DNS | `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md` |
 | busselect DNS + Secrets | `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md` |
+| お名前.com 一括（両ドメイン） | `patches/ONAMAE-DNS-BATCH.md` |
 
 ---
 
@@ -124,6 +127,8 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 | #8–#14 | GA4/GSC 横展開、darekore GSC パッチ | マージ済 |
 | #10 | machi-list Render 案 | **クローズ（ superseded ）** |
 | #15–#18 | DTI CSV / デプロイガイド | マージ済 |
+| #20 | busselect patch 0002 | マージ済 |
+| #21 | busselect APPLY + Site Creator DNS ガイド | マージ済 |
 
 ---
 
