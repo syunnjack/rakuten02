@@ -30,6 +30,18 @@ php artisan migrate
 php artisan samples:import-csv database/seeders/data/dti-movies.csv
 ```
 
+## hey-douga-guide への反映
+
+```bash
+git clone https://github.com/syunnjack/hey-douga-guide.git
+cd hey-douga-guide
+curl -L https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/0001-Add-DTI-CSV-import-sample-MP4-playback-and-thumbnail.patch | git am
+php artisan migrate
+php artisan dti:import-csv database/seeders/data/dti-movies.csv --verify-sample
+```
+
+詳細: `patches/hey-douga-guide/README.md`
+
 ## 取り込み対象 (2026/08/06)
 
 最新バッチ: `_var3_tmp_162667 (5).csv` — **424行**
