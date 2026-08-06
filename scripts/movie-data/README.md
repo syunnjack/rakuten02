@@ -25,9 +25,17 @@ python3 scripts/movie-data/process-dti-csv.py scripts/movie-data/dti-movies.csv 
 ```bash
 git clone https://github.com/syunnjack/free-sample-hub.git
 cd free-sample-hub
-curl -L https://github.com/syunnjack/rakuten02/raw/master/patches/free-sample-hub/0001-Add-DTI-Caribbeancom-sample-import-and-MP4-playback.patch | git am
+for p in 0001 0002 0003; do
+  curl -L "https://github.com/syunnjack/rakuten02/raw/master/patches/free-sample-hub/${p}-"*.patch | git am
+done
 php artisan migrate
 php artisan samples:import-csv database/seeders/data/dti-movies.csv
+```
+
+または一括適用:
+
+```bash
+./scripts/movie-data/apply-dti-patches.sh free-sample-hub
 ```
 
 ## hey-douga-guide への反映
@@ -35,9 +43,17 @@ php artisan samples:import-csv database/seeders/data/dti-movies.csv
 ```bash
 git clone https://github.com/syunnjack/hey-douga-guide.git
 cd hey-douga-guide
-curl -L https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/0001-Add-DTI-CSV-import-sample-MP4-playback-and-thumbnail.patch | git am
+for p in 0001 0002; do
+  curl -L "https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/${p}-"*.patch | git am
+done
 php artisan migrate
 php artisan dti:import-csv database/seeders/data/dti-movies.csv --verify-sample
+```
+
+または一括適用:
+
+```bash
+./scripts/movie-data/apply-dti-patches.sh hey-douga-guide
 ```
 
 詳細: `patches/hey-douga-guide/README.md`

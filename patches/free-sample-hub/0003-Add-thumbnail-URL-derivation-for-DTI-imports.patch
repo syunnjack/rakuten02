@@ -1,0 +1,102 @@
+From 34af48715d5932586918e96b94f42f012f23cfc5 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 6 Aug 2026 05:55:13 +0000
+Subject: [PATCH] Add thumbnail URL derivation for DTI imports
+
+---
+ app/Console/Commands/ImportMovieCsv.php     |  7 +++++--
+ app/Console/Commands/SyncDtiSamples.php     |  2 +-
+ app/Services/CaribbeancomSampleResolver.php | 23 +++++++++++++++++++++
+ resources/views/welcome.blade.php           |  2 +-
+ 4 files changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/app/Console/Commands/ImportMovieCsv.php b/app/Console/Commands/ImportMovieCsv.php
+index 0f9ef12..fd3e657 100644
+--- a/app/Console/Commands/ImportMovieCsv.php
++++ b/app/Console/Commands/ImportMovieCsv.php
+@@ -97,6 +97,9 @@ private function importRow(array $row): bool
+             return false;
+         }
+ 
++        $page = $pageUrl !== '' ? $pageUrl : (CaribbeancomSampleResolver::officialPageUrl($affiliateUrl) ?? '');
++        $imageUrl = $page !== '' ? CaribbeancomSampleResolver::thumbnailUrl($page) : null;
++
+         SampleItem::updateOrCreate(
+             ['content_id' => $movieId],
+             [
+@@ -107,10 +110,10 @@ private function importRow(array $row): bool
+                 'actress' => $actress,
+                 'description' => mb_substr($description, 0, 500),
+                 'genre' => null,
+-                'image_url' => null,
++                'image_url' => $imageUrl,
+                 'sample_url' => $sampleUrl,
+                 'sample_media_type' => 'mp4',
+-                'url' => $pageUrl !== '' ? $pageUrl : CaribbeancomSampleResolver::officialPageUrl($affiliateUrl),
++                'url' => $page !== '' ? $page : $affiliateUrl,
+                 'affiliate_url' => $affiliateUrl,
+                 'review_average' => null,
+                 'review_count' => 0,
+diff --git a/app/Console/Commands/SyncDtiSamples.php b/app/Console/Commands/SyncDtiSamples.php
+index 3d26f5b..87a41c8 100644
+--- a/app/Console/Commands/SyncDtiSamples.php
++++ b/app/Console/Commands/SyncDtiSamples.php
+@@ -53,7 +53,7 @@ public function handle(DtiRssClient $client): int
+                     'actress' => $item['actress'],
+                     'description' => mb_substr($item['description'], 0, 500),
+                     'genre' => null,
+-                    'image_url' => null,
++                    'image_url' => CaribbeancomSampleResolver::thumbnailUrl($pageUrl),
+                     'sample_url' => $sampleUrl,
+                     'sample_media_type' => 'mp4',
+                     'url' => $pageUrl,
+diff --git a/app/Services/CaribbeancomSampleResolver.php b/app/Services/CaribbeancomSampleResolver.php
+index 276a756..0e6b438 100644
+--- a/app/Services/CaribbeancomSampleResolver.php
++++ b/app/Services/CaribbeancomSampleResolver.php
+@@ -67,6 +67,29 @@ public static function sampleMp4Url(string $pageUrl): ?string
+         return null;
+     }
+ 
++    public static function thumbnailUrl(string $pageUrl): ?string
++    {
++        if (! preg_match('#/moviepages/([^/]+)/index\.html#', $pageUrl, $matches)) {
++            return null;
++        }
++
++        $code = $matches[1];
++
++        if (str_contains($pageUrl, 'caribbeancompr.com')) {
++            return "https://www.caribbeancompr.com/moviepages/{$code}/images/l_l.jpg";
++        }
++
++        if (str_contains($pageUrl, 'heyzo.com')) {
++            return "https://www.heyzo.com/contents/3000/{$code}/gallery/001.jpg";
++        }
++
++        if (str_contains($pageUrl, 'caribbeancom.com')) {
++            return "http://www.caribbeancom.com/moviepages/{$code}/images/l_l.jpg";
++        }
++
++        return null;
++    }
++
+     public static function sampleMp4Exists(string $sampleUrl): bool
+     {
+         if ($sampleUrl === '') {
+diff --git a/resources/views/welcome.blade.php b/resources/views/welcome.blade.php
+index ba50b52..361a777 100644
+--- a/resources/views/welcome.blade.php
++++ b/resources/views/welcome.blade.php
+@@ -99,7 +99,7 @@ function gtag(){dataLayer.push(arguments);}
+             <div class="player">
+               <span class="free-badge">無料サンプル</span>
+               @if($item->sample_media_type === 'mp4')
+-                <video src="{{ $item->sample_url }}" controls preload="metadata" playsinline title="{{ $item->title }}"></video>
++                <video src="{{ $item->sample_url }}" controls preload="metadata" playsinline title="{{ $item->title }}"@if($item->image_url) poster="{{ $item->image_url }}"@endif></video>
+               @else
+                 <iframe src="{{ $item->sample_url }}" loading="lazy" allowfullscreen title="{{ $item->title }}"></iframe>
+               @endif
+-- 
+2.43.0
+

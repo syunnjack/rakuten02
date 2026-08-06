@@ -7,10 +7,19 @@ DTI affstats CSV インポート、サムネイル/MP4 推定、サンプル動�
 ```bash
 git clone https://github.com/syunnjack/hey-douga-guide.git
 cd hey-douga-guide
-curl -L https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/0001-Add-DTI-CSV-import-sample-MP4-playback-and-thumbnail.patch | git am
+for p in 0001 0002; do
+  curl -L "https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/${p}-"*.patch | git am
+done
 php artisan migrate
 php artisan dti:import-csv database/seeders/data/dti-movies.csv --verify-sample
 ```
+
+## パッチ一覧
+
+| # | 内容 |
+| --- | --- |
+| 0001 | CSV インポート、MP4 再生、サムネイル推定、424行シード |
+| 0002 | RSS 同期時も page URL / サムネ / MP4 を自動補完 |
 
 ## 追加コマンド
 
