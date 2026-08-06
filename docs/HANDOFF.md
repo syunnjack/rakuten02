@@ -98,7 +98,7 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 | 1 | machi-list.jp DNS 変更 | ユーザー @ お名前.com | 5分 |
 | 2 | darekore / goalpilot Search Console | ユーザー @ ブラウザ | 各2分 |
 | 3 | hey-douga-guide PR マージ | ユーザー @ GitHub | 2分 |
-| 4 | busselect パッチ + DNS | ユーザー PowerShell + DNS | 15分 |
+| 4 | busselect **パッチ 0002** + DNS | ユーザー PowerShell + DNS | 15分 |
 | 5 | free-sample-hub セットアップ | ユーザー PowerShell | 20分 |
 | 6 | ランキングサイト デプロイ計画 | 要相談 | — |
 

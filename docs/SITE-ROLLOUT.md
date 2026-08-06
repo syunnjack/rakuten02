@@ -72,12 +72,16 @@ GitHub Secrets 設定 → Actions **Deploy static site** を Re-run:
 
 ## 手順 4: busselect.jp — パッチ + DNS
 
+**0001 が失敗する場合は 0002 を使用**（layout.tsx 更新済みのため）
+
 ```powershell
 cd C:\Users\syunn\source\repos\kousokubus-benri
-curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch"
+curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
 git am bs.patch
 git push origin main
 ```
+
+0001 を既に試して失敗した場合: `git am --abort` してから 0002 を適用。
 
 お名前.com: パーキング解除 → Site Creator DNS 設定
 
