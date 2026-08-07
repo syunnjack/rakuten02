@@ -17,6 +17,51 @@
     そのまま再利用
   - PHP: サーバーデフォルトは8.0.30のため、`/usr/bin/php8.3`を明示使用
 
+## シンレンタルサーバー（WPXアカウント）接続情報
+
+2026-08-08確認。実体はXserver系列の「wpX」ブランドのアカウント。
+
+- Host: `wp858043.wpx.jp`（別名 `sv6054.wpx.ne.jp`） / Port: `10022` / User: `wp858043`
+- SSH秘密鍵: このマシンの `~/.ssh/xserver_wpx`（認証確認済み）
+- PHP: サーバーデフォルトは8.0.30。`/usr/bin/php8.1`〜`/usr/bin/php8.4`が利用可能
+
+### 重要な発見: 残り17件のPHPランキングサイトも既にここに手動デプロイ済みだった
+
+`~/app-<repo>-ranking/` 形式で17件全て配置済み、**全てDMM_API_ID等が実際の値で設定済み**
+（プレースホルダーではない）。ただし**DNSがまだこのサーバーを向いておらず、外部からアクセス不可**
+（ColorfulBOX側は既にライブだったのと対照的）。
+
+| ディレクトリ | ドメイン |
+|---|---|
+| app-back-piston-ranking | back-piston.jp |
+| app-hard-piston-ranking | hard-piston.jp |
+| app-kosupure-ranking | kosupure.jp |
+| app-kyonyu-ranking | kyonyu.site |
+| app-mesuiki-ranking | mesuiki.jp |
+| app-mesuochi-ranking | mesuochi.jp |
+| app-neback-ranking | neback.jp |
+| app-netorare-ranking | netorare.net |
+| app-play-inbus-ranking | play-inbus.jp |
+| app-play-inplane-ranking | play-inplane.jp |
+| app-play-promotionalgirl-ranking | play-with-promotionalgirl.jp |
+| app-play-roundgirl-ranking | play-with-roundgirl.jp |
+| app-playincar-ranking | playincar.jp |
+| app-shibari-ranking | shibari.click |
+| app-shirouto-ranking | shirouto.tech |
+| app-tachiback-ranking | tachiback.jp |
+| app-taimenzai-ranking | taimenzai.jp |
+
+### このアカウントで稼働中の、ranking以外の3サイト（リポジトリ未特定）
+
+`manga-kuchikomi.jp`、`massage-kuchikomi.jp`、`vr-choice.jp`（ホームディレクトリに
+`wp858043.wpx.jp`用ディレクトリとは別に確認、詳細未調査）
+
+### 容量に関する注意
+
+ColorfulBOX（22サイト稼働中）・この WPXアカウント（20サイト稼働中）とも、既に相応の数の
+サイトを抱えている。新規30サイトを「適切に分散」する際は、プラン容量の確認が必要な可能性がある
+（未確認）。
+
 ## 重要な発見: アダルト系10件は既にColorfulBOXに手動デプロイ・本番稼働中だった
 
 `boewaxno`アカウントには、`sosolu`/`sosoru`ドメインファミリー全20ドメイン分の
