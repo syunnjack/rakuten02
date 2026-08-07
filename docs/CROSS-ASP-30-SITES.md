@@ -57,23 +57,37 @@
 | debut-cross | 新人デビュー | 新人 | debut-genre.net |
 | intai-archive-cross | 引退作品 | 引退 | intai-archive.jp |
 
-## ホスティング
+## ホスティング（15/15 + 15/15、確定・デプロイ済み）
 
-ユーザー指示: 「シンレンタルサーバー、カラフルBOXと適切に分散」。
+両アカウントとも容量確認済み（ディスク: ColorfulBOX 1.1TB中1.5GB使用、WPX同様に余裕あり）。
+ジャンル一覧の前半15件をColorfulBOX、後半15件をシンレンタルサーバー(WPX)に割り当てた。
 
-- ColorfulBOX（`boewaxno`）: 接続情報確認済み（[XSERVER-DEPLOY.md](./XSERVER-DEPLOY.md)参照）。
-  既に22サイト稼働中
-- シンレンタルサーバー（WPX、`wp858043`）: 接続情報確認済み。既に17ランキングサイト+3サイト稼働中
-  （コード配置済みだがDNS未接続で非公開）
-- 30サイトの振り分け（何件ずつどちらに置くか）・両アカウントの容量余地は未確定
+**ColorfulBOX（`boewaxno`、GitHub Actions経由で自動デプロイ動作確認済み）:**
+joshidaisei, wakazuma, jokyoshi, nurse, hisho, joshi-ana, vr-av, 4k-av,
+best-compilation, gansha, nakadashi, kousoku-sm, swapping, roshutsu, chikan-play
+
+**シンレンタルサーバー(WPX、`wp858043`、手動デプロイ済み・後述の理由でGitHub Actions経由は不可):**
+lesbian, pocchari, hinnyu, slender, bijiri, ashi-fetish, panchira, jk-seifuku,
+maid, miko, asmr-voice, doujin-game, kojin-satsuei, debut, intai-archive
+
+デプロイ先: `/home/wp858043/app-<repo>` / `/home/boewaxno/app-<repo>`
+
+### WPX側はGitHub Actionsからデプロイ不可（IP制限と思われる）
+
+SSH鍵認証は成功するが、認証直後に接続が切断される（`Connection closed by <IP> port ***`）。
+ColorfulBOXでは同じ構成で問題なく動くため、WPX側のSSHアクセス制限（許可IPホワイトリスト等）が
+原因と推測される。**このマシンからのSSHは正常に通る**ため、2026-08-08は全15サイトを
+このセッションから直接手動デプロイ（`composer install`はサーバー側で実行、ローカルの
+最適化オートローダーはLinux環境に持ち込むと壊れるため使わない）。
+恒久対応（WPXパネルでのIP制限解除、または別のCI経路）は未着手。
 
 ## 進行状況
 
 - [x] 共通テンプレート（`_template-multi-asp`）作成・ビルド検証済み
 - [x] 30リポジトリ作成・push・APP_KEY設定済み（`syunnjack/<slug>-cross`）
-- [x] デプロイワークフロー雛形追加（ColorfulBOX向け、Secrets未設定）
-- [x] ドメイン購入完了（30/30）
-- [x] 各リポジトリのAPP_URL Secrets設定完了
-- [ ] 30サイトのホスト振り分け決定（容量確認後）
-- [ ] 各リポジトリのデプロイ先パスSecrets設定
+- [x] ドメイン購入完了（30/30）、各リポジトリのAPP_URL Secrets設定完了
+- [x] ホスト振り分け決定・デプロイ完了（ColorfulBOX 15件は自動デプロイ、WPX 15件は手動デプロイ）
+- [x] ASPクライアントのnullable引数バグ修正（APIキー未設定時にクラッシュしていた問題）
+- [ ] WPX側のGitHub Actions IP制限の恒久対応
 - [ ] 各種APIキー（DMM/DUGA/SOKMIL）・フィードURL（APEX/MGS/SOD/DTICASH）の設定
+- [ ] gansha-crossの予備ドメイン`gansha-cross.net`の使い道検討
