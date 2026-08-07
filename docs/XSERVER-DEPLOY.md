@@ -62,9 +62,25 @@ push (デフォルトブランチ) 時に、composer/npm ビルド → SSH経由
 
 **アダルト系10件（ColorfulBOX、共通の値になるはず）:**
 
-- `COLORFULBOX_SSH_HOST` / `COLORFULBOX_SSH_PORT` / `COLORFULBOX_SSH_USER` / `COLORFULBOX_SSH_KEY`
-- `COLORFULBOX_DEPLOY_PATH`: リポジトリごとに異なる
+判明済み（cPanel「一般情報」「サーバー情報」より、2026-08-07確認）:
+
+- cPanelユーザー名: `boewaxno`
+- プライマリドメイン: `sosoru.info`（当初のドメイン一覧12+8件には無かった。追加保有ドメインの可能性）
+- 共有IPアドレス: `183.90.183.168`
+- ホームディレクトリ: `/home/boewaxno`
+- サーバー名: `x018`
+- ホスティングパッケージ: BOX3
+- cPanel 136.0 / Apache 2.4.68 / MariaDB 10.6.27 / PHP実行環境あり（要PHPバージョン確認）
+
+まだ不明（これがないとSecretsを設定できない）:
+
+- `COLORFULBOX_SSH_HOST`: cPanelの「SSH Access」ページに表示されるホスト名（`x018.colorfulbox.jp`のような形が予想されるが要確認）
+- `COLORFULBOX_SSH_PORT`: 同ページに表示されるポート番号（標準22でない可能性あり）
+- `COLORFULBOX_SSH_USER`: おそらく`boewaxno`（cPanelのSSHユーザーは通常cPanelユーザー名と同じ）
+- `COLORFULBOX_SSH_KEY`: cPanelの「SSH Access」>「Manage SSH Keys」で新規キーペアを生成し、秘密鍵をダウンロード・Authorizeしたもの
+- `COLORFULBOX_DEPLOY_PATH`: リポジトリ（＝ドメイン）ごとに異なる。1アカウントに10サイト全部をアドオンドメインとして追加するなら `/home/boewaxno/<ドメイン>` 配下になるはず
 - `APP_URL`: 本番ドメイン（`sitemap.xml`記載の`*.jp`/`*.site`/`*.net`/`*.tech`/`*.click`等が実際に登録済みか未確認、[RANKING-SITES.md](./RANKING-SITES.md)参照）
+- 10サイトを1つのColorfulBOXアカウントに集約するのか、アカウントを分けるのか（未確認）
 
 **API認証情報（対象リポジトリのみ。用途は各リポジトリの`config/services.php`参照）:**
 
