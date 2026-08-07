@@ -1,103 +1,92 @@
 # デプロイ設定（PHP/Laravelランキングサイト群 + golf-search）
 
-2026-08-07、以下11リポジトリに GitHub Actionsデプロイワークフローを追加した。
-push (デフォルトブランチ) 時に、composer/npm ビルド → SSH経由rsyncでサーバへ配置 →
-`migrate`/`cache`/コンテンツ同期コマンドを実行する。
+2026-08-07〜08、11リポジトリに GitHub Actionsデプロイワークフローを追加し、
+**全11リポジトリでCI/CDが動作確認済み**（push → composer/npmビルド → SSH経由rsyncで配置 →
+`migrate`/`cache`/コンテンツ同期コマンド、まで自動）。
 
-## ホスト振り分け
+## ホスト振り分け・接続情報（全て確認・設定済み）
 
 - **アダルト系10件 → ColorfulBOX**（`.github/workflows/deploy-colorfulbox.yml`）
+  - Host: `183.90.183.168` / Port: `22` / User: `boewaxno`
+  - SSH秘密鍵はこのマシンの `~/.ssh/colorfulbox_sosolu` にあり、全10リポジトリの
+    `COLORFULBOX_SSH_KEY` に設定済み
+  - PHP: サーバーデフォルトの`php`は7.4のため、`/opt/cpanel/ea-php83/root/usr/bin/php`を明示使用
 - **golf-search（一般ジャンル）→ Xserver**（`.github/workflows/deploy-xserver.yml`）
+  - アカウント`xs501620`（`goalpilot.jp`と同じ）、Port `10022`
+  - SSH鍵は2026-08-03/04に設定済みの既存Secrets（`SSH_HOST`/`SSH_USERNAME`/`SSH_PRIVATE_KEY`）を
+    そのまま再利用
+  - PHP: サーバーデフォルトは8.0.30のため、`/usr/bin/php8.3`を明示使用
 
-（当初アダルト系もXserver向けに作ってしまったが誤り。Xserverは一般ジャンル、
-アダルト系はシンレンタルサーバー/カラフルBOXに振り分ける方針とのことで、
-今回は指示によりアダルト系10件は全てColorfulBOXに統一した。）
+## 重要な発見: アダルト系10件は既にColorfulBOXに手動デプロイ・本番稼働中だった
 
-対象リポジトリと同期コマンド:
+`boewaxno`アカウントには、`sosolu`/`sosoru`ドメインファミリー全20ドメイン分の
+`app-<ドメイン名>`ディレクトリが既に存在し、ランキング10サイト＋他12サイト（下記）が
+本番稼働していた。**sosolu/sosoruファミリーに"空きドメイン"は無い。**
 
-| リポジトリ | ホスト | 同期コマンド | Cron分（毎時） |
-|---|---|---|---|
-| adult-comic-ranking | ColorfulBOX | `comics:sync` | 5 |
-| adult-figure-ranking | ColorfulBOX | `figures:sync` | 10 |
-| adult-novel-ranking | ColorfulBOX | `novels:sync` | 15 |
-| bl-tl-doujin-ranking | ColorfulBOX | `doujin:sync` | 20 |
-| bl-tl-novel-ranking | ColorfulBOX | `novels:sync` | 25 |
-| cross-asp-ranking | ColorfulBOX | `cross:sync` | 30 |
-| duga-video-ranking | ColorfulBOX | `duga:sync` | 35 |
-| gravure-photo-ranking | ColorfulBOX | `photos:sync` | 40 |
-| mature-genre-ranking | ColorfulBOX | `genre:sync` | 45 |
-| r18-anime-ranking | ColorfulBOX | `anime:sync` | 50 |
-| golf-search | Xserver | （同期コマンドなし） | - |
+実際のドメイン ↔ リポジトリ ↔ デプロイ先パス対応表（2026-08-08確認、Secretsに設定済み）:
 
-## golf-searchについて判明した事実
+| リポジトリ | 本番ドメイン | デプロイ先パス |
+|---|---|---|
+| adult-comic-ranking | `sosolu.pro` | `/home/boewaxno/app-sosolu-pro` |
+| adult-figure-ranking | `sosolu.link` | `/home/boewaxno/app-sosolu-link` |
+| adult-novel-ranking | `sosolu.email` | `/home/boewaxno/app-sosolu-email` |
+| bl-tl-doujin-ranking | `sosolu.help` | `/home/boewaxno/app-sosolu-help` |
+| bl-tl-novel-ranking | `sosolu.org` | `/home/boewaxno/app-sosolu-org` |
+| cross-asp-ranking | `sosoru.click` | `/home/boewaxno/app-sosoru-click` |
+| duga-video-ranking | `sosoru.tokyo` | `/home/boewaxno/app-sosoru-tokyo` |
+| gravure-photo-ranking | `sosolu.net` | `/home/boewaxno/app-sosolu-net` |
+| mature-genre-ranking | `sosolu.tokyo` | `/home/boewaxno/app-sosolu-tokyo` |
+| r18-anime-ranking | `sosolu.xyz` | `/home/boewaxno/app-sosolu-xyz` |
 
-`golf-search`リポジトリに2026-08-01時点で既存のデプロイワークフローがあり、以下が確認できた
-（今回、より完全なワークフローに置き換えたため削除したが、値はここに転記）:
+`sosolu.pro`にアクセスして実際にエロ漫画ランキングが表示されることを確認済み＝**このドメイン群は
+既にDNSがColorfulBOXに向いており、ライブ状態**（他の.jp/.site系ドメイン群とは違い、NS反映待ちではない）。
 
-- **Xserverアカウント: `xs501620`**（`goalpilot.jp`と同じアカウント）
-- **SSHポート: `10022`**
-- 旧設定のデプロイ先: `/home/xs501620/golf-search.jp/public_html/`（ドメインは`.jp`だった）
+### その他、同アカウントで稼働中の12サイト（ranking以外、リポジトリ未特定）
 
-ユーザーの直近の指示で golf-search は `.org` に変更する方針とのこと。旧workflowは
-`public/`のみをSFTPでアップロードするだけで、composer install・.env生成・DBマイグレーションを
-一切行っておらず、実際には動作するLaravelアプリとしてデプロイできていなかった（不完全な雛形）。
+`sosolu.blog`(doujin-release-calendar) `sosolu.life`(adult-goods-compare)
+`sosolu.online`(eroge-release-alert) `sosolu.site`(av-debut-tracker=AVデビュー速報、**触らない**)
+`sosolu.space`(subscription-compare) `sosoru.asia`(free-sample-hub)
+`sosoru.help`(fanza-sale-watch) `sosoru.link`(mgs-video-guide)
+`sosoru.net`(sokmil-new-releases) `sosoru.org`(hey-douga-guide)
+`sosoru.shop`(sexy-costume-compare) `sosoru.site`(unlimited-comic-hub)
 
-## 各リポジトリで設定済み（自動）
+## ⚠️ インシデント記録（2026-08-08）
 
-- `APP_KEY`: リポジトリごとに一意な値をこちらで生成し、GitHub Secretsに設定済み。追加作業不要。
+デプロイワークフロー初版は `rsync --delete` に `.env` の除外指定が漏れており、かつ空のAPI
+キーで`.env`を新規生成するステップがあった。package-lock.json追加のpushが誘発した自動デプロイで、
+**3サイトの本番`.env`が空の認証情報で上書きされた**（キャンセルが間に合わなかった）:
 
-## 各リポジトリで設定が必要（ユーザー側、未設定）
+- `mature-genre-ranking`（`sosolu.tokyo`）: `DMM_API_ID`/`DMM_AFFILIATE_ID`が空に
+- `gravure-photo-ranking`（`sosolu.net`）: 同上
+- `duga-video-ranking`（`sosoru.tokyo`）: `DUGA_APP_ID`/`DUGA_AGENT_ID`が空に
 
-お名前.com、Xserver/ColorfulBOX管理画面へのアクセス、DMM/DUGA/Sokmilの提携APIキーはこちらから
-取得できないため、以下は各リポジトリの `Settings > Secrets and variables > Actions` で手動設定が必要。
+サーバー上にバックアップなし。**元のAPI ID値はDMM/DUGAの提携アカウント管理画面から再取得が必要**
+（ユーザー確認待ち、2026-08-08時点で未復旧）。表示上はDB内の既存データが残っているため、
+現時点では見た目上壊れていないが、次回同期（cron）が空キーで失敗し続ける状態。
 
-**golf-search（Xserver、アカウントxs501620と分かっているので実質ポート/ユーザー以外は埋まる）:**
+原因だった`.env`削除・上書き問題は全10リポジトリで修正済み（`.env`をrsync除外、
+CI側での`.env`生成ステップ自体を削除 = サーバー上の既存`.env`をそのまま使う方式に変更）。
 
-- `XSERVER_SSH_HOST`: 例 `sv****.xserver.jp`（xs501620アカウントの契約サーバー番号）
-- `XSERVER_SSH_PORT`: `10022`（旧workflowで確認済み）
-- `XSERVER_SSH_USER`: `xs501620`
-- `XSERVER_SSH_KEY`: SSH秘密鍵（PEM形式）。Xserver側に対応する公開鍵の登録が必要
-- `XSERVER_DEPLOY_PATH`: ドメインを`.org`にする場合、Xserver管理画面で新規ドメイン設定後のパス（例 `/home/xs501620/golf-search.org/public_html`）
-- `APP_URL`: 本番ドメイン（`.org`の具体名は未確認）
+## 各リポジトリで設定済み（自動、追加作業不要）
 
-**アダルト系10件（ColorfulBOX、共通の値になるはず）:**
+- `APP_KEY`: リポジトリごとに一意な値を生成しSecrets設定済み（ただし実際の本番`.env`は
+  サーバー上の既存ファイルがそのまま使われるため、この値は現状未使用）
+- `COLORFULBOX_SSH_HOST` / `PORT` / `USER` / `KEY` / `DEPLOY_PATH`: 上記対応表の通り設定済み
+- アダルト系10件の`APP_URL`: 上記対応表の通り設定済み
+- golf-searchの`APP_URL`: `https://golf-search.org`設定済み
+- golf-searchの`XSERVER_DEPLOY_PATH`: `/home/xs501620/golf-search.org/public_html`（推定・未検証、
+  Xserver管理画面での`.org`ドメイン登録が前提）
 
-判明済み（cPanel「一般情報」「サーバー情報」より、2026-08-07確認）:
+## まだユーザー対応が必要なもの
 
-- cPanelユーザー名: `boewaxno`
-- プライマリドメイン: `sosoru.info`（当初のドメイン一覧12+8件には無かった。追加保有ドメインの可能性）
-- 共有IPアドレス: `183.90.183.168`
-- ホームディレクトリ: `/home/boewaxno`
-- サーバー名: `x018`
-- ホスティングパッケージ: BOX3
-- cPanel 136.0 / Apache 2.4.68 / MariaDB 10.6.27 / PHP実行環境あり（要PHPバージョン確認）
+1. **DMM/DUGA API認証情報の再取得**（上記インシデント参照、最優先）
+2. **golf-search.orgのDNS/Xserverドメイン登録**: デプロイ自体は成功済みだが、
+   ドメインがまだXserverを指していないため公開URLでアクセスできない
+3. 残り12サイト（av-debut-tracker等）のリポジトリ特定・GitHub Actions化は未着手
+4. golf-searchの`XSERVER_SSH_HOST`は未確認（`xs501620`アカウントの契約サーバー番号が必要）
 
-まだ不明（これがないとSecretsを設定できない）:
+## 前提条件（確認済み）
 
-- `COLORFULBOX_SSH_HOST`: cPanelの「SSH Access」ページに表示されるホスト名（`x018.colorfulbox.jp`のような形が予想されるが要確認）
-- `COLORFULBOX_SSH_PORT`: 同ページに表示されるポート番号（標準22でない可能性あり）
-- `COLORFULBOX_SSH_USER`: おそらく`boewaxno`（cPanelのSSHユーザーは通常cPanelユーザー名と同じ）
-- `COLORFULBOX_SSH_KEY`: cPanelの「SSH Access」>「Manage SSH Keys」で新規キーペアを生成し、秘密鍵をダウンロード・Authorizeしたもの
-- `COLORFULBOX_DEPLOY_PATH`: リポジトリ（＝ドメイン）ごとに異なる。1アカウントに10サイト全部をアドオンドメインとして追加するなら `/home/boewaxno/<ドメイン>` 配下になるはず
-- `APP_URL`: 本番ドメイン（`sitemap.xml`記載の`*.jp`/`*.site`/`*.net`/`*.tech`/`*.click`等が実際に登録済みか未確認、[RANKING-SITES.md](./RANKING-SITES.md)参照）
-- 10サイトを1つのColorfulBOXアカウントに集約するのか、アカウントを分けるのか（未確認）
-
-**API認証情報（対象リポジトリのみ。用途は各リポジトリの`config/services.php`参照）:**
-
-- `DMM_API_ID` / `DMM_AFFILIATE_ID`: DMMアフィリエイトAPIを使う全リポジトリ（duga-video-ranking以外の9件）
-- `DUGA_APP_ID` / `DUGA_AGENT_ID`: duga-video-ranking, cross-asp-ranking
-- `SOKMIL_API_KEY` / `SOKMIL_AFFILIATE_ID`: cross-asp-rankingのみ
-- `GA4_MEASUREMENT_ID`: 任意（未設定でも動作する）
-
-## 前提条件
-
-- 対象サーバでSSH接続が有効になっていること（プランによっては別途SSH有効化が必要。
-  ColorfulBOXのSSH対応状況は未確認）
-- デプロイ先ドキュメントルートは事前に管理画面でドメイン設定済みであること
-- PHP 8.3以上、SQLite拡張が有効なこと
-
-## 未確定事項
-
-- 上記10ランキングサイトの実際のドメイン名（登録済みか未確認）
-- golf-searchの`.org`の具体的なドメイン名
-- ColorfulBOXのSSH対応可否・接続情報
+- ColorfulBOX: SSH利用可能（ポート22、パスワード無しの鍵認証）。PHP 8.1〜8.5が`/opt/cpanel/ea-phpXX/`に用意されている
+- Xserver（xs501620）: SSH利用可能（ポート10022）。PHP 8.0〜8.4?が`/usr/bin/phpX.Y`に用意されている
+- 両方ともSQLite使用、DB接続情報の設定は不要
