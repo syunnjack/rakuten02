@@ -35,7 +35,7 @@
 | vr-av-cross | VR | VR | vr-douga-hikaku.jp |
 | 4k-av-cross | 4K高画質 | 4K | 4k-av.jp |
 | best-compilation-cross | 総集編 | 総集編 | best-compilation.click |
-| gansha-cross | 顔射 | 顔射 | **未確認（購入リストに無かった、要確認）** |
+| gansha-cross | 顔射 | 顔射 | gansha.jp（`gansha-cross.net`も購入済み、予備ドメイン扱い） |
 | nakadashi-cross | 中出し | 中出し | nakadashi.shop（候補は.net） |
 | kousoku-sm-cross | 拘束・SM | SM | kousoku-sm.jp |
 | swapping-cross | スワッピング | スワッピング | swapping-genre.click |
@@ -57,8 +57,6 @@
 | debut-cross | 新人デビュー | 新人 | debut-genre.net |
 | intai-archive-cross | 引退作品 | 引退 | intai-archive.jp |
 
-**gansha-cross（顔射）のみドメイン未確認。** 購入漏れか貼り付け漏れか要確認。
-
 ## ホスティング
 
 ユーザー指示: 「シンレンタルサーバー、カラフルBOXと適切に分散」。
@@ -74,8 +72,8 @@
 - [x] 共通テンプレート（`_template-multi-asp`）作成・ビルド検証済み
 - [x] 30リポジトリ作成・push・APP_KEY設定済み（`syunnjack/<slug>-cross`）
 - [x] デプロイワークフロー雛形追加（ColorfulBOX向け、Secrets未設定）
-- [x] ドメイン購入完了（29/30、gansha-cross除く）
-- [ ] gansha-cross のドメイン確認
+- [x] ドメイン購入完了（30/30）
+- [x] 各リポジトリのAPP_URL Secrets設定完了
 - [ ] 30サイトのホスト振り分け決定（容量確認後）
-- [ ] 各リポジトリのAPP_URL・デプロイ先パスSecrets設定
+- [ ] 各リポジトリのデプロイ先パスSecrets設定
 - [ ] 各種APIキー（DMM/DUGA/SOKMIL）・フィードURL（APEX/MGS/SOD/DTICASH）の設定
