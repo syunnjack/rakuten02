@@ -1,0 +1,20 @@
+name: Keep Render Service Warm
+
+on:
+  schedule:
+    - cron: "*/12 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping shudenhotel.jp
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" -m 40 "https://shudenhotel.jp/" || echo "000")
+            echo "attempt $i: $code"
+            if [ "$code" = "200" ]; then exit 0; fi
+            sleep 5
+          done
+          echo "warning: shudenhotel.jp did not return 200 after 3 attempts"
