@@ -72,9 +72,33 @@
    コンテンツ取得に使用。cross-asp30サイトと同じもの流用可）
 3. ホスティング先の決定・デプロイ（未着手）。ColorfulBOX/シンレンタルサーバーとも既存30サイトが
    既に稼働中のため、容量再確認してから振り分ける想定
-4. デプロイワークフロー（`.github/workflows/`）は未追加。cross-asp30サイトの`deploy-colorfulbox.yml`
-   /`deploy-wpx.yml`パターンを流用予定だが、WPX側はGitHub ActionsからのSSHがブロックされる問題が
-   未解決のまま（[XSERVER-DEPLOY.md](./XSERVER-DEPLOY.md)参照）
+4. ~~デプロイワークフロー未追加~~ → 2026-08-08、完了。ColorfulBOX15件はGitHub Actions経由で
+   デプロイ成功確認済み。WPX15件はGitHub ActionsがIP制限でブロックされるため、cross-asp30サイトと
+   同様にこのセッションから直接手動デプロイ（`composer install`はサーバー側で実行）。
+   全30サイトとも `/home/<user>/app-<repo>` にコード配置済み
+
+## ホスティング配置（コード配置済み、ドメイン配線は未着手）
+
+- **ColorfulBOX 15件**: ai-portal-shindan, review-digest-ai, arasuji-ai, emotion-ranking-ai,
+  ranking-kaisetsu-ai, weekly-ai-news, monthly-best-ai, ai-price-yosoku, trend-yosoku-ai,
+  ai-shinjin-hakken, recommend-hikaku-ai, voice-digest-ai, koeshitsu-ai, ai-interview-kiji,
+  ai-365-calendar
+- **WPX 15件**: ai-shindan, mood-ai-genre, chara-shindan-ai, custom-shindan-ai,
+  personal-curator-ai, shicho-analytics-ai, ai-playlist, scene-ai-search, situation-ai,
+  similar-work-ai, ai-soudan-shitsu, dochira-ai, sakufu-ai-bunrui, text-search-ai,
+  thumbnail-ai-search
+
+### 次に必要なドメイン配線（cross-asp30サイトと全く同じ手順が必要）
+
+現時点でDNSゾーン・アドオンドメイン登録は未実施。ドメイン(30件)のネームサーバー変更が
+お名前.com側で反映され次第、以下が必要:
+
+- **ColorfulBOX側15件**: DNSマネージャーでゾーン作成（レコードセット`x018.cbsv.jp`）→
+  cPanelで「新しいドメイン」追加（ドキュメントルート`app-<repo>/public`）
+- **WPX側15件**: 管理画面で「＋ドメインを追加」→ 作成された`<domain>/public_html`を削除し、
+  `app-<repo>`を`<domain>/laravel-app`に移動、`public_html`を`laravel-app/public`への
+  symlinkに置き換え（cross-asp30サイトで確立した手順と同一）。ネームサーバーは
+  `ns1.wpx.ne.jp` / `ns2.wpx.ne.jp` / `ns3.wpx.ne.jp`
 
 ## 既知の環境上の注意
 
