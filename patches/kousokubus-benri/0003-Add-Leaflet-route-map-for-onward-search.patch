@@ -1,0 +1,903 @@
+From ba91e332961e510307f31aa2543c211c2b2ec178 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Sun, 9 Aug 2026 21:17:04 +0000
+Subject: [PATCH] Add Leaflet map for onward route search results
+
+- Geocode arrival/destination via Nominatim and draw route with OSRM
+- Show interactive OpenStreetMap in OnwardPlanner after search
+- Add leaflet dependency and route map styles
+---
+ app/api/onward/route.ts  |  22 ++++-
+ app/globals.css          |   2 +-
+ app/onward/planner.tsx   |   9 +-
+ app/onward/route-map.tsx |  96 ++++++++++++++++++++
+ lib/geocode.ts           |  59 ++++++++++++
+ package-lock.json        | 188 +++++++++++----------------------------
+ package.json             |   2 +
+ 7 files changed, 237 insertions(+), 141 deletions(-)
+ create mode 100644 app/onward/route-map.tsx
+ create mode 100644 lib/geocode.ts
+
+diff --git a/app/api/onward/route.ts b/app/api/onward/route.ts
+index 800c8cc..f4e7460 100644
+--- a/app/api/onward/route.ts
++++ b/app/api/onward/route.ts
+@@ -1,5 +1,6 @@
+ import { asString, getD1, jsonError } from "../../../db/d1";
+ import { fetchNavitimeRoute } from "../../../lib/transit-provider";
++import { fetchRoutePolyline, geocodePlace, type GeoPoint } from "../../../lib/geocode";
+ 
+ export async function POST(request: Request) {
+   const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+@@ -23,9 +24,28 @@ export async function POST(request: Request) {
+       ? { durationMinutes: 42, fare: 420, transferCount: 0, walkMinutes: 3 }
+       : { durationMinutes: 36, fare: 420, transferCount: 1, walkMinutes: 8 };
+ 
++  const [startPoint, endPoint] = await Promise.all([
++    geocodePlace(arrivalStop),
++    geocodePlace(finalDestination),
++  ]);
++
++  let map: { start: GeoPoint; end: GeoPoint; coordinates: [number, number][] } | null = null;
++  if (startPoint && endPoint) {
++    const profile = preference === "low_walk" ? "foot" as const : "foot" as const;
++    const coordinates = await fetchRoutePolyline(startPoint, endPoint, profile);
++    map = { start: startPoint, end: endPoint, coordinates };
++  }
++
+   await getD1().prepare(`
+     INSERT INTO onward_searches (id, arrival_stop, final_destination, preference, duration_minutes, fare, transfer_count, created_at)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+   `).bind(crypto.randomUUID(), arrivalStop, finalDestination, preference, demo.durationMinutes, demo.fare, demo.transferCount, Date.now()).run();
+-  return Response.json({ ok: true, provider, route: demo, providerItems, note: provider === "demo" ? "交通API契約情報の設定後、自動的に実データへ切り替わります。" : null });
++  return Response.json({
++    ok: true,
++    provider,
++    route: demo,
++    map,
++    providerItems,
++    note: provider === "demo" ? "交通API契約情報の設定後、自動的に実データへ切り替わります。" : null,
++  });
+ }
+diff --git a/app/globals.css b/app/globals.css
+index 3e1492e..75ebdb7 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -1,6 +1,6 @@
+ @import "tailwindcss";
+ 
+-.onward-page{min-height:100vh;background:#f7f8f3}.onward-hero{background:var(--green);color:#fff;padding:58px 0 68px}.onward-hero nav{font-size:9px;color:#b9cec6;margin-bottom:38px}.onward-hero .kicker{color:var(--lime)}.onward-hero h1{font-size:clamp(38px,6vw,62px);line-height:1.15;margin:10px 0}.onward-hero p{color:#c3d7d0;font-size:12px}.planner-shell{padding:42px 0 70px}.planner-form{display:grid;grid-template-columns:1fr 28px 1fr;gap:12px;align-items:end;background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px}.planner-form>label{display:flex;flex-direction:column;gap:7px}.planner-form>label span,.planner-form legend{font-size:9px;font-weight:800}.planner-form input[type=text],.planner-form>label input{border:1px solid #cad4cc;border-radius:4px;padding:13px;font-size:12px}.planner-form>i{font-style:normal;text-align:center;padding-bottom:13px;color:var(--orange)}.planner-form fieldset{grid-column:1/3;border:0;padding:8px 0 0;display:flex;gap:7px}.planner-form fieldset label input{position:absolute;opacity:0}.planner-form fieldset label span{display:block;border:1px solid #ccd5ce;border-radius:99px;padding:8px 12px}.planner-form fieldset label:has(input:checked) span{background:var(--green);border-color:var(--green);color:#fff}.planner-form>button{grid-column:3;border:0;border-radius:4px;background:var(--orange);color:#fff;padding:13px;font-weight:900}.planner-result{background:#e9f0e5;border-left:4px solid var(--green);padding:22px;margin-top:18px}.planner-result header{display:flex;align-items:end;justify-content:space-between}.planner-result h2{font-size:20px;margin:6px 0}.planner-result header>strong{font:900 30px Arial;color:var(--green)}.planner-result dl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.planner-result dl>div{display:flex;flex-direction:column;background:#fff;padding:12px}.planner-result dt{font-size:8px;color:#748079}.planner-result dd{margin:5px 0 0;font-weight:900}.transport-choice{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:24px 0}.transport-choice article{background:#fff;border:1px solid var(--line);border-radius:7px;padding:20px}.transport-choice article>b{font-size:8px;color:var(--orange);letter-spacing:2px}.transport-choice h2{font-size:18px;margin:8px 0}.transport-choice p{font-size:9px;line-height:1.8;color:#68756f;min-height:48px}.transport-choice a{font-size:9px;font-weight:900;color:var(--green)}.planner-note{font-size:9px;line-height:1.8;color:#6f7c76;background:#eef1eb;padding:16px}@media(max-width:700px){.planner-form{grid-template-columns:1fr}.planner-form>i{padding:0}.planner-form fieldset,.planner-form>button{grid-column:1}.transport-choice{grid-template-columns:1fr 1fr}.planner-result dl{grid-template-columns:1fr 1fr}}
++.onward-page{min-height:100vh;background:#f7f8f3}.onward-hero{background:var(--green);color:#fff;padding:58px 0 68px}.onward-hero nav{font-size:9px;color:#b9cec6;margin-bottom:38px}.onward-hero .kicker{color:var(--lime)}.onward-hero h1{font-size:clamp(38px,6vw,62px);line-height:1.15;margin:10px 0}.onward-hero p{color:#c3d7d0;font-size:12px}.planner-shell{padding:42px 0 70px}.planner-form{display:grid;grid-template-columns:1fr 28px 1fr;gap:12px;align-items:end;background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px}.planner-form>label{display:flex;flex-direction:column;gap:7px}.planner-form>label span,.planner-form legend{font-size:9px;font-weight:800}.planner-form input[type=text],.planner-form>label input{border:1px solid #cad4cc;border-radius:4px;padding:13px;font-size:12px}.planner-form>i{font-style:normal;text-align:center;padding-bottom:13px;color:var(--orange)}.planner-form fieldset{grid-column:1/3;border:0;padding:8px 0 0;display:flex;gap:7px}.planner-form fieldset label input{position:absolute;opacity:0}.planner-form fieldset label span{display:block;border:1px solid #ccd5ce;border-radius:99px;padding:8px 12px}.planner-form fieldset label:has(input:checked) span{background:var(--green);border-color:var(--green);color:#fff}.planner-form>button{grid-column:3;border:0;border-radius:4px;background:var(--orange);color:#fff;padding:13px;font-weight:900}.planner-result{background:#e9f0e5;border-left:4px solid var(--green);padding:22px;margin-top:18px}.planner-result header{display:flex;align-items:end;justify-content:space-between}.planner-result h2{font-size:20px;margin:6px 0}.planner-result header>strong{font:900 30px Arial;color:var(--green)}.planner-result dl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.planner-result dl>div{display:flex;flex-direction:column;background:#fff;padding:12px}.planner-result dt{font-size:8px;color:#748079}.planner-result dd{margin:5px 0 0;font-weight:900}.transport-choice{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:24px 0}.transport-choice article{background:#fff;border:1px solid var(--line);border-radius:7px;padding:20px}.transport-choice article>b{font-size:8px;color:var(--orange);letter-spacing:2px}.transport-choice h2{font-size:18px;margin:8px 0}.transport-choice p{font-size:9px;line-height:1.8;color:#68756f;min-height:48px}.transport-choice a{font-size:9px;font-weight:900;color:var(--green)}.planner-note{font-size:9px;line-height:1.8;color:#6f7c76;background:#eef1eb;padding:16px}.route-map-panel{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px}.route-map-panel header h3{font-size:18px;margin:6px 0 14px}.route-map{height:360px;border-radius:6px;border:1px solid #d8e0da;overflow:hidden;background:#eef2eb}.route-map-note{margin:10px 0 0;font-size:9px;line-height:1.7;color:#6f7c76}.route-marker{display:grid;place-items:center;border-radius:50%;font:900 11px Arial;color:#fff;box-shadow:0 2px 8px #123c2c33}.route-marker-start{background:var(--orange)}.route-marker-end{background:var(--green)}@media(max-width:700px){.planner-form{grid-template-columns:1fr}.planner-form>i{padding:0}.planner-form fieldset,.planner-form>button{grid-column:1}.transport-choice{grid-template-columns:1fr 1fr}.planner-result dl{grid-template-columns:1fr 1fr}.route-map{height:280px}}
+ 
+ .official-schedule{border-left:4px solid #7aa543!important}.arrival-connect,.alternative-routes{margin:42px 0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px}.arrival-connect header h2,.alternative-routes h2{font-size:25px;margin:6px 0}.arrival-connect header p{font-size:10px;color:#68756f}.mode-chips{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0}.mode-chips span{background:#eaf0e8;color:var(--green);border-radius:99px;padding:7px 12px;font-size:9px;font-weight:800}.arrival-stop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.arrival-stop-grid a{display:flex;flex-direction:column;gap:5px;border:1px solid #dfe5de;border-radius:5px;padding:14px}.arrival-stop-grid b{font-size:11px}.arrival-stop-grid small{font-size:8px;color:#728079}.arrival-stop-grid span{font-size:8px;color:var(--green);font-weight:900}.onward-cta{display:inline-block;margin-top:18px;background:var(--orange);color:#fff!important;border-radius:4px;padding:13px 18px;font-size:10px;font-weight:900}.alternative-routes>a{display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:12px 2px;border-top:1px solid #e6ebe5;font-size:10px}.alternative-routes>a b{color:var(--green)}@media(max-width:700px){.arrival-stop-grid{grid-template-columns:1fr 1fr}.arrival-connect,.alternative-routes{padding:19px}.alternative-routes>a{grid-template-columns:1fr auto}.alternative-routes>a small{grid-column:1/3}}
+ 
+diff --git a/app/onward/planner.tsx b/app/onward/planner.tsx
+index ed3605e..4655a0a 100644
+--- a/app/onward/planner.tsx
++++ b/app/onward/planner.tsx
+@@ -1,8 +1,14 @@
+ "use client";
+ 
+ import { FormEvent, useMemo, useState } from "react";
++import type { GeoPoint } from "../../lib/geocode";
++import { RouteMap } from "./route-map";
+ 
+-type RouteResult = { provider: string; route: { durationMinutes: number; fare: number; transferCount: number; walkMinutes: number } };
++type RouteResult = {
++  provider: string;
++  route: { durationMinutes: number; fare: number; transferCount: number; walkMinutes: number };
++  map?: { start: GeoPoint; end: GeoPoint; coordinates: [number, number][] } | null;
++};
+ 
+ export function OnwardPlanner({ initialArrival }: { initialArrival: string }) {
+   const [arrival, setArrival] = useState(initialArrival || "バスタ新宿");
+@@ -32,6 +38,7 @@ export function OnwardPlanner({ initialArrival }: { initialArrival: string }) {
+       <button disabled={loading}>{loading?"検索中…":"ルートを検索"}</button>
+     </form>
+     {result&&<div className="planner-result"><header><div><span className="kicker">ROUTE SUMMARY</span><h2>{arrival} → {destination}</h2></div><strong>{result.route.durationMinutes}分</strong></header><dl><div><dt>運賃目安</dt><dd>¥{result.route.fare.toLocaleString()}</dd></div><div><dt>乗換</dt><dd>{result.route.transferCount}回</dd></div><div><dt>徒歩</dt><dd>{result.route.walkMinutes}分</dd></div><div><dt>データ</dt><dd>{result.provider==="navitime"?"交通API":"概算＋外部経路"}</dd></div></dl></div>}
++    {result?.map&&<RouteMap start={result.map.start} end={result.map.end} coordinates={result.map.coordinates} />}
+     <div className="transport-choice">
+       <article><b>BUS</b><h2>路線バス</h2><p>登録済み4,304停留所の時刻表から、到着地周辺を確認します。</p><a href="/local-bus">停留所・時刻表を検索 →</a></article>
+       <article><b>RAIL</b><h2>電車・地下鉄</h2><p>鉄道と地下鉄を含む公共交通ルートを地図アプリで開きます。</p><a href={links.transit} target="_blank" rel="noreferrer">公共交通ルート →</a></article>
+diff --git a/app/onward/route-map.tsx b/app/onward/route-map.tsx
+new file mode 100644
+index 0000000..cd41ab6
+--- /dev/null
++++ b/app/onward/route-map.tsx
+@@ -0,0 +1,96 @@
++"use client";
++
++import { useEffect, useRef } from "react";
++import type { GeoPoint } from "../../lib/geocode";
++
++export type RouteMapProps = {
++  start: GeoPoint;
++  end: GeoPoint;
++  coordinates: [number, number][];
++};
++
++export function RouteMap({ start, end, coordinates }: RouteMapProps) {
++  const containerRef = useRef<HTMLDivElement | null>(null);
++  const mapRef = useRef<{ remove: () => void } | null>(null);
++
++  useEffect(() => {
++    let cancelled = false;
++
++    async function mountMap() {
++      if (!containerRef.current || cancelled) return;
++
++      const L = (await import("leaflet")).default;
++      await import("leaflet/dist/leaflet.css");
++
++      if (mapRef.current) {
++        mapRef.current.remove();
++        mapRef.current = null;
++      }
++
++      const map = L.map(containerRef.current, { scrollWheelZoom: false });
++      mapRef.current = map;
++
++      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
++        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
++        maxZoom: 19,
++      }).addTo(map);
++
++      const route = L.polyline(coordinates, {
++        color: "#174c3b",
++        weight: 5,
++        opacity: 0.85,
++      }).addTo(map);
++
++      const startIcon = L.divIcon({
++        className: "route-marker route-marker-start",
++        html: '<span aria-hidden="true">A</span>',
++        iconSize: [28, 28],
++        iconAnchor: [14, 14],
++      });
++      const endIcon = L.divIcon({
++        className: "route-marker route-marker-end",
++        html: '<span aria-hidden="true">B</span>',
++        iconSize: [28, 28],
++        iconAnchor: [14, 14],
++      });
++
++      L.marker([start.lat, start.lng], { icon: startIcon })
++        .addTo(map)
++        .bindPopup(`<strong>降車地</strong><br>${escapeHtml(start.label)}`);
++      L.marker([end.lat, end.lng], { icon: endIcon })
++        .addTo(map)
++        .bindPopup(`<strong>目的地</strong><br>${escapeHtml(end.label)}`);
++
++      map.fitBounds(route.getBounds(), { padding: [36, 36] });
++    }
++
++    mountMap();
++
++    return () => {
++      cancelled = true;
++      if (mapRef.current) {
++        mapRef.current.remove();
++        mapRef.current = null;
++      }
++    };
++  }, [start.lat, start.lng, start.label, end.lat, end.lng, end.label, coordinates]);
++
++  return (
++    <section className="route-map-panel" aria-label="ルート地図">
++      <header>
++        <span className="kicker">ROUTE MAP</span>
++        <h3>地図でルートを確認</h3>
++      </header>
++      <div ref={containerRef} className="route-map" role="img" aria-label={`${start.label}から${end.label}までのルート`} />
++      <p className="route-map-note">OpenStreetMap と OSRM による概算ルートです。実際の公共交通ルートとは異なる場合があります。</p>
++    </section>
++  );
++}
++
++function escapeHtml(value: string) {
++  return value
++    .replaceAll("&", "&amp;")
++    .replaceAll("<", "&lt;")
++    .replaceAll(">", "&gt;")
++    .replaceAll('"', "&quot;");
++}
+diff --git a/lib/geocode.ts b/lib/geocode.ts
+new file mode 100644
+index 0000000..3174b2e
+--- /dev/null
++++ b/lib/geocode.ts
+@@ -0,0 +1,59 @@
++export type GeoPoint = { lat: number; lng: number; label: string };
++
++export async function geocodePlace(query: string): Promise<GeoPoint | null> {
++  const trimmed = query.trim().slice(0, 120);
++  if (!trimmed) return null;
++
++  const endpoint = new URL("https://nominatim.openstreetmap.org/search");
++  endpoint.searchParams.set("q", trimmed);
++  endpoint.searchParams.set("format", "json");
++  endpoint.searchParams.set("limit", "1");
++  endpoint.searchParams.set("countrycodes", "jp");
++
++  const response = await fetch(endpoint, {
++    headers: {
++      "accept-language": "ja",
++      "user-agent": "busselect.jp/1.0 (route search; contact@busselect.jp)",
++    },
++  });
++  if (!response.ok) return null;
++
++  const rows = (await response.json()) as Array<{ lat?: string; lon?: string; display_name?: string }>;
++  const hit = rows[0];
++  if (!hit?.lat || !hit?.lon) return null;
++
++  return {
++    lat: Number(hit.lat),
++    lng: Number(hit.lon),
++    label: hit.display_name?.split(",").slice(0, 2).join("，") || trimmed,
++  };
++}
++
++export async function fetchRoutePolyline(
++  start: GeoPoint,
++  end: GeoPoint,
++  profile: "foot" | "driving" = "foot",
++): Promise<[number, number][]> {
++  const path = `${start.lng},${start.lat};${end.lng},${end.lat}`;
++  const endpoint = `https://router.project-osrm.org/route/v1/${profile}/${path}?overview=full&geometries=geojson`;
++
++  try {
++    const response = await fetch(endpoint, { headers: { accept: "application/json" } });
++    if (!response.ok) return fallbackLine(start, end);
++    const data = (await response.json()) as {
++      routes?: Array<{ geometry?: { coordinates?: [number, number][] } }>;
++    };
++    const coords = data.routes?.[0]?.geometry?.coordinates;
++    if (!coords?.length) return fallbackLine(start, end);
++    return coords.map(([lng, lat]) => [lat, lng]);
++  } catch {
++    return fallbackLine(start, end);
++  }
++}
++
++function fallbackLine(start: GeoPoint, end: GeoPoint): [number, number][] {
++  return [
++    [start.lat, start.lng],
++    [end.lat, end.lng],
++  ];
++}
+diff --git a/package-lock.json b/package-lock.json
+index 7ce7ea0..e9e01ff 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -9,6 +9,7 @@
+       "version": "0.1.0",
+       "dependencies": {
+         "drizzle-orm": "0.45.2",
++        "leaflet": "1.9.4",
+         "next": "16.2.6",
+         "react": "19.2.6",
+         "react-dom": "19.2.6"
+@@ -16,6 +17,7 @@
+       "devDependencies": {
+         "@cloudflare/vite-plugin": "1.37.1",
+         "@tailwindcss/postcss": "4.2.1",
++        "@types/leaflet": "1.9.21",
+         "@types/node": "22.19.19",
+         "@types/react": "19.2.14",
+         "@types/react-dom": "19.2.3",
+@@ -464,6 +466,7 @@
+       "version": "1.10.0",
+       "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.10.0.tgz",
+       "integrity": "sha512-ewvYlk86xUoGI0zQRNq/mC+16R1QeDlKQy21Ki3oSYXNgLb45GV1P6A0M+/s6nyCuNDqe5VpaY84BzXGwVbwFA==",
++      "dev": true,
+       "license": "MIT",
+       "optional": true,
+       "dependencies": {
+@@ -1586,6 +1589,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1608,6 +1612,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1630,6 +1635,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1646,6 +1652,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1662,9 +1669,7 @@
+       "cpu": [
+         "arm"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1681,9 +1686,7 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1700,9 +1703,7 @@
+       "cpu": [
+         "ppc64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1719,9 +1720,7 @@
+       "cpu": [
+         "riscv64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1738,9 +1737,7 @@
+       "cpu": [
+         "s390x"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1757,9 +1754,7 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1776,9 +1771,7 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1795,9 +1788,7 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
++      "dev": true,
+       "license": "LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -1814,9 +1805,7 @@
+       "cpu": [
+         "arm"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1839,9 +1828,7 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1864,9 +1851,7 @@
+       "cpu": [
+         "ppc64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1889,9 +1874,7 @@
+       "cpu": [
+         "riscv64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1914,9 +1897,7 @@
+       "cpu": [
+         "s390x"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1939,9 +1920,7 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1964,9 +1943,7 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -1989,9 +1966,7 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
++      "dev": true,
+       "license": "Apache-2.0",
+       "optional": true,
+       "os": [
+@@ -2014,6 +1989,7 @@
+       "cpu": [
+         "wasm32"
+       ],
++      "dev": true,
+       "license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+       "optional": true,
+       "dependencies": {
+@@ -2033,6 +2009,7 @@
+       "cpu": [
+         "arm64"
+       ],
++      "dev": true,
+       "license": "Apache-2.0 AND LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -2052,6 +2029,7 @@
+       "cpu": [
+         "ia32"
+       ],
++      "dev": true,
+       "license": "Apache-2.0 AND LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -2071,6 +2049,7 @@
+       "cpu": [
+         "x64"
+       ],
++      "dev": true,
+       "license": "Apache-2.0 AND LGPL-3.0-or-later",
+       "optional": true,
+       "os": [
+@@ -2213,9 +2192,6 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2232,9 +2208,6 @@
+       "cpu": [
+         "arm64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2251,9 +2224,6 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2270,9 +2240,6 @@
+       "cpu": [
+         "x64"
+       ],
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2517,9 +2484,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2537,9 +2501,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2557,9 +2518,6 @@
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2577,9 +2535,6 @@
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2597,9 +2552,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2617,9 +2569,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2911,9 +2860,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2931,9 +2877,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2951,9 +2894,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -2971,9 +2911,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3167,6 +3104,13 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@types/geojson": {
++      "version": "7946.0.16",
++      "resolved": "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.16.tgz",
++      "integrity": "sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==",
++      "dev": true,
++      "license": "MIT"
++    },
+     "node_modules/@types/json-schema": {
+       "version": "7.0.15",
+       "resolved": "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz",
+@@ -3181,6 +3125,16 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@types/leaflet": {
++      "version": "1.9.21",
++      "resolved": "https://registry.npmjs.org/@types/leaflet/-/leaflet-1.9.21.tgz",
++      "integrity": "sha512-TbAd9DaPGSnzp6QvtYngntMZgcRk+igFELwR2N99XZn7RXUdKgsXMR+28bUO0rPsWp8MIu/f47luLIQuSLYv/w==",
++      "dev": true,
++      "license": "MIT",
++      "dependencies": {
++        "@types/geojson": "*"
++      }
++    },
+     "node_modules/@types/node": {
+       "version": "22.19.19",
+       "resolved": "https://registry.npmjs.org/@types/node/-/node-22.19.19.tgz",
+@@ -3642,9 +3596,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3659,9 +3610,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3676,9 +3624,6 @@
+         "ppc64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3693,9 +3638,6 @@
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3710,9 +3652,6 @@
+         "riscv64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3727,9 +3666,6 @@
+         "s390x"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3744,9 +3680,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -3761,9 +3694,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -7521,6 +7451,12 @@
+         "node": ">=0.10"
+       }
+     },
++    "node_modules/leaflet": {
++      "version": "1.9.4",
++      "resolved": "https://registry.npmjs.org/leaflet/-/leaflet-1.9.4.tgz",
++      "integrity": "sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==",
++      "license": "BSD-2-Clause"
++    },
+     "node_modules/levn": {
+       "version": "0.4.1",
+       "resolved": "https://registry.npmjs.org/levn/-/levn-0.4.1.tgz",
+@@ -7678,9 +7614,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -7702,9 +7635,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -7726,9 +7656,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -7750,9 +7677,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -10256,9 +10180,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -10280,9 +10201,6 @@
+         "arm64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -10304,9 +10222,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "glibc"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+@@ -10328,9 +10243,6 @@
+         "x64"
+       ],
+       "dev": true,
+-      "libc": [
+-        "musl"
+-      ],
+       "license": "MPL-2.0",
+       "optional": true,
+       "os": [
+diff --git a/package.json b/package.json
+index ae4351f..55af6b7 100644
+--- a/package.json
++++ b/package.json
+@@ -15,6 +15,7 @@
+   },
+   "dependencies": {
+     "drizzle-orm": "0.45.2",
++    "leaflet": "1.9.4",
+     "next": "16.2.6",
+     "react": "19.2.6",
+     "react-dom": "19.2.6"
+@@ -22,6 +23,7 @@
+   "devDependencies": {
+     "@cloudflare/vite-plugin": "1.37.1",
+     "@tailwindcss/postcss": "4.2.1",
++    "@types/leaflet": "1.9.21",
+     "@types/node": "22.19.19",
+     "@types/react": "19.2.14",
+     "@types/react-dom": "19.2.3",
+-- 
+2.43.0
+
