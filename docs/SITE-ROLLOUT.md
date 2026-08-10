@@ -1,24 +1,24 @@
-# 全サイト ロールアウト手順（1→4）
+# 全サイト ロールアウト手順
 
-最終確認: **2026-08-06**（引き継ぎ更新）
+最終確認: **2026-08-10**
 
-マスター台帳: `docs/HANDOFF.md`
+マスター台帳: `docs/HANDOFF.md` / 残り作業: `docs/REMAINING-WORK.md`
 
 ## 現状スナップショット
 
 | サイト | 公開 | GA4 | GSC | 次のアクション |
 |--------|------|-----|-----|----------------|
 | shudenhotel.jp | ✅ | ✅ | ✅ | **完了** |
-| darekore.jp | ✅ | ✅ | メタ live | **Search Console で「確認」→ サイトマップ送信** |
-| goalpilot.jp | ✅ | ✅ | メタ live | **Search Console でサイトマップ送信** |
-| machi-list.jp | 🟡 HTTP | 未 | 未 | **GitHub Pages HTTPS + Secrets + 再デプロイ** |
-| busselect.jp | ❌ DNS | 準備済 | 準備済 | **Site Creator env + お名前.com DNS**（パッチ 0002 適用済） |
-
-DNS: `machi-list.jp` → GitHub Pages A レコード ✅ / `busselect.jp` → **150.95.255.38** パーキング ❌
+| darekore.jp | ✅ | ✅ | ✅ | **Search Console サイトマップ送信** |
+| goalpilot.jp | ✅ | ✅ | ✅ | **Search Console サイトマップ送信** |
+| machi-list.jp | ✅ HTTPS | ❌ | ✅ | **GA4 Secret + Deploy 再実行** |
+| busselect.jp | ✅ | ✅ | ✅ | **Search Console サイトマップ送信**（Leaflet 適用済） |
 
 一括確認:
 
 ```powershell
+cd C:\Users\syunn\rakuten02
+git pull origin master
 .\scripts\site-analytics\check-sites.ps1
 ```
 
@@ -36,20 +36,15 @@ DNS: `machi-list.jp` → GitHub Pages A レコード ✅ / `busselect.jp` → **
 
 ---
 
-## 手順 2: machi-list.jp — HTTPS + Secrets 仕上げ
+## 手順 2: machi-list.jp — GA4 Secret + 再デプロイ
 
-**DNS 反映済**（2026-08-06）。`http://machi-list.jp/` は 200 OK。  
-**残り:** GitHub Pages Enforce HTTPS + Secrets + 再デプロイ
+**HTTPS + GSC: 完了**（2026-08-10）。**GA4 のみ未注入。**
 
-詳細: **`patches/machi-list/POST-DNS-GITHUB-PAGES.md`**
+1. https://github.com/syunnjack/machi-list/settings/secrets/actions  
+   `GOOGLE_ANALYTICS_MEASUREMENT_ID` = GA4 測定 ID
+2. Actions → **Deploy static site** → Run workflow
 
-1. https://github.com/syunnjack/machi-list/settings/pages  
-   Custom domain `machi-list.jp` → DNS Check OK → **Enforce HTTPS ON**
-2. https://github.com/syunnjack/machi-list/settings/secrets/actions  
-   `GOOGLE_ANALYTICS_MEASUREMENT_ID` / `GOOGLE_SITE_VERIFICATION` / `INDEXNOW_KEY`
-3. Actions → **Deploy static site** → Run workflow
-
-初回 DNS 手順（参考・完了済）: `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`
+詳細: `patches/machi-list/POST-DNS-GITHUB-PAGES.md`
 
 ---
 
@@ -63,53 +58,15 @@ DNS: `machi-list.jp` → GitHub Pages A レコード ✅ / `busselect.jp` → **
 
 ---
 
-## 手順 4: busselect.jp — Site Creator env + DNS
+## 手順 4: busselect.jp — 完了 / Search Console のみ
 
-**パッチ 0002: 適用済**（2026-08-06）。残り 2 ステップ:
+**公開・GA4/GSC・Leaflet ルート地図: 完了**（2026-08-10）
 
-詳細: **`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`**
+残り（任意）: Search Console → `https://busselect.jp/sitemap.xml` 送信
 
-### 1. Site Creator 環境変数（GA4 / GSC）
-
-ChatGPT → Sites → busselect → Settings → Environment variables
-
-| 変数 | 値 |
-|------|-----|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 測定 ID |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console meta `content` |
-
-→ 保存後 **再デプロイ**
-
-### 2. GitHub Secret（IndexNow）
-
-https://github.com/syunnjack/kousokubus-benri/settings/secrets/actions  
-`INDEXNOW_KEY` = `busselectindex2026`（省略可）
-
-### 3. お名前.com DNS
-
-- **削除:** `@ A 150.95.255.38`（パーキング）
-- **追加:** Site Creator → Add domain → `busselect.jp` → 表示された DNS レコード
-
-### 確認
-
-```powershell
-cd C:\Users\syunn\rakuten02
-.\scripts\site-analytics\check-sites.ps1
-```
-
----
-
-<details>
-<summary>パッチ適用手順（参考・完了済）</summary>
-
-```powershell
-cd C:\Users\syunn\kousokubus-benri
-curl.exe -L -o bs.patch "https://github.com/syunnjack/rakuten02/raw/master/patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
-git am bs.patch
-git push origin main
-```
-
-</details>
+パッチ参考:
+- `patches/kousokubus-benri/APPLY-0003-LEAFLET.md`
+- `patches/kousokubus-benri/WINDOWS-DEV.md`（ローカル dev）
 
 ---
 

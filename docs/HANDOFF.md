@@ -1,113 +1,51 @@
-# プロジェクト引き継ぎ — 2026-08-06
+# プロジェクト引き継ぎ — 2026-08-10 更新
 
-前セッション（フリーズ前）＋本セッションの作業を統合したマスター台帳です。  
-**PowerShell 実行はユーザー担当**、**パッチ・ドキュメント・CI・リポジトリ整理はエージェント担当**。
-
----
-
-## 今日の作業マップ（2本柱）
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  A. カスタムドメイン・SEO ロールアウト（Aug 2–5 中心）        │
-│     shudenhotel / darekore / goalpilot / machi-list / busselect │
-├─────────────────────────────────────────────────────────────┤
-│  B. DTI CSV・動画サイト連携（Aug 6）                          │
-│     hey-douga-guide / free-sample-hub / rakuten02 パッチ      │
-├─────────────────────────────────────────────────────────────┤
-│  C. ランキングサイト量産（Aug 5–6・AI 作成、未デプロイ）       │
-│     netorare-ranking 他 41 リポジトリ                         │
-└─────────────────────────────────────────────────────────────┘
-```
+**残り作業一覧:** `docs/REMAINING-WORK.md`（最新チェックリスト）
 
 ---
 
-## A. カスタムドメイン — 現状（エージェント確認 2026-08-06）
+## A. カスタムドメイン — 現状（ライブ確認 2026-08-10）
 
-| サイト | ドメイン | 公開 | GA4 | GSC | ブロッカー |
-|--------|----------|------|-----|-----|------------|
-| 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし（完了） |
-| ダレコレ | darekore.jp | ✅ | ✅ | ✅ check-sites 全Y | **Search Console でサイトマップ送信** |
-| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ メタ live | **Search Console でサイトマップ送信** |
-| 町リスト | machi-list.jp | 🟡 HTTP | 未 | 未 | **GitHub Pages HTTPS + Secrets + 再デプロイ** |
-| バスセレクト | busselect.jp | ❌ | 準備済 | 準備済 | **Site Creator 環境変数 + DNS**（パッチ 0002 適用済） |
+| サイト | ドメイン | 公開 | GA4 | GSC | 残り |
+|--------|----------|------|-----|-----|------|
+| 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし |
+| ダレコレ | darekore.jp | ✅ | ✅ | ✅ | **サイトマップ送信** |
+| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ | **サイトマップ送信** |
+| 町リスト | machi-list.jp | ✅ HTTPS | ❌ | ✅ | **GA4 Secret + Deploy** |
+| バスセレクト | busselect.jp | ✅ | ✅ | ✅ | **サイトマップ送信**（Leaflet 0003 適用済） |
 
-### DNS 状況（エージェント確認 2026-08-06 13:35 UTC）
+### busselect パッチ履歴
 
-| ドメイン | DNS | 公開 |
-|----------|-----|------|
-| machi-list.jp | ✅ GitHub Pages A レコード | 🟡 HTTP 200（HTTPS 証明書待ち） |
-| busselect.jp | ❌ 150.95.255.38 パーキング | 未公開 |
-
-**machi-list 仕上げ:** `patches/machi-list/POST-DNS-GITHUB-PAGES.md`  
-（GitHub Pages → Enforce HTTPS、Secrets、Deploy 再実行）
-
-**machi-list 初回 DNS:** `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md`
-
-**busselect:** パッチ適用済 → Site Creator 環境変数 + DNS（`patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md`）
-
-### 確認コマンド（PowerShell）
-
-```powershell
-cd C:\Users\syunn\rakuten02
-.\scripts\site-analytics\check-sites.ps1
-.\scripts\site-analytics\run-rollout.ps1
-```
-
-### エージェント実施済み
-
-- PR #10（machi-list Render 案）→ **クローズ**（GitHub Pages 方針に統合済みのため）
-- PR #21 → **マージ済**（busselect APPLY / DEPLOY-SITE-CREATOR-DNS ガイド）
-- `docs/SITE-ROLLOUT.md` 更新（本ファイルと同期）
-- お名前.com 一括 DNS 手順: `patches/ONAMAE-DNS-BATCH.md`
+| パッチ | 内容 | 状態 |
+|--------|------|------|
+| 0002 | GA4 / GSC / IndexNow | ✅ |
+| 0003 | Leaflet ルート地図 | ✅ 本番確認済 |
+| 0004 | Windows `npm run dev` | 任意（`WINDOWS-DEV.md`） |
 
 ---
 
-## B. DTI CSV・動画サイト — 現状
+## B. DTI CSV・動画サイト
 
 | リポジトリ | 状態 | 次 |
 |------------|------|-----|
-| **rakuten02** | パッチ master 同梱、PR #15–18 マージ済 | — |
-| **hey-douga-guide** | ✅ PR #1 マージ済（2026-08-06） | 本番サーバーで migrate + import（`MERGE-PR.md`） |
-| **free-sample-hub** | 未セットアップ | [SETUP.md](free-sample-hub/SETUP.md) |
-
-詳細: `patches/DEPLOY-WINDOWS.md` / `patches/STATUS.md`
+| hey-douga-guide | PR #1 マージ済 | 本番 migrate + import |
+| free-sample-hub | 未セットアップ | `patches/free-sample-hub/SETUP.md` |
 
 ---
 
 ## C. ランキングサイト（41 リポジトリ）
 
-AI が Aug 5–6 に作成。例:
-
-- PHP: `netorare-ranking`, `gyaru-ranking`, `onsen-ranking` …
-- Astro: `play-withca-ranking`, `play-withladies-ranking`, `duga-video-ranking` …
-
-**現状:** GitHub にコードのみ。**GitHub Pages 未設定**（`syunnjack.github.io/*` → 404）。**独自ドメイン未割当**。
-
-**次フェーズ（未着手）:**
-
-1. ドメイン一覧の確定（どの repo にどのドメインか）
-2. Astro → Vercel/Cloudflare Pages、PHP → Render 等のデプロイ方針
-3. `scripts/site-analytics/` キットの横展開（GA4/GSC/sitemap）
-
-一覧取得:
-
-```powershell
-gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ranking$"))'
-```
+GitHub のみ・未デプロイ。`docs/RANKING-SITES.md`
 
 ---
 
-## 優先順位（推奨）
+## 確認コマンド
 
-| 優先 | 作業 | 担当 | 所要 |
-|------|------|------|------|
-| 1 | machi-list **HTTPS + Secrets + 再デプロイ** | ユーザー @ GitHub Pages / Actions | 10分 |
-| 2 | darekore / goalpilot Search Console | ユーザー @ ブラウザ | 各2分 |
-| 3 | hey-douga-guide **本番 migrate/import** | ユーザー PowerShell（本番） | 10分 |
-| 4 | busselect **Site Creator env + DNS** | ユーザー @ ChatGPT Sites + お名前.com | 15分 |
-| 5 | free-sample-hub セットアップ | ユーザー PowerShell | 20分 |
-| 6 | ランキングサイト デプロイ計画 | 要相談 | — |
+```powershell
+cd C:\Users\syunn\rakuten02
+git pull origin master
+.\scripts\site-analytics\check-sites.ps1
+```
 
 ---
 
@@ -115,29 +53,14 @@ gh repo list syunnjack --limit 100 --json name --jq '.[].name | select(test("-ra
 
 | 用途 | パス |
 |------|------|
-| ドメインロールアウト手順 | `docs/SITE-ROLLOUT.md` |
-| サイト台帳 JSON | `scripts/site-analytics/sites.config.json` |
-| DTI ステータス | `patches/STATUS.md` |
-| Windows 手順 | `patches/DEPLOY-WINDOWS.md` |
-| machi-list DNS | `patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md` |
-| busselect DNS + Secrets | `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md` |
-| お名前.com 一括（両ドメイン） | `patches/ONAMAE-DNS-BATCH.md` |
+| **残り作業** | `docs/REMAINING-WORK.md` |
+| ドメインロールアウト | `docs/SITE-ROLLOUT.md` |
+| machi-list GA4 修正 | `patches/machi-list/POST-DNS-GITHUB-PAGES.md` |
+| busselect | `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md` |
+| DTI Windows | `patches/DEPLOY-WINDOWS.md` |
 
 ---
 
 ## 関連 PR（rakuten02）
 
-| PR | 内容 | 状態 |
-|----|------|------|
-| #8–#14 | GA4/GSC 横展開、darekore GSC パッチ | マージ済 |
-| #10 | machi-list Render 案 | **クローズ（ superseded ）** |
-| #15–#18 | DTI CSV / デプロイガイド | マージ済 |
-| #20 | busselect patch 0002 | マージ済 |
-| #21 | busselect APPLY + Site Creator DNS ガイド | マージ済 |
-
----
-
-## フリーズ前エージェント
-
-Site rollout: `bc-5ce2714e-0180-40ff-984f-549d73e20b8e`  
-DTI CSV: 本セッション Cloud Agent
+#20–#25 マージ済（busselect パッチ、Leaflet、Windows dev fix 含む）

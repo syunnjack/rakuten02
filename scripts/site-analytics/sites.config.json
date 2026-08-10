@@ -50,13 +50,14 @@
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-render",
-    "status": "dns-live-https-secrets-pending",
+    "status": "live-gsc-only-ga4-secret-pending",
+    "httpsEnforced": "2026-08-09",
     "dnsVerified": "2026-08-06",
     "deployDoc": "patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md",
     "postDnsDoc": "patches/machi-list/POST-DNS-GITHUB-PAGES.md",
     "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "DNS 反映済 → GitHub Pages HTTPS + Secrets 待ち",
+    "dnsNote": "HTTPS 有効。GA4 Secret 設定後 Deploy 再実行",
     "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION"
@@ -70,9 +71,13 @@
     "repo": "syunnjack/kousokubus-benri",
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
-    "status": "patch-applied-dns-pending",
+    "status": "live-leaflet-0003",
+    "liveVerified": "2026-08-10",
     "patchApplied": "2026-08-06",
+    "patches": ["0002", "0003", "0004-optional"],
     "deployDoc": "patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md",
+    "leafletDoc": "patches/kousokubus-benri/APPLY-0003-LEAFLET.md",
+    "windowsDevDoc": "patches/kousokubus-benri/WINDOWS-DEV.md",
     "siteCreatorEnv": [
       "NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION"
@@ -84,6 +89,6 @@
     "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
     "patchNote": "0001 fails on current layout.tsx — use 0002",
     "indexNowKey": "busselectindex2026",
-    "dnsNote": "150.95.255.38 パーキング → Site Creator DNS へ変更"
+    "note": "Search Console サイトマップ送信のみ残り"
   }
 ]
