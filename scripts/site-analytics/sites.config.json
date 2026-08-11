@@ -89,6 +89,16 @@
     "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
     "patchNote": "0001 fails on current layout.tsx — use 0002",
     "indexNowKey": "busselectindex2026",
-    "note": "Search Console サイトマップ送信のみ残り"
+    "note": "Search Console サイトマップ送信のみ残り。GA4 env 未設定でライブHTMLにタグなし"
+  },
+  {
+    "id": "municipality-car",
+    "repo": "syunnjack/municipacipality-car",
+    "domain": "https://municipality-car.jp/",
+    "stack": "vite-xserver",
+    "status": "live-robots-sitemap-host-pending",
+    "liveVerified": "2026-08-11",
+    "ga4": "G-PKSFSL0DC3",
+    "note": "robots.txt が vercel.app の sitemap を宣言。PR municipacipality-car#1 待ち"
   }
 ]
