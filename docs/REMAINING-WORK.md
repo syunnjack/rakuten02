@@ -83,6 +83,17 @@ GSC メタは live。GA4 タグが HTML にない → Secret 未設定 or 再デ
 
 **既存レコードは http のまま DB に入っているので、マージ後に本番で再 import が必要。**
 
+### ❌ 最優先 — sosoru.asia / sosoru.org がクローラーに中身を返していない
+
+両ドメインが**すべてのリクエストに対して** `One moment, please...`（5秒後に JS で reload するローダー画面、`server: openresty`）を返す。UAをGooglebotにしても、`/robots.txt` や `/sitemap.xml` でも同じHTMLが返る（実測 2026-08-11）。
+
+```
+$ curl -A "Mozilla/5.0 (compatible; Googlebot/2.1; ...)" https://sosoru.asia/robots.txt
+<!DOCTYPE html> ... <title>One moment, please...
+```
+
+Googlebot は JS チャレンジを完走しないため、**robots.txt すら読めず1ページも索引登録できない**状態。コード側では直せないので、ホスティング（XServer サーバーパネル）側で該当サイトの Bot 判定 / WAF / アクセス集中対策を無効化するか、検索エンジンのUA・IPを除外する必要がある。ここが解けるまで、上のmixed content修正やサイトマップ送信は検索結果に反映されない。
+
 ### hey-douga-guide 本番
 
 ```powershell
