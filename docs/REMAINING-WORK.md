@@ -1,18 +1,34 @@
-# 残り作業チェックリスト — 2026-08-10 更新
+# 残り作業チェックリスト — 2026-08-11 更新
 
-ライブ確認済み。✅ = 完了 / 🟡 = 一部残 / ❌ = 未着手
+ライブHTMLを再確認して更新。✅ = 完了 / 🟡 = 一部残 / ❌ = 未着手
 
 ---
 
-## トラック A — カスタムドメイン（5サイト）
+## トラック A — カスタムドメイン（6サイト）
+
+GA4 / canonical はライブHTMLの実測値。
 
 | サイト | 公開 | GA4 | GSC | 残り |
 |--------|------|-----|-----|------|
-| shudenhotel.jp | ✅ | ✅ | ✅ | なし |
-| darekore.jp | ✅ | ✅ | ✅ | **Search Console でサイトマップ送信** |
-| goalpilot.jp | ✅ | ✅ | ✅ | **Search Console でサイトマップ送信** |
-| machi-list.jp | ✅ HTTPS | ❌ | ✅ | **GitHub Secret `GOOGLE_ANALYTICS_MEASUREMENT_ID` + Deploy 再実行** |
-| busselect.jp | ✅ | ✅ | ✅ | **Search Console サイトマップ送信**（任意） |
+| shudenhotel.jp | ✅ | ❌ | 🟡 | **Render に env 4件追加**（下記） / PR #27・#29 マージ |
+| darekore.jp | ✅ | ✅ | ✅ | Search Console サイトマップ送信 / PR task-dashboard#8 マージ |
+| goalpilot.jp | ✅ | ✅ | ✅ | canonical・robots が未出力 → PR goal-pilot-app#1 マージ |
+| machi-list.jp | ✅ HTTPS | ❌ | ✅ | **GitHub Secret `GOOGLE_ANALYTICS_MEASUREMENT_ID` + Deploy 再実行** / PR machi-list#1 |
+| busselect.jp | ✅ | ❌ | ✅ | **ホスティング側に `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID`** / PR kousokubus-benri#1 |
+| municipality-car.jp | ✅ | ✅ | ✅ | robots.txt が vercel.app の sitemap を宣言 → PR municipacipality-car#1 |
+
+### shudenhotel — Render の env が未反映
+
+サービスがBlueprint管理でないため `render.yaml` の `envVars` が効いていない。Dashboard → `shudenhotel` → Environment に直接追加する。
+
+| key | value |
+|-----|-------|
+| `PUBLIC_BASE_URL` | `https://shudenhotel.jp` |
+| `GOOGLE_ANALYTICS_MEASUREMENT_ID` | GA4 の測定ID（`render.yaml` の `G-542370310` はGA4の形式ではないので要確認） |
+| `GOOGLE_SITE_VERIFICATION` | `render.yaml` と同じ値 |
+| `INDEXNOW_KEY` | `shudenhotelindex2026` |
+
+未設定の間は GA4 タグと GSC メタが出力されない。canonical の http→https は PR #29 で env なしでも直る。
 
 ### machi-list — GA4 だけ未注入
 
@@ -24,17 +40,31 @@ GSC メタは live。GA4 タグが HTML にない → Secret 未設定 or 再デ
 
 詳細: `patches/machi-list/POST-DNS-GITHUB-PAGES.md`
 
-### darekore / goalpilot / busselect — Search Console（ブラウザ 2分×）
+### Search Console サイトマップ送信（ブラウザ 2分×）
 
 1. https://search.google.com/search-console
 2. 各ドメイン → **サイトマップ** → 追加:
    - `https://darekore.jp/sitemap.xml`
    - `https://goalpilot.jp/sitemap.xml`
    - `https://busselect.jp/sitemap.xml`
+   - `https://municipality-car.jp/sitemap.xml`
+
+### 未マージのSEO PR（マージ＋デプロイで反映）
+
+| PR | 内容 |
+|----|------|
+| rakuten02 #27 | `/search` を noindex にして sitemap から除外 |
+| rakuten02 #29 | プロキシ経由でも canonical / sitemap を https に |
+| kousokubus-benri #1 | busselect の `/search` noindex、トップ title の `\| NOLU` 二重を解消 |
+| task-dashboard #8 | darekore の URL パーセントエンコードと出演者一覧ページ生成 |
+| machi-list #1 | 店舗詳細ページ生成 |
+| goal-pilot-app #1 | 自己参照 canonical と全ルートの sitemap 登録 |
+| municipacipality-car #1 | 静的HTMLのプリレンダーと robots.txt の sitemap ホスト修正 |
+| maportal #3 / golf-search #1 / wait-time-alert #1 / tsumiage-log #32 / hey-douga-guide #2 | robots・canonical・sitemap の整合 |
 
 ### busselect — 完了済み（参考）
 
-- パッチ 0002（GA4/GSC/IndexNow）✅
+- パッチ 0002（GA4/GSC/IndexNow）✅ — ただし GA4 の環境変数が未設定でタグは未出力
 - パッチ 0003（Leaflet ルート地図）✅ — 秋葉原で動作確認済
 - パッチ 0004（Windows `npm run dev`）— 任意
 
@@ -85,7 +115,9 @@ git pull origin master
 
 | # | 作業 | 担当 | 時間目安 |
 |---|------|------|----------|
-| 1 | machi-list GA4 Secret + Deploy | GitHub UI | 5分 |
-| 2 | Search Console サイトマップ ×3〜4 | ブラウザ | 10分 |
-| 3 | hey-douga 本番 migrate | 本番 PowerShell | 10分 |
-| 4 | free-sample-hub セットアップ | ローカル PowerShell | 20分 |
+| 1 | 未マージのSEO PR をマージ（上記表） | GitHub UI | 10分 |
+| 2 | shudenhotel Render env 4件 | Render UI | 5分 |
+| 3 | machi-list GA4 Secret + Deploy / busselect GA4 env | GitHub・ホスティングUI | 5分 |
+| 4 | Search Console サイトマップ ×4 | ブラウザ | 10分 |
+| 5 | hey-douga 本番 migrate | 本番 PowerShell | 10分 |
+| 6 | free-sample-hub セットアップ | ローカル PowerShell | 20分 |
