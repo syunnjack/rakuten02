@@ -1,9 +1,19 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
+using Microsoft.AspNetCore.HttpOverrides;
 using Rakuten02.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// The TLS terminating proxy forwards plain HTTP, so trust its scheme header to
+// keep canonical, OGP and sitemap URLs on https.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddHttpClient<GeoCodingClient>(client =>
 {
@@ -31,6 +41,7 @@ builder.Services.AddSingleton(_ => new RakutenApiOptions(
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 app.UseStaticFiles();
 
 var landingPages = new[]
