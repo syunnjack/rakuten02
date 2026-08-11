@@ -175,21 +175,24 @@ app.MapGet("/search", async (
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, "場所を入力してください。", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            "text/html; charset=utf-8",
+            statusCode: StatusCodes.Status400BadRequest);
     }
 
     if (parsedCheckin < today)
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, "チェックイン日は今日以降を指定してください。", today, today.AddDays(1)),
-            "text/html; charset=utf-8");
+            "text/html; charset=utf-8",
+            statusCode: StatusCodes.Status400BadRequest);
     }
 
     if (parsedCheckout <= parsedCheckin)
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, "チェックアウト日はチェックイン日の翌日以降を指定してください。", parsedCheckin, parsedCheckin.AddDays(1)),
-            "text/html; charset=utf-8");
+            "text/html; charset=utf-8",
+            statusCode: StatusCodes.Status400BadRequest);
     }
 
     try
@@ -208,13 +211,15 @@ app.MapGet("/search", async (
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, ex.Message, parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            "text/html; charset=utf-8",
+            statusCode: StatusCodes.Status503ServiceUnavailable);
     }
     catch (HttpRequestException ex)
     {
         return Results.Content(
             HtmlPages.SearchError(httpRequest, $"検索APIへの接続に失敗しました: {ex.Message}", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            "text/html; charset=utf-8",
+            statusCode: StatusCodes.Status503ServiceUnavailable);
     }
 });
 
@@ -331,13 +336,8 @@ static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPage
         ("/terms", "monthly", "0.3")
     });
 
-    var searchPlaces = new[]
-    {
-        "新宿駅", "渋谷駅", "東京駅", "横浜駅", "池袋駅", "上野駅", "品川駅", "なんば駅",
-        "東京ドーム", "さいたまスーパーアリーナ", "横浜アリーナ", "幕張メッセ"
-    };
-    entries.AddRange(searchPlaces.Select(place =>
-        ($"/search?place={Uri.EscapeDataString(place)}&radius=1.0", "daily", "0.7")));
+    // /search is noindex: it renders live availability for a date range and every one of these
+    // places already has its own landing page above.
 
     var urls = string.Join(Environment.NewLine, entries.Select(entry => $"""
   <url>
@@ -546,6 +546,8 @@ internal static class HtmlPages
             title,
             description,
             canonicalUrl: $"{origin}/search?place={Uri.EscapeDataString(place)}&checkin={checkin:yyyy-MM-dd}&checkout={checkout:yyyy-MM-dd}&radius={radius:F1}",
+            // Live availability for a given date range: useful to visitors, not a page to index.
+            noIndex: true,
             body: $"""
 <section class="search-header">
   <a class="back-link" href="/">検索トップへ</a>
@@ -672,6 +674,7 @@ internal static class HtmlPages
             title: "検索できませんでした | 終電ホテル",
             description: "ホテル空室検索でエラーが発生しました。",
             canonicalUrl: origin + "/",
+            noIndex: true,
             body: $"""
 <section class="search-header">
   <a class="back-link" href="/">検索トップへ</a>
@@ -683,7 +686,7 @@ internal static class HtmlPages
             jsonLd: SoftwareJsonLd(origin));
     }
 
-    private static string Layout(string title, string description, string canonicalUrl, string body, string jsonLd)
+    private static string Layout(string title, string description, string canonicalUrl, string body, string jsonLd, bool noIndex = false)
     {
         return $"""
 <!doctype html>
@@ -693,7 +696,7 @@ internal static class HtmlPages
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="{Html(description)}">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="{(noIndex ? "noindex, follow" : "index, follow")}">
   <link rel="canonical" href="{Html(canonicalUrl)}">
   {GoogleSiteVerificationMeta()}
   <meta property="og:type" content="website">
