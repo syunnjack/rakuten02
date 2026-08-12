@@ -1,6 +1,19 @@
-# プロジェクト引き継ぎ — 2026-08-10 更新
+# プロジェクト引き継ぎ — 2026-08-12 更新
 
 **残り作業一覧:** `docs/REMAINING-WORK.md`（最新チェックリスト）
+
+---
+
+## T. TOGE BASE（イニシャルDポータル）— 2026-08-12 追加
+
+| 項目 | 内容 |
+|------|------|
+| ソース | `toge-base/`（`wangan-base` 同型） |
+| ブランド | TOGE BASE / 想定ドメイン `togepass.jp` |
+| 実装 | 攻略LP・UGC・robots/sitemap/llms.txt・JSON-LD |
+| 次 | GitHub リポジトリ切り出し → Pages → DNS |
+
+詳細: `toge-base/docs/SETUP-REPO.md` / `patches/toge-base/README.md`
 
 ---
 

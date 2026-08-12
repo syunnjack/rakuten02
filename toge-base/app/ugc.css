@@ -1,0 +1,271 @@
+.ugc-boost {
+  display: grid;
+  grid-template-columns: 2fr 0.8fr 0.8fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ugc-boost article,
+.engagement-grid > section {
+  border: 1px solid #3a3228;
+  background: #14110e;
+  padding: 22px;
+}
+
+.daily-topic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(120deg, rgba(240, 160, 32, 0.16), #14110e) !important;
+  border-color: #6a4e20 !important;
+}
+
+.daily-topic p {
+  margin: 11px 0 5px;
+  color: #86959d;
+  font-size: 10px;
+}
+
+.daily-topic h3 {
+  margin: 0;
+  max-width: 520px;
+  font-size: 18px;
+}
+
+.daily-topic button,
+.answer-call button,
+.empty-posts button {
+  border: 0;
+  background: none;
+  color: var(--amber);
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.live-badge {
+  display: inline-block;
+  padding: 4px 7px;
+  background: var(--amber);
+  color: #1a1206;
+  font: 8px monospace;
+  letter-spacing: 1px;
+}
+
+.contribution-card strong,
+.answer-call strong {
+  display: inline-block;
+  margin: 10px 6px 7px 0;
+  font: 36px monospace;
+}
+
+.contribution-card > span,
+.answer-call > span {
+  color: #7d8b93;
+  font: 9px monospace;
+}
+
+.contribution-card div,
+.answer-call button {
+  margin-top: 12px;
+}
+
+.contribution-card div b {
+  display: block;
+  color: #7f8d95;
+  font-size: 8px;
+}
+
+.contribution-card i,
+.poll-options i {
+  display: block;
+  height: 3px;
+  margin-top: 7px;
+  background: #2a231a;
+}
+
+.contribution-card em {
+  display: block;
+  width: 66%;
+  height: 100%;
+  background: var(--amber);
+}
+
+.engagement-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.panel-heading h3 {
+  margin: 7px 0 0;
+  font-size: 18px;
+}
+
+.panel-heading > span {
+  color: #65747d;
+  font: 9px monospace;
+}
+
+.poll-options {
+  display: grid;
+  gap: 8px;
+}
+
+.poll-options button {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(100px, 1.4fr) 38px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #2a231a;
+  background: #0c0a08;
+  text-align: left;
+  cursor: pointer;
+}
+
+.poll-options button:not(:disabled):hover,
+.poll-options button.selected {
+  border-color: var(--amber);
+}
+
+.poll-options button:disabled {
+  cursor: default;
+}
+
+.poll-options span {
+  font-size: 10px;
+}
+
+.poll-options i {
+  margin: 0;
+}
+
+.poll-options i em {
+  display: block;
+  height: 100%;
+  background: var(--amber);
+}
+
+.poll-options b {
+  color: var(--amber);
+  font: 10px monospace;
+  text-align: right;
+}
+
+.vote-note,
+.ranking-panel > p {
+  margin: 14px 0 0;
+  color: #64727a;
+  font-size: 9px;
+}
+
+.ranking-panel ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ranking-panel li {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #2a231a;
+}
+
+.ranking-panel li > strong {
+  color: var(--amber);
+  font: 18px monospace;
+}
+
+.ranking-panel li div b,
+.ranking-panel li div span {
+  display: block;
+}
+
+.ranking-panel li div b {
+  font-size: 11px;
+}
+
+.ranking-panel li div span {
+  margin-top: 3px;
+  color: #7a7064;
+  font-size: 8px;
+}
+
+.ranking-panel li > em {
+  color: var(--amber);
+  font: normal 9px monospace;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #718089;
+}
+
+.empty-posts {
+  padding: 34px;
+  border: 1px dashed #34434c;
+  color: #718089;
+  text-align: center;
+}
+
+.empty-posts button {
+  display: block;
+  margin: 10px auto;
+}
+
+.post-prompt {
+  padding: 10px 12px;
+  border-left: 2px solid var(--amber);
+  background: #15191a;
+  color: #b5c0c6;
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .ugc-boost {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .daily-topic {
+    grid-column: 1 / -1;
+  }
+
+  .engagement-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 590px) {
+  .ugc-boost {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-topic {
+    display: block;
+  }
+
+  .daily-topic button {
+    margin-top: 18px;
+  }
+
+  .poll-options button {
+    grid-template-columns: 1fr 70px 34px;
+    padding-inline: 8px;
+  }
+}

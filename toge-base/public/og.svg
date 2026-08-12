@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0A0908"/>
+  <defs>
+    <radialGradient id="g1" cx="70%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#F0A020" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#0A0908" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="20%" cy="80%" r="45%">
+      <stop offset="0%" stop-color="#E4572E" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#0A0908" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g1)"/>
+  <rect width="1200" height="630" fill="url(#g2)"/>
+  <text x="80" y="210" fill="#F0A020" font-family="Arial Narrow, sans-serif" font-size="36" letter-spacing="8">TOUGE PLAYER COMMUNITY</text>
+  <text x="80" y="320" fill="#F6F0E6" font-family="Arial Narrow, sans-serif" font-size="110" font-weight="700">TOGE BASE</text>
+  <text x="80" y="420" fill="#C4B49A" font-family="Arial Narrow, sans-serif" font-size="42">àgdjL‹</text>
+  <text x="80" y="520" fill="#9A8F80" font-family="Arial Narrow, sans-serif" font-size="28">¤Ë·ãëD×ì¤äün;eú0 / togepass.jp</text>
+</svg>

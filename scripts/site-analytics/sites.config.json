@@ -90,5 +90,17 @@
     "patchNote": "0001 fails on current layout.tsx — use 0002",
     "indexNowKey": "busselectindex2026",
     "note": "Search Console サイトマップ送信のみ残り"
+  },
+  {
+    "id": "togebase",
+    "repo": "syunnjack/toge-base",
+    "domain": "https://togepass.jp/",
+    "stack": "vinext-nextjs-github-pages",
+    "status": "source-ready-repo-pending",
+    "sourcePath": "toge-base/",
+    "setupDoc": "toge-base/docs/SETUP-REPO.md",
+    "seoDoc": "toge-base/docs/SEO-AIO-LLMO.md",
+    "patchNote": "本体は rakuten02/toge-base。単体リポジトリ切り出し後に Pages/DNS",
+    "note": "イニシャルDポータル。SEO/AIO/LLMO/UGC実装済み。GitHub repo作成・DNS待ち"
   }
 ]

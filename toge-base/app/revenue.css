@@ -1,0 +1,185 @@
+.revenue-section {
+  border-top: 1px solid #1e282f;
+  border-bottom: 1px solid #1e282f;
+  background: radial-gradient(circle at 20% 30%, rgba(240, 160, 32, 0.1), transparent 28%), #0c0a08;
+}
+
+.revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.revenue-grid article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 430px;
+  padding: 28px;
+  border: 1px solid #2b363d;
+  background: linear-gradient(155deg, #1a1612, #0c0a08);
+}
+
+.revenue-grid article:first-child {
+  border-color: #74602e;
+  box-shadow: inset 0 2px 0 var(--amber);
+}
+
+.revenue-label {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 6px 9px;
+  background: var(--amber);
+  color: #171006;
+  font: 8px monospace;
+  letter-spacing: 1px;
+}
+
+.revenue-label.pr {
+  background: var(--ember);
+  color: white;
+}
+
+.revenue-label.sponsor {
+  background: var(--moss);
+  color: white;
+}
+
+.revenue-grid h3 {
+  margin: 12px 0;
+  font-size: 28px;
+}
+
+.revenue-grid article > p:not(.kicker) {
+  color: #85929a;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.price {
+  padding: 12px 0 18px;
+  border-bottom: 1px solid #2b363d;
+}
+
+.price strong {
+  color: var(--amber);
+  font: 38px monospace;
+}
+
+.price span {
+  color: #7e8b93;
+  font-size: 10px;
+}
+
+.revenue-grid ul {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.revenue-grid li {
+  color: #a1adb3;
+  font-size: 11px;
+}
+
+.revenue-grid li::before {
+  content: "✓";
+  margin-right: 9px;
+  color: var(--amber);
+}
+
+.gear-items {
+  display: grid;
+  gap: 0;
+  margin: 18px 0;
+  border-top: 1px solid #2b363d;
+}
+
+.gear-items span {
+  padding: 12px 0;
+  border-bottom: 1px solid #2b363d;
+  color: #a1adb3;
+  font-size: 10px;
+}
+
+.partner-plan dl {
+  margin: 16px 0;
+}
+
+.partner-plan dl div {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-top: 1px solid #2b363d;
+  font-size: 10px;
+}
+
+.partner-plan dt {
+  color: #6f7c84;
+}
+
+.partner-plan dd {
+  margin: 0;
+  color: #b0bbc0;
+}
+
+.revenue-cta {
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  margin-top: auto;
+  border: 1px solid var(--amber);
+  background: var(--amber);
+  color: #151006;
+  font-size: 11px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.revenue-cta:hover {
+  border-color: white;
+  background: white;
+}
+
+.secondary-cta {
+  border-color: #3a4850;
+  background: transparent;
+  color: white;
+}
+
+.revenue-grid small {
+  margin-top: 9px;
+  color: #5f6d75;
+  font-size: 8px;
+  text-align: center;
+}
+
+.revenue-policy {
+  max-width: 820px;
+  margin: 22px auto 0;
+  color: #6a5f52;
+  font-size: 9px;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.revenue-policy a {
+  color: var(--amber);
+}
+
+@media (max-width: 900px) {
+  .revenue-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-grid article {
+    min-height: auto;
+  }
+
+  .revenue-cta {
+    margin-top: 20px;
+  }
+}
