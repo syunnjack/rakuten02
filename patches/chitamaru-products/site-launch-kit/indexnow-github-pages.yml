@@ -1,0 +1,35 @@
+# .github/workflows/indexnow.yml — IndexNow 自動送信 (知多丸テンプレート)
+# push 時に Bing / Yandex へサイトマップURLを送信します
+
+name: IndexNow
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Submit sitemap to IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}   # 例: https://your-domain.jp
+        run: |
+          if [[ -z "$INDEXNOW_KEY" || -z "$SITE_URL" ]]; then
+            echo "INDEXNOW_KEY or SITE_URL is not set — skipping"
+            exit 0
+          fi
+
+          SITEMAP_URL="${SITE_URL%/}/sitemap.xml"
+          PAYLOAD=$(jq -n \
+            --arg host "$(echo "$SITE_URL" | sed 's|https\?://||')" \
+            --arg key "$INDEXNOW_KEY" \
+            --arg keyLocation "${SITE_URL%/}/${INDEXNOW_KEY}.txt" \
+            --argjson urls "[\"$SITEMAP_URL\"]" \
+            '{host: $host, key: $key, keyLocation: $keyLocation, urlList: $urls}')
+
+          curl -s -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "$PAYLOAD"
+          echo "IndexNow submitted: $SITEMAP_URL"

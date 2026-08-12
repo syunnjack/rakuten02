@@ -1,0 +1,91 @@
+{
+  "_note": "tsumiage-log の app/data/store-videos.json の videos 配列先頭に挿入する新商品エントリ",
+  "targetRepo": "syunnjack/tsumiage-log",
+  "targetFile": "app/data/store-videos.json",
+  "products": [
+    {
+      "slug": "rakuafi-tool-ppv",
+      "kind": "ppv",
+      "title": "楽天ROOMクリック改善ツール【知多丸 PRO版・買い切り】",
+      "description": "投稿文の自動生成、商品別リンク診断、クリック・報酬データの記録、報酬ゼロ原因の自動言語化まで。楽天ROOM運用をブラウザ1画面で完結させる買い切りのWebツールです。",
+      "language": "React / Vite / localStorage",
+      "repositoryUrl": "https://github.com/syunnjack/rakuafi-tool",
+      "articleUrl": "https://syunnjack.dev/store",
+      "freePreviewSlideCount": 3,
+      "priceNote": "¥2,480（買い切り）/ 購入後に合言葉をお伝えします",
+      "boothUrl": "https://chitamaru.booth.pm/items/rakuafi-tool",
+      "slides": [
+        { "title": "楽天ROOMクリック改善ツール\n【知多丸 PRO版・買い切り】", "body": "投稿文生成、リンク診断、報酬ゼロ原因分析まで。ROOM運用をブラウザ1画面で完結させます。" },
+        { "title": "こんな悩みを解決します", "body": "「何を投稿すればいいか分からない」「なぜ報酬が出ないか分からない」——その2つを仕組みで解決します。" },
+        { "title": "投稿文を自動生成", "body": "商品名・悩み・メリットを入力するだけで、ROOM向けの投稿文が即座に生成されます。ワンタップでコピー＆ROOMを開けます。" },
+        { "title": "商品別リンク診断", "body": "汎用のショップトップリンクを自動検知して警告。成約につながる商品個別リンクへの差し替えを促します。" },
+        { "title": "CSVレポートで収益を可視化", "body": "楽天アフィリエイトのCSVをそのまま取り込み。クリック・注文・売上・報酬の推移をグラフで確認できます。" },
+        { "title": "買い切り・サーバー送信なし", "body": "データはブラウザ内に保存。外部サーバーへの自動送信なし。¥2,480の買い切りで永続利用できます。" }
+      ],
+      "narration": [
+        "楽天ROOMクリック改善ツール、知多丸PRO版を紹介します。楽天ROOM運用をブラウザ1画面で完結させる、買い切りのWebツールです。",
+        "「何を投稿すればいいか分からない」「なぜ報酬が出ないか分からない」——この2つの悩みを、仕組みで解決します。",
+        "商品名、ターゲットの悩み、メリットを入力するだけで、ROOM向けの投稿文が自動生成されます。ワンタップでコピーしてROOMを開けます。",
+        "汎用のショップトップリンクを自動で検知して警告。成約につながる商品個別リンクへの差し替えを、ツールが促してくれます。",
+        "楽天アフィリエイトのCSVをそのまま取り込めます。クリック・注文・売上・報酬の推移をグラフで把握できます。",
+        "データはブラウザ内に保存されるため、外部サーバーへの自動送信はありません。¥2,480の買い切りで永続利用でき、アップデートも無料で反映されます。"
+      ]
+    },
+    {
+      "slug": "affiliate-logbook",
+      "kind": "ppv",
+      "title": "副業アフィリエイト 週次収支ログブック【知多丸 スプレッドシートテンプレート】",
+      "description": "楽天・Amazon・A8など複数ASPの週次収益をまとめて記録し、「どのコンテンツが稼いでいるか」を1枚で把握できるGoogleスプレッドシートテンプレートです。",
+      "language": "Google スプレッドシート",
+      "repositoryUrl": "https://github.com/syunnjack",
+      "articleUrl": "https://syunnjack.dev/store",
+      "freePreviewSlideCount": 2,
+      "priceNote": "¥580（買い切り）/ 購入後にGoogleスプレッドシートのコピー用URLをお渡しします",
+      "boothUrl": "https://chitamaru.booth.pm/items/affiliate-logbook",
+      "slides": [
+        { "title": "副業アフィリエイト\n週次収支ログブック\n【知多丸 テンプレート】", "body": "複数ASPの週次収益を1枚で把握。「どのコンテンツが稼いでいるか」を可視化するスプレッドシートです。" },
+        { "title": "こんな方に向いています", "body": "楽天・Amazon・A8など複数のASPを掛け持ちしていて、どのコンテンツが収益に貢献しているか分かっていない方。" },
+        { "title": "週次でまとめて記録する", "body": "ASPごとのクリック・承認・報酬を週単位で入力するだけ。月別・ASP別のサマリーが自動で集計されます。" },
+        { "title": "コンテンツ別の貢献度を見える化", "body": "記事・SNS投稿・動画など、チャネル別に収益を紐づけて記録。「どこを強化すべきか」が一目で分かります。" },
+        { "title": "記録することで改善サイクルが回る", "body": "週次のメモ欄に施策と結果を残していくと、翌週の打ち手が自然と決まります。" },
+        { "title": "¥580 買い切り・Googleスプレッドシート", "body": "購入後にコピー用URLをお渡しします。ご自身のGoogleドライブに保存して自由に編集できます。" }
+      ],
+      "narration": [
+        "副業アフィリエイト週次収支ログブック、知多丸のスプレッドシートテンプレートを紹介します。",
+        "楽天・Amazon・A8など複数のASPを掛け持ちしていて、どのコンテンツが収益に貢献しているか分からない方に向けたテンプレートです。",
+        "ASPごとのクリック・承認・報酬を週単位で入力するだけ。月別・ASP別のサマリーが自動で集計されます。",
+        "記事、SNS投稿、動画など、チャネル別に収益を紐づけて記録することで、どこを強化すべきかが一目で分かります。",
+        "週次のメモ欄に施策と結果を残していくと、翌週の打ち手が自然と決まっていきます。",
+        "¥580の買い切りで、購入後にGoogleスプレッドシートのコピー用URLをお渡しします。自由に編集してご利用いただけます。"
+      ]
+    },
+    {
+      "slug": "chitamaru-site-launch-kit",
+      "kind": "ppv",
+      "title": "個人開発サイト公開キット【知多丸 SEO・GA4・IndexNow 一括設定テンプレート】",
+      "description": "Next.js/Vite/静的サイト向けに、SEOメタタグ、GA4、Search Console、IndexNow、sitemap、robots.txtを一括で設定するパッチセットとチェックリストです。実際に5サイト以上の公開で使い込んだ手順をそのまま詰め込みました。",
+      "language": "Next.js / Vite / Bash / GitHub Actions",
+      "repositoryUrl": "https://github.com/syunnjack/rakuten02",
+      "articleUrl": "https://syunnjack.dev/store",
+      "freePreviewSlideCount": 2,
+      "priceNote": "¥980（買い切り）/ テンプレートファイル一式 + 手順書PDF",
+      "boothUrl": "https://chitamaru.booth.pm/items/site-launch-kit",
+      "slides": [
+        { "title": "個人開発サイト公開キット\n【知多丸テンプレート】", "body": "SEO・GA4・IndexNow・サイトマップを一括設定。個人開発サイトを検索に乗せる初期設定をまとめたパッチセットです。" },
+        { "title": "公開直後にやるべき設定をまとめました", "body": "canonical、OGP、robots.txt、sitemap.xml、GA4タグ、IndexNow連携——毎回調べながら設定するのは時間の無駄です。" },
+        { "title": "Next.js / Vite / 静的サイト対応", "body": "3種のテンプレートを同梱。GitHub Actionsのworkflowファイルもそのまま使えます。" },
+        { "title": "公開前チェックリスト付き", "body": "設定漏れをゼロにするための30項目チェックリストPDFが付属します。実際に5サイト以上で使った手順です。" },
+        { "title": "IndexNowで即時インデックス申請", "body": "公開直後にBingやYandexへ即時インデックス申請できるIndexNowの設定テンプレートも含みます。" },
+        { "title": "¥980 買い切り・即ダウンロード", "body": "テンプレートファイル一式 + 手順書PDF。購入後すぐにダウンロードできます。" }
+      ],
+      "narration": [
+        "個人開発サイト公開キット、知多丸テンプレートを紹介します。",
+        "SEO設定、GA4タグ、Search Console、IndexNow、サイトマップ——公開直後にやるべき初期設定を一括でまとめたパッチセットです。",
+        "Next.js、Vite、静的サイトの3種に対応したテンプレートを同梱しており、GitHub Actionsのworkflowファイルもそのまま使えます。",
+        "設定漏れをゼロにするための30項目チェックリストPDFが付属します。実際に5サイト以上の公開で使い込んだ手順をそのまま詰め込みました。",
+        "公開直後にBingやYandexへ即時インデックス申請できるIndexNowの設定テンプレートも含まれています。",
+        "¥980の買い切りで、テンプレートファイル一式と手順書PDFが即ダウンロードできます。"
+      ]
+    }
+  ]
+}
