@@ -1,78 +1,84 @@
-# tsumiage-log への適用手順
+# tsumiage-log ストア更新 — 全リポジトリから厳選16製品
 
-このフォルダのファイルを `syunnjack/tsumiage-log` リポジトリに適用します。
+## 適用ファイル
 
-## 対象ファイルと配置先
-
-| このフォルダ | tsumiage-log での配置先 |
-|-------------|------------------------|
+| パッチファイル | 配置先 |
+|---------------|--------|
 | `GlobalNav.tsx` | `app/components/GlobalNav.tsx` |
 | `globals.css` | `app/globals.css` |
 | `store-page.tsx` | `app/store/page.tsx` |
+| `store-products.ts` | `app/store/store-products.ts` **（新規）** |
 | `store-videos.json` | `app/data/store-videos.json` |
 
-## ワンライナーで適用
+## ワンライナー
 
 ```bash
 cd /path/to/tsumiage-log
-PATCH_DIR="/path/to/rakuten02/patches/chitamaru-products"
-
-cp "$PATCH_DIR/GlobalNav.tsx"    app/components/GlobalNav.tsx
-cp "$PATCH_DIR/globals.css"      app/globals.css
-cp "$PATCH_DIR/store-page.tsx"   app/store/page.tsx
-cp "$PATCH_DIR/store-videos.json" app/data/store-videos.json
-
-git add app/components/GlobalNav.tsx app/globals.css app/store/page.tsx app/data/store-videos.json
-git commit -m "Redesign store: nav 9 items, store button, reorder sections, add 5 products"
-git push
+PATCH="/path/to/rakuten02/patches/chitamaru-products"
+cp "$PATCH/GlobalNav.tsx"       app/components/GlobalNav.tsx
+cp "$PATCH/globals.css"         app/globals.css
+cp "$PATCH/store-page.tsx"      app/store/page.tsx
+cp "$PATCH/store-products.ts"   app/store/store-products.ts
+cp "$PATCH/store-videos.json"   app/data/store-videos.json
+git add -A && git commit -m "Store: add 16 curated products from all repos, category layout" && git push
 ```
 
-## 変更内容サマリー
+## 追加した製品一覧（16点）
 
-### GlobalNav.tsx（13項目→9項目 + 🛒ストアボタン）
+### アフィリエイト・収益化（3点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| 楽天ROOMクリック改善ツール PRO | ¥2,480 | rakuafi-tool |
+| えらびより（楽天横断検索） | ¥2,480 | raku-toolv2 |
+| 副業アフィリエイト 週次収支ログブック | ¥580 | — |
 
-**削除**: このブログについて / 見積依頼 / お問い合わせ / お気に入り動画（→フッターへ）
-**変更**: 「サービス」+「見積依頼」→「相談する」 / 「販売プラットフォーム」→ヘッダー右端の「🛒 ストア」ボタン
+### SEO・サイト運用（3点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| SEO管理ダッシュボード Pro | ¥3,800 | — |
+| 個人開発サイト公開キット | ¥980 | rakuten02 |
+| RepoKura（リポジトリ棚卸し） | ¥2,480 | togo-kanri-tool |
 
-**Before**: 13項目を横スクロール、「販売プラットフォーム」が末尾に埋もれる
-**After**: 8項目のメインナビ + 右端に「🛒 ストア」（アンバー色ボタン）+ 「GitHub ↗」
+### せどり・買取・在庫（3点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| JAN・ISBN一括査定（せどらーS） | ¥3,800 | sedora-s |
+| DVD JAN Scan DB | ¥2,480 | dvd-jan-scan-db |
+| BuybackAlert 仕入れ価格差 | ¥980 | buyback-price-alert |
 
-### globals.css
+### 生活・学習・習慣化（5点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| 時短レシピ支援アプリ | ¥580 | jitan-recipe |
+| GoalPilot 目標達成アプリ | ¥980 | goal-pilot-app |
+| レシート家計簿 | ¥980 | receipt-jp |
+| AI Quiz Study | ¥980 | ai-quiz-study |
+| StudyLaw App（クイズテンプレ） | ¥980 | studylaw-app |
 
-追加CSS:
-- `.global-actions` — ストアとGitHubをまとめるフレックスコンテナ
-- `.global-store` — アンバー色の購入促進ボタン（モバイルでは非表示）
-- `.store-feature-list` — 商品機能リストのスタイル
-- `.store-coming-soon` — BOOTH出品準備中の表示スタイル
-- `.store-products-section` — ソフトウェア製品セクションのパディング
+### コンテンツ制作（1点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| コンテンツブリーフ生成エンジン | ¥580 | content-brief-engine |
 
-### store/page.tsx（セクション順序変更 + 商品5件追加）
+### 不動産・投資（1点）
+| 製品 | 価格 | リポジトリ |
+|------|------|-----------|
+| 不動産価格ウォッチ | ¥2,480 | fudousan-kakaku-watch |
 
-**Before**: PPV動画 → 無料紹介動画 → ソフトウェア製品
-**After**: ソフトウェア製品（5件）→ PPV動画 → 無料紹介動画
+## 選定基準
 
-ソフトウェア製品として新規追加:
-1. SEO管理ダッシュボード Pro ¥3,800（既存）
-2. 時短レシピ支援アプリ ¥580（既存）
-3. 楽天ROOMクリック改善ツール PRO版 ¥2,480（新規）
-4. 副業アフィリエイト 週次収支ログブック ¥580（新規）
-5. 個人開発サイト公開キット ¥980（新規）
+- ✅ 単体で価値がある完成度の高いツール
+- ✅ 明確なターゲットユーザーがいる
+- ✅ ソースコードまたはテンプレートとして納品可能
+- ❌ アダルト系ランキングサイトのみ（除外）
+- ❌ アフィリエイト送客のみの比較サイト（除外）
+- ❌ 空テンプレ・未完成リポジトリ（除外）
 
-ページタイトルを「販売プラットフォーム」→「ストア」に変更
-ページdescriptionを収益商品中心に更新
+## BOOTH出品が必要な新商品
 
-### store-videos.json
+`chitamaru.booth.pm/items/` 以下に出品してください:
 
-- `hobby-log-special` の `boothUrl` を `https://chitamaru.booth.pm/items/hobby-log-special` に設定
-  （BOOTH出品後に本URLへ更新してください）
-
-## BOOTH出品が必要な商品（手動作業）
-
-| 商品 | BOOTH URL（予定） | 状態 |
-|------|----------|------|
-| SEO管理ダッシュボード Pro | `/items/seo-dashboard-pro` | 出品済み |
-| 時短レシピ支援アプリ | `/items/jitan-recipe` | 出品済み |
-| 楽天ROOMクリック改善ツール | `/items/rakuafi-tool` | **出品が必要** |
-| 副業アフィリエイト 週次収支ログブック | `/items/affiliate-logbook` | **出品が必要** |
-| 個人開発サイト公開キット | `/items/site-launch-kit` | **出品が必要** |
-| 推し活・趣味記録【PPV特別版】 | `/items/hobby-log-special` | **出品が必要** |
+- `raku-toolv2` `togo-kanri-tool` `sedora-s` `dvd-jan-scan-db`
+- `buyback-price-alert` `goal-pilot-app` `receipt-jp` `ai-quiz-study`
+- `studylaw-app` `content-brief-engine` `fudousan-kakaku-watch`
+- `hobby-log-special`（PPV動画）
