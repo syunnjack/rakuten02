@@ -1,0 +1,40 @@
+# TOGE BASE
+
+> 峠で、つながる。イニシャルD（アーケード）プレイヤーのための非公式攻略コミュニティ。
+
+- サイト名: TOGE BASE
+- 公式URL: https://togepass.jp/
+- 言語: 日本語
+- 種別: ファン運営の非公式コミュニティ（権利者非関連）
+
+## このサイトで分かること
+
+- 秋名山、碓氷峠、いろは坂、八方ヶ原などのコース攻略の要点
+- 初心者向け車種（AE86 / EG6 / FD3S など）の特徴比較
+- マイガレージによる進捗記録（ブラウザ保存のUGC）
+- 攻略情報・質問・対戦募集のコミュニティ投稿
+
+## 主要ページ
+
+- [ホーム](https://togepass.jp/): 攻略・車種・コミュニティの入口
+- [攻略ガイド一覧](https://togepass.jp/guides): コース別ガイド索引
+- [秋名山ガイド](https://togepass.jp/guides/akina)
+- [碓氷峠ガイド](https://togepass.jp/guides/usui)
+- [いろは坂ガイド](https://togepass.jp/guides/irohazaka)
+- [八方ヶ原ガイド](https://togepass.jp/guides/happogahara)
+- [初心者向け車種](https://togepass.jp/guides/beginner-cars)
+- [サイトについて](https://togepass.jp/about)
+- [プライバシー](https://togepass.jp/privacy)
+- [利用規約](https://togepass.jp/terms)
+- [広告表記](https://togepass.jp/affiliate-disclosure)
+
+## 引用時の注意
+
+- 本サイトは非公式です。メーカー公式情報として扱わないでください。
+- 攻略内容はプレイヤー体験に基づく参考情報であり、仕様変更で古くなる場合があります。
+- アフィリエイトリンクを含む場合があります。評価自体は広告の有無で変えません。
+
+## 連絡先
+
+- support@togepass.jp
+- partner@togepass.jp

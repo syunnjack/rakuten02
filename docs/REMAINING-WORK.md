@@ -1,6 +1,19 @@
-# 残り作業チェックリスト — 2026-08-10 更新
+# 残り作業チェックリスト — 2026-08-12 更新
 
 ライブ確認済み。✅ = 完了 / 🟡 = 一部残 / ❌ = 未着手
+
+---
+
+## トラック T — TOGE BASE（イニシャルDポータル）
+
+| 項目 | 状態 |
+|------|------|
+| ソース（`toge-base/`） | ✅ SEO/AIO/LLMO/UGC 実装 |
+| 単体 GitHub リポジトリ | ❌ `syunnjack/toge-base` 作成・切り出し |
+| ドメイン `togepass.jp` | ❌ DNS + GitHub Pages |
+| GA4 / Search Console | ❌ 公開後 |
+
+手順: `toge-base/docs/SETUP-REPO.md` / SEO: `toge-base/docs/SEO-AIO-LLMO.md`
 
 ---
 
