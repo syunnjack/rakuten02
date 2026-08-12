@@ -27,6 +27,12 @@ export function SiteShell({
           <Link className={active === "guides" ? "active" : ""} href="/#guides">
             攻略
           </Link>
+          <Link
+            className={active === "arcades" ? "active" : ""}
+            href="/arcades"
+          >
+            店舗
+          </Link>
           <Link className={active === "about" ? "active" : ""} href="/about">
             について
           </Link>

@@ -11,13 +11,27 @@
 
 - 秋名山、碓氷峠、いろは坂、八方ヶ原などのコース攻略の要点
 - 初心者向け車種（AE86 / EG6 / FD3S など）の特徴比較
+- 頭文字D THE ARCADE筐体の全国設置ゲームセンター一覧（都道府県別）
 - マイガレージによる進捗記録（ブラウザ保存のUGC）
 - 攻略情報・質問・対戦募集のコミュニティ投稿
 
+## 設置店舗データについて
+
+- 一覧ページ: https://togepass.jp/arcades
+- 出典: ALL.Net 設置店舗検索（https://location.am-all.net/alm/location?gm=105）
+- 内容: ネットワーク接続状況に基づく参考リスト。最新の稼働・営業は公式検索と各店舗で確認すること
+- 本サイトは非公式ミラーであり、公式発表ではない
+
 ## 主要ページ
 
-- [ホーム](https://togepass.jp/): 攻略・車種・コミュニティの入口
-- [攻略ガイド一覧](https://togepass.jp/guides): コース別ガイド索引
+- [ホーム](https://togepass.jp/): 攻略・店舗・車種・コミュニティの入口
+- [全国設置店舗](https://togepass.jp/arcades)
+- [東京都の設置店舗](https://togepass.jp/arcades/tokyo)
+- [大阪府の設置店舗](https://togepass.jp/arcades/osaka)
+- [愛知県の設置店舗](https://togepass.jp/arcades/aichi)
+- [福岡県の設置店舗](https://togepass.jp/arcades/fukuoka)
+- [北海道の設置店舗](https://togepass.jp/arcades/hokkaido)
+- [攻略ガイド一覧](https://togepass.jp/guides)
 - [秋名山ガイド](https://togepass.jp/guides/akina)
 - [碓氷峠ガイド](https://togepass.jp/guides/usui)
 - [いろは坂ガイド](https://togepass.jp/guides/irohazaka)
@@ -31,7 +45,7 @@
 ## 引用時の注意
 
 - 本サイトは非公式です。メーカー公式情報として扱わないでください。
-- 攻略内容はプレイヤー体験に基づく参考情報であり、仕様変更で古くなる場合があります。
+- 攻略内容・店舗リストは参考情報であり、仕様変更や撤去で古くなる場合があります。
 - アフィリエイトリンクを含む場合があります。評価自体は広告の有無で変えません。
 
 ## 連絡先

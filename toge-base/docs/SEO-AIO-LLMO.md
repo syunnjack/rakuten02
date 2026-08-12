@@ -28,6 +28,7 @@ Google の AI Overview / AI Mode、および LLM 引用向けに「隠しテク�
 | llms.txt | LLM向けサイト要約と主要URL |
 | 法務 | about / privacy / terms / affiliate-disclosure |
 | 攻略LP | akina / usui / irohazaka / happogahara / beginner-cars |
+| 設置店舗 | `/arcades` + 47都道府県ページ（ALL.Net由来の参考リスト） |
 | UGC | マイガレージ・投稿・投票（localStorage） |
 
 ## 狙う検索意図
@@ -44,6 +45,13 @@ Google の AI Overview / AI Mode、および LLM 引用向けに「隠しテク�
 - イニシャルD 初心者 おすすめ車種
 - AE86 アーケード 攻略
 - EG6 初心者
+
+### 店舗系
+
+- イニシャルD 設置店舗
+- イニシャルD ゲームセンター 東京
+- 頭文字D THE ARCADE ゲーセン 大阪
+- イニシャルD 筐体 近く
 
 ### コミュニティ系
 

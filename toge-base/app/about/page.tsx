@@ -31,6 +31,7 @@ export default function AboutPage() {
         <h2>できること</h2>
         <ul>
           <li>秋名・碓氷・いろは坂などのコース攻略を読む</li>
+          <li>全国の筐体設置ゲームセンターを都道府県別に探す</li>
           <li>初心者向け車種の特徴を比較する</li>
           <li>マイガレージで進捗と次の目標を残す</li>
           <li>攻略・質問・対戦募集を投稿する（UGC）</li>
@@ -47,6 +48,7 @@ export default function AboutPage() {
         </p>
         <div className="legal-nav">
           <Link href="/">トップへ戻る</Link>
+          <Link href="/arcades">全国設置店舗</Link>
           <Link href="/guides/akina">秋名山ガイド</Link>
           <Link href="/privacy">プライバシー</Link>
         </div>

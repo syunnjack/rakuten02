@@ -664,6 +664,143 @@ main { min-height: 100vh; overflow: hidden }
     margin-bottom: 2px;
   }
 }
+.arcade-home { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #100e0b }
+.arcade-region-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 28px 0;
+}
+.arcade-region-grid.home { margin-top: 0 }
+.arcade-region-card {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  border: 1px solid #3a3228;
+  background: linear-gradient(155deg, #1a1612, #0c0a08);
+  text-decoration: none;
+  color: inherit;
+}
+.arcade-region-card:hover { border-color: var(--amber) }
+.arcade-region-card small { color: #7a7064; font: 9px monospace; letter-spacing: 1px }
+.arcade-region-card strong { font-size: 22px }
+.arcade-region-card span { color: var(--amber); font: 12px monospace }
+.arcade-featured {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+.arcade-featured article {
+  border: 1px solid #3a3228;
+  background: #14110e;
+  padding: 18px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+.arcade-featured span { color: var(--amber); font: 9px monospace }
+.arcade-featured h3 { font-size: 15px; margin: 10px 0 8px; line-height: 1.4 }
+.arcade-featured p { color: #8a7d6c; font-size: 10px; line-height: 1.7; margin: 0 }
+.arcade-featured a {
+  margin-top: auto;
+  padding-top: 14px;
+  color: var(--amber);
+  font-size: 10px;
+  text-decoration: none;
+}
+.arcade-page { max-width: 960px }
+.arcade-pref-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 20px 0 36px;
+}
+.arcade-pref-grid a {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid #3a3228;
+  background: #14110e;
+  text-decoration: none;
+  font-size: 12px;
+}
+.arcade-pref-grid a:hover { border-color: var(--amber) }
+.arcade-pref-grid span { color: var(--amber); font: 11px monospace }
+.arcade-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+.arcade-toolbar label {
+  display: grid;
+  gap: 7px;
+  color: #9a8f80;
+  font-size: 10px;
+}
+.arcade-toolbar select,
+.arcade-toolbar input {
+  border: 1px solid #4a3f32;
+  background: #0c0a08;
+  color: #fff;
+  padding: 12px;
+  outline: 0;
+}
+.arcade-toolbar select:focus,
+.arcade-toolbar input:focus { border-color: var(--amber) }
+.arcade-result-count { color: #9a8f80; font-size: 12px }
+.arcade-result-count strong { color: var(--amber); font: 18px monospace; margin-right: 6px }
+.arcade-result-count a { color: var(--amber) }
+.arcade-store-list { display: grid; gap: 8px; margin: 18px 0 }
+.arcade-store-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid #3a3228;
+  background: #14110e;
+}
+.arcade-store-list h3 { margin: 8px 0 6px; font-size: 16px }
+.arcade-store-list p { margin: 0; color: #9a8f80; font-size: 12px; line-height: 1.7 }
+.arcade-pref-chip {
+  display: inline-block;
+  padding: 3px 7px;
+  border: 1px solid #4a3f32;
+  color: var(--amber);
+  font: 9px monospace;
+  text-decoration: none;
+}
+.arcade-store-actions {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 110px;
+}
+.arcade-store-actions a {
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  border: 1px solid #4a3f32;
+  color: #efe4d4;
+  font-size: 10px;
+  text-decoration: none;
+}
+.arcade-store-actions a:hover { border-color: var(--amber); color: var(--amber) }
+.arcade-note, .arcade-disclaimer { color: #6a5f52; font-size: 11px; line-height: 1.8 }
+.arcade-disclaimer a { color: var(--amber) }
+.arcade-disclaimer.home { margin-top: 18px }
+
+@media (max-width: 900px) {
+  .arcade-region-grid { grid-template-columns: repeat(2, 1fr) }
+  .arcade-featured { grid-template-columns: repeat(2, 1fr) }
+  .arcade-pref-grid { grid-template-columns: repeat(2, 1fr) }
+  .arcade-toolbar { grid-template-columns: 1fr }
+  .arcade-store-list article { flex-direction: column }
+  .arcade-store-actions { grid-template-columns: 1fr 1fr; min-width: 0 }
+}
+
 @media (max-width: 590px) {
   .hero { min-height: auto; padding: 65px 20px }
   .hero h1 { font-size: 58px; letter-spacing: -3px }
@@ -685,4 +822,5 @@ main { min-height: 100vh; overflow: hidden }
   .footer { padding-bottom: 100px }
   .ticker div { padding: 0 20px }
   .form-row { grid-template-columns: 1fr }
+  .arcade-region-grid, .arcade-featured, .arcade-pref-grid { grid-template-columns: 1fr }
 }

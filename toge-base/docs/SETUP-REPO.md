@@ -33,3 +33,15 @@ git push -u origin main
 
 - Actions Secrets またはビルド時に `NEXT_PUBLIC_GA_MEASUREMENT_ID`
 - Search Console で所有権確認 → `https://togepass.jp/sitemap.xml` 送信
+
+## 6. 設置店舗データの更新
+
+ALL.Net から全国店舗を再取得:
+
+```bash
+cd toge-base
+npm run arcades:refresh
+npm run build:pages
+```
+
+更新後は `public/sitemap.xml` の `lastmod` も必要なら合わせてください。

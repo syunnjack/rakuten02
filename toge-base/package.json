@@ -13,6 +13,7 @@
     "start": "vinext start",
     "test": "npm run build:pages && node --test tests/seo-static.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern out",
+    "arcades:refresh": "python3 scripts/refresh-arcade-locations.py",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

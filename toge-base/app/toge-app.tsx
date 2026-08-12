@@ -1,6 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  arcadeData,
+  getFeaturedStores,
+  getRegionSummaries,
+} from "./arcades/data";
 
 type Garage = {
   name: string;
@@ -265,6 +270,7 @@ export default function TogeApp() {
             [
               ["ホーム", "top"],
               ["攻略", "guides"],
+              ["店舗", "arcades"],
               ["車種", "cars"],
               ["コミュニティ", "community"],
             ] as const
@@ -356,8 +362,8 @@ export default function TogeApp() {
       <section className="ticker">
         <span>NOW TRENDING</span>
         <div>01　秋名山・夜間ブラインド攻略</div>
-        <div>02　初心者向け車種ガイド（AE86 / EG6）</div>
-        <div>03　碓氷ヘアピンのブレーキング</div>
+        <div>02　全国{arcadeData.totalStores}店舗の設置ゲーセン</div>
+        <div>03　初心者向け車種ガイド（AE86 / EG6）</div>
       </section>
 
       <section className="section" id="guides">
@@ -404,6 +410,63 @@ export default function TogeApp() {
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="section arcade-home" id="arcades">
+        <div className="section-title">
+          <div>
+            <p className="kicker">ARCADE LOCATIONS</p>
+            <h2>
+              筐体のあるゲーセンを、
+              <br />
+              <em>全国から探す。</em>
+            </h2>
+          </div>
+          <p>
+            頭文字D THE ARCADE設置店舗を {arcadeData.totalStores} 件収録。
+            <br />
+            都道府県別ページと検索で目的地を絞れます。
+          </p>
+        </div>
+        <div className="arcade-region-grid home">
+          {getRegionSummaries().map((region) => (
+            <a
+              key={region.region}
+              className="arcade-region-card"
+              href={`/arcades#${region.region}`}
+            >
+              <small>{region.prefectureCount}都道府県</small>
+              <strong>{region.label}</strong>
+              <span>{region.storeCount} 店舗</span>
+            </a>
+          ))}
+        </div>
+        <div className="arcade-featured">
+          {getFeaturedStores().map((item) => (
+            <article key={item.slug}>
+              <span>{item.prefecture}</span>
+              <h3>{item.store.name}</h3>
+              <p>{item.store.address}</p>
+              <a href={`/arcades/${item.slug}`}>都道府県の店舗一覧 →</a>
+            </article>
+          ))}
+        </div>
+        <div className="guide-actions">
+          <a className="primary" href="/arcades">
+            全国の設置店舗を見る <span>→</span>
+          </a>
+          <a
+            className="secondary"
+            href="https://location.am-all.net/alm/location?gm=105"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            公式検索で最新確認 ↗
+          </a>
+        </div>
+        <p className="arcade-disclaimer home">
+          {arcadeData.disclaimer}
+        </p>
       </section>
 
       <section className="section dark-panel" id="cars">
@@ -759,11 +822,11 @@ export default function TogeApp() {
         </p>
         <div>
           <a href="#guides">攻略</a>
+          <a href="/arcades">設置店舗</a>
           <a href="/about">サイトについて</a>
           <a href="/privacy">プライバシー</a>
           <a href="/terms">利用規約</a>
           <a href="/affiliate-disclosure">広告表記</a>
-          <a href="#support">運営を支援</a>
         </div>
       </footer>
 
@@ -772,15 +835,17 @@ export default function TogeApp() {
           [
             ["⌂", "ホーム", "top"],
             ["⌁", "攻略", "guides"],
+            ["⌖", "店舗", "arcades"],
             ["＋", "投稿", "post"],
-            ["♢", "ガレージ", "garage"],
           ] as const
         ).map(([icon, label, id]) => (
           <button
             onClick={() =>
-              id === "post" || id === "garage"
-                ? setModal(id)
-                : jump(label, id)
+              id === "post"
+                ? setModal("post")
+                : id === "arcades"
+                  ? (window.location.href = "/arcades")
+                  : jump(label, id)
             }
             key={label}
           >
