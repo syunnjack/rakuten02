@@ -20,11 +20,22 @@
 
 ## 全リポジトリ一括適用
 
+### ローカル（推奨）
+
+自分の GitHub 認証情報で実行します。
+
 ```bash
+export GITHUB_OWNER=syunnjack
 ./scripts/booth-rollout/rollout-all-repos.sh
 ```
 
-- 各リポジトリに `cursor/booth-revenue-funnel-80c6` ブランチを push
+### GitHub Actions
+
+1. リポジトリ Secret に `BOOTH_ROLLOUT_PAT` を登録（`repo` スコープ付き classic PAT）
+2. Actions → **BOOTH rollout** → Run workflow
+
+各リポジトリに `cursor/booth-revenue-funnel-80c6` ブランチが push されます。マージはリポジトリごとに PR を作成して確認してください。
+
 - 既に BOOTH セクションがあるリポジトリはスキップ
 
 ## rakuten02（終電ホテル）固有
