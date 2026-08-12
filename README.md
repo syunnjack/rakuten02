@@ -113,3 +113,9 @@ Renderで公開する場合は `render.yaml` をBlueprintとして読み込み�
 - `/robots.txt` のSitemap URLが `https://shudenhotel.jp/sitemap.xml` になっていることを確認
 - `/og-image.svg` と `/favicon.svg` が表示されることを確認
 - `/areas/*`, `/venues/*`, `/guides/*` のLPが200で返ることを確認
+
+<!-- booth-support:readme -->
+
+## 開発支援（BOOTH）
+
+有料ツール・特典コンテンツは [BOOTH（chitamaru）](https://chitamaru.booth.pm/) で販売しています。応援購入いただけると開発の継続に役立ちます。
