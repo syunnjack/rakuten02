@@ -4,9 +4,35 @@ import storeData from "../data/store-videos.json"
 import { resolveVideoAssetUrl } from "../lib/video-assets"
 import { storeProductCategories, storeProducts } from "./store-products"
 
-const pageTitle = "ストア | 積み上げログ"
+const pageTitle = "知多丸ストア | 積み上げログ"
 const pageDescription =
-  "知多丸ブランドの買い切りツール・Webアプリ・テンプレートをBOOTHで販売。アフィリエイト・せどり・SEO・学習・不動産など16製品を掲載。"
+  "知多丸の買い切りツール。副業アフィリエイト・個人開発・せどり向けに厳選したWebアプリとテンプレートをBOOTHで販売しています。"
+
+const personalEntries = [
+  {
+    id: "affiliate",
+    title: "副業アフィリエイトを伸ばす",
+    body: "投稿文・リンク診断・週次収支。ROOMとASPの「感覚運用」をやめる。",
+    cta: "アフィリエイト商品を見る",
+    picks: "ROOM改善ツール ¥2,480 ／ 週次ログブック ¥580",
+  },
+  {
+    id: "seo-ops",
+    title: "個人開発の公開を早くする",
+    body: "SEO・GA4・IndexNowとリポジトリ棚卸し。毎回調べ直す時間をキットにする。",
+    cta: "SEO・運用商品を見る",
+    picks: "サイト公開キット ¥980 ／ RepoKura ¥2,480",
+  },
+  {
+    id: "resale",
+    title: "せどりの査定を速くする",
+    body: "JANスキャン・相場・店舗間価格差。仕入れ判断を手元で完結させる。",
+    cta: "せどり商品を見る",
+    picks: "せどらーS ¥3,800 ／ BuybackAlert ¥980",
+  },
+] as const
+
+const BOOTH_SHOP_URL = "https://chitamaru.booth.pm"
 
 export const metadata: Metadata = {
   title: pageTitle,
@@ -146,15 +172,23 @@ export default function StorePage() {
         name: "決済方法は何に対応していますか？",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "すべてBOOTHでの購入に対応します。クレジットカード、PayPay、コンビニ払い、キャリア決済など、BOOTHが対応する各種決済方法がご利用いただけます。",
+          text: "決済はBOOTHで完結します。クレジットカード、PayPay、コンビニ払い、キャリア決済など、BOOTHが対応する方法が使えます。",
         },
       },
       {
         "@type": "Question",
-        name: "購入形式はどのような形ですか？",
+        name: "買い切りですか？月額ですか？",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "ソフトウェア・テンプレートは買い切りです。動画は単品PPV購入。サブスクリプション不要で、一度購入したソフトウェアは永続利用できます。",
+          text: "いま出している本体は買い切り（と一部PPV）です。月額アラート系は準備中で、ストアではまず買い切りから始められます。",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "どれから買えばいいですか？",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "副業なら楽天ROOMクリック改善ツールか週次収支ログブック、個人開発ならサイト公開キット、せどりならBuybackAlertかせどらーS。ページ上部の「おすすめ3つの入口」から選んでください。",
         },
       },
       {
@@ -162,7 +196,7 @@ export default function StorePage() {
         name: "無料で試せる商品はありますか？",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "時短レシピ支援アプリ（/tools/recipe）、GoalPilot（goalpilot.jp）、AI Quiz Study（デモ版）、RepoKura（デモ版）など、複数の商品で無料お試し・デモを公開しています。",
+          text: "時短レシピ、GoalPilot、AI Quiz Study、RepoKura、えらびよりなど、デモや無料枠がある商品があります。各商品の「デモを見る」からどうぞ。",
         },
       },
       {
@@ -170,7 +204,15 @@ export default function StorePage() {
         name: "ソースコードは含まれますか？",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Webアプリ・Laravelテンプレート・Windowsアプリはソースコード一式をお渡しします。スプレッドシートテンプレートはコピー用URL、公開キットはZIPダウンロードです。各商品ページの説明をご確認ください。",
+          text: "Webアプリ・Laravel・Windows系はソース一式が基本です。スプレッドシートはコピー用URL、公開キットはZIPです。",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "会社や店舗向けの掲載・SaaSはありますか？",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "B2B（店舗掲載や業務向けSaaS）は別フェーズで準備中です。まずは個人向けの買い切りラインをご利用ください。",
         },
       },
     ],
@@ -185,7 +227,7 @@ export default function StorePage() {
       <section className="archive-hero store-hero">
         <p className="eyebrow">
           <span />
-          知多丸 ストア
+          知多丸
         </p>
         <h1>
           使えるものを、
@@ -193,17 +235,49 @@ export default function StorePage() {
           買い切りで。
         </h1>
         <p>
-          syunnjackの全リポジトリから厳選した{storeProducts.length}製品をBOOTHで販売しています。
-          アフィリエイト・せどり・SEO・学習・不動産など、目的別に選べます。
+          副業・個人開発・せどり。まず自分の収益と運用を整えるツールだけをBOOTHで。
         </p>
-        <div className="store-payment-note">
-          <span>販売</span>
-          <strong>BOOTH</strong>
-          <span>形式</span>
-          <strong>買い切り / PPV</strong>
-          <span>製品数</span>
-          <strong>{storeProducts.length}点</strong>
+        <div className="store-hero-cta">
+          <a className="store-hero-cta-primary" href="#personal-entries">
+            おすすめ3つの入口へ
+          </a>
+          <a
+            className="store-hero-cta-secondary"
+            href={BOOTH_SHOP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            BOOTHショップを開く ↗
+          </a>
         </div>
+      </section>
+
+      <section className="store-entries" id="personal-entries">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">
+              <span />
+              個人向け
+            </p>
+            <h2>おすすめ3つの入口</h2>
+          </div>
+          <p>迷ったらここから。買い切りのみ。</p>
+        </div>
+        <ol className="store-entry-list">
+          {personalEntries.map((entry, index) => (
+            <li key={entry.id}>
+              <a className="store-entry-link" href={`#cat-${entry.id}`}>
+                <span className="store-entry-index">{String(index + 1).padStart(2, "0")}</span>
+                <span className="store-entry-copy">
+                  <strong>{entry.title}</strong>
+                  <span>{entry.body}</span>
+                  <em>{entry.picks}</em>
+                </span>
+                <span className="store-entry-cta">{entry.cta}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* ── ソフトウェア製品（カテゴリ別）── */}
@@ -211,7 +285,7 @@ export default function StorePage() {
         const products = storeProducts.filter((p) => p.category === cat.id)
         if (products.length === 0) return null
         return (
-          <section className="store-products-section" key={cat.id}>
+          <section className="store-products-section" id={`cat-${cat.id}`} key={cat.id}>
             <div className="section-heading">
               <div>
                 <p className="eyebrow">

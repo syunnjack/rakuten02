@@ -76,9 +76,12 @@ git add -A && git commit -m "Store: add 16 curated products from all repos, cate
 
 ## BOOTH出品が必要な新商品
 
+出品文・価格・納品チェックリストは **`BOOTH-LISTINGS.md`** を参照（コピペ用）。
+
 `chitamaru.booth.pm/items/` 以下に出品してください:
 
-- `raku-toolv2` `togo-kanri-tool` `sedora-s` `dvd-jan-scan-db`
-- `buyback-price-alert` `goal-pilot-app` `receipt-jp` `ai-quiz-study`
-- `studylaw-app` `content-brief-engine` `fudousan-kakaku-watch`
-- `hobby-log-special`（PPV動画）
+- 優先: `rakuafi-tool` `affiliate-logbook` `site-launch-kit`
+- 未出品11: `raku-toolv2` `togo-kanri-tool` `sedora-s` `dvd-jan-scan-db`
+  `buyback-price-alert` `goal-pilot-app` `receipt-jp` `ai-quiz-study`
+  `studylaw-app` `content-brief-engine` `fudousan-kakaku-watch`
+- PPV: `hobby-log-special`
