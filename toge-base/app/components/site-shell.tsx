@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE_NAME } from "../site";
+import { BOOTH_SHOP_URL, boothRel } from "../booth";
 
 export function SiteShell({
   children,
@@ -60,6 +61,9 @@ export function SiteShell({
           <Link href="/privacy">プライバシー</Link>
           <Link href="/terms">利用規約</Link>
           <Link href="/affiliate-disclosure">広告表記</Link>
+          <a href={BOOTH_SHOP_URL} target="_blank" rel={boothRel}>
+            BOOTH
+          </a>
           <Link href="/llms.txt">llms.txt</Link>
         </div>
       </footer>

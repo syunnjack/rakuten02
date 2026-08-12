@@ -54,7 +54,10 @@ npm test
 | `NEXT_PUBLIC_SITE_URL` | canonical / OGP のベースURL（既定: `https://togepass.jp`） |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | GA4 測定ID（未設定時はタグ非出力） |
 | `NEXT_PUBLIC_SUPPORT_URL` | サポーター登録URL |
-| `NEXT_PUBLIC_GEAR_AFFILIATE_URL` | ギア紹介アフィリエイトURL |
+| `NEXT_PUBLIC_BOOTH_SHOP_URL` | BOOTHショップURL（既定: `https://togebase.booth.pm`） |
+| `NEXT_PUBLIC_BOOTH_ITEM_NOTES_URL` | 峠メモ商品URL（未設定時はショップTOP） |
+| `NEXT_PUBLIC_BOOTH_ITEM_CHECKLIST_URL` | チェックリスト商品URL |
+| `NEXT_PUBLIC_BOOTH_ITEM_SUPPORT_URL` | 応援パック商品URL |
 | `NEXT_PUBLIC_PARTNER_URL` | 店舗掲載相談URL |
 
 ## デプロイ

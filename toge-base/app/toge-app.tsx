@@ -6,6 +6,7 @@ import {
   getFeaturedStores,
   getRegionSummaries,
 } from "./arcades/data";
+import { BOOTH_ITEMS, boothRel } from "./booth";
 
 type Garage = {
   name: string;
@@ -141,9 +142,9 @@ const revenueLinks = {
   support:
     process.env.NEXT_PUBLIC_SUPPORT_URL ||
     "mailto:support@togepass.jp?subject=TOGE%20BASE%E3%82%B5%E3%83%9D%E3%83%BC%E3%82%BF%E3%83%BC%E7%99%BB%E9%8C%B2",
-  gear:
-    process.env.NEXT_PUBLIC_GEAR_AFFILIATE_URL ||
-    "https://www.amazon.co.jp/s?k=%E3%83%89%E3%83%A9%E3%82%A4%E3%83%93%E3%83%B3%E3%82%B0%E3%82%B0%E3%83%AD%E3%83%BC%E3%83%96+%E3%82%B2%E3%83%BC%E3%83%A0",
+  booth:
+    process.env.NEXT_PUBLIC_BOOTH_SHOP_URL?.trim() ||
+    "https://togebase.booth.pm",
   partner:
     process.env.NEXT_PUBLIC_PARTNER_URL ||
     "mailto:partner@togepass.jp?subject=TOGE%20BASE%E6%8E%B2%E8%BC%89%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87",
@@ -469,6 +470,32 @@ export default function TogeApp() {
         </p>
       </section>
 
+      <aside className="booth-strip" aria-label="BOOTHショップ">
+        <div className="booth-strip-copy">
+          <span className="booth-pr">PR</span>
+          <p className="kicker">BOOTH</p>
+          <p>
+            攻略本文は無料。応援したいときだけ、峠メモやチェックリストをBOOTHからどうぞ。
+          </p>
+        </div>
+        <div className="booth-strip-items">
+          {BOOTH_ITEMS.map((item) => (
+            <a key={item.id} href={item.href} target="_blank" rel={boothRel}>
+              <b>{item.label}</b>
+              <span>{item.blurb}</span>
+            </a>
+          ))}
+        </div>
+        <a
+          className="booth-strip-shop"
+          href={revenueLinks.booth}
+          target="_blank"
+          rel={boothRel}
+        >
+          ショップを開く →
+        </a>
+      </aside>
+
       <section className="section dark-panel" id="cars">
         <div className="section-title">
           <div>
@@ -714,7 +741,7 @@ export default function TogeApp() {
           <p>
             攻略情報はこれまで通り無料。
             <br />
-            応援とパートナー掲載が運営を支えます。
+            BOOTHの任意購入とパートナー掲載が運営を支えます。
           </p>
         </div>
         <div className="revenue-grid">
@@ -737,27 +764,29 @@ export default function TogeApp() {
             </a>
             <small>いつでも解除できます</small>
           </article>
-          <article className="gear-guide">
-            <div className="revenue-label pr">AFFILIATE</div>
-            <p className="kicker">DRIVER&apos;S GEAR</p>
-            <h3>プレイを快適にするギア</h3>
+          <article className="gear-guide booth-plan">
+            <div className="revenue-label pr">PR / BOOTH</div>
+            <p className="kicker">PASS NOTES</p>
+            <h3>BOOTHで峠メモ</h3>
             <p>
-              手の滑りを抑えるグローブ、アーケードカードケース、イヤホンなど、プレイヤー目線で選んだアイテムを紹介。
+              サイトの攻略は無料のまま。手元に残したい人向けに、練習メモやチェックリストをBOOTHで静かに公開しています。
             </p>
             <div className="gear-items">
-              <span>01　ドライビンググローブ</span>
-              <span>02　アーケードカードケース</span>
-              <span>03　有線イヤホン</span>
+              {BOOTH_ITEMS.map((item, index) => (
+                <span key={item.id}>
+                  {String(index + 1).padStart(2, "0")}　{item.label}
+                </span>
+              ))}
             </div>
             <a
               className="revenue-cta secondary-cta"
-              href={revenueLinks.gear}
+              href={revenueLinks.booth}
               target="_blank"
-              rel="nofollow sponsored noopener"
+              rel={boothRel}
             >
-              おすすめギアを見る ↗
+              BOOTHを見る ↗
             </a>
-            <small>購入により運営者へ紹介料が入る場合があります</small>
+            <small>購入が運営の継続につながります（任意）</small>
           </article>
           <article className="partner-plan">
             <div className="revenue-label sponsor">FOR PARTNERS</div>
@@ -787,7 +816,7 @@ export default function TogeApp() {
           </article>
         </div>
         <p className="revenue-policy">
-          TOGE BASEは、広告や提携の有無によって攻略評価を変更しません。広告・アフィリエイト・スポンサー投稿には「PR」を明記します。詳細は
+          TOGE BASEは、広告や提携の有無によって攻略評価を変更しません。BOOTH販売・広告・スポンサー投稿には「PR」を明記します。詳細は
           <a href="/affiliate-disclosure">広告・アフィリエイト表記</a>
           をご覧ください。
         </p>
@@ -823,9 +852,15 @@ export default function TogeApp() {
         <div>
           <a href="#guides">攻略</a>
           <a href="/arcades">設置店舗</a>
+          <a
+            href={revenueLinks.booth}
+            target="_blank"
+            rel={boothRel}
+          >
+            BOOTH
+          </a>
           <a href="/about">サイトについて</a>
           <a href="/privacy">プライバシー</a>
-          <a href="/terms">利用規約</a>
           <a href="/affiliate-disclosure">広告表記</a>
         </div>
       </footer>

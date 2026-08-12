@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SiteShell } from "../components/site-shell";
 import { SITE_NAME, SITE_URL } from "../site";
 import { ArcadeExplorer } from "./arcade-explorer";
+import { BoothSoftCta } from "../components/booth-soft-cta";
 import {
   OFFICIAL_LOCATION_SEARCH,
   arcadeData,
@@ -92,6 +93,7 @@ export default function ArcadesPage() {
 
         <h2 id="list">店舗を絞り込む</h2>
         <ArcadeExplorer />
+        <BoothSoftCta variant="inline" />
 
         <div className="legal-nav">
           <Link href="/">トップへ戻る</Link>

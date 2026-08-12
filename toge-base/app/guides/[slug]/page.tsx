@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BoothSoftCta } from "../../components/booth-soft-cta";
 import { SiteShell } from "../../components/site-shell";
 import { SITE_NAME, SITE_URL } from "../../site";
 import { getGuide, guides } from "../data";
@@ -136,6 +137,8 @@ export default async function GuidePage({
             ガイド一覧へ
           </Link>
         </div>
+
+        <BoothSoftCta variant="guide" guideTitle={guide.title} />
 
         <div className="legal-nav">
           <Link href="/">トップへ戻る</Link>

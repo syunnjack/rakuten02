@@ -77,6 +77,23 @@ test("arcade location pages export nationwide data", async () => {
   assert.ok(locations.totalStores > 500);
 });
 
+test("booth soft revenue paths are present", async () => {
+  const html = await readOut("index.html");
+  assert.match(html, /BOOTH/);
+  assert.match(html, /booth\.pm|PASS NOTES|峠メモ/);
+  assert.match(html, /nofollow sponsored noopener/);
+
+  const guide = await readOut("guides/akina.html").catch(() =>
+    readOut("guides/akina/index.html"),
+  );
+  assert.match(guide, /BOOTH|PASS NOTES/);
+
+  const disclosure = await readOut("affiliate-disclosure.html").catch(() =>
+    readOut("affiliate-disclosure/index.html"),
+  );
+  assert.match(disclosure, /BOOTH/);
+});
+
 test("package identity is toge-base", async () => {
   const pkg = JSON.parse(
     await readFile(new URL("../package.json", import.meta.url), "utf8"),
