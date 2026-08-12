@@ -42,6 +42,24 @@ builder.Services.AddSingleton(_ => new RakutenApiOptions(
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+app.Use(async (context, next) =>
+{
+    // Prefer the apex host so Search Console does not split signals across www.
+    if (string.Equals(context.Request.Host.Host, "www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+    {
+        var target =
+            $"https://shudenhotel.jp{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+        context.Response.Redirect(target, permanent: true);
+        return;
+    }
+
+    if (string.Equals(context.Request.Host.Host, "shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.Headers.StrictTransportSecurity = "max-age=31536000; includeSubDomains";
+    }
+
+    await next();
+});
 app.UseStaticFiles();
 
 var landingPages = new[]
@@ -63,15 +81,14 @@ var landingPages = new[]
     new LandingPage("/guides/nomikai-after-hotel", "飲み会後に帰れない時のホテル検索", "飲み会後、終電後、深夜に帰宅が難しい時に近くで今夜泊まれるホテルを探すためのページです。", "新宿駅", "飲み会後に帰れない時のホテル探し", "飲み会後は現在地に近い駅名や繁華街名で探すのが早いです。徒歩圏のホテル、チェックイン可能時間、価格を確認してから予約画面へ進みます。")
 };
 
-app.MapGet("/", (HttpRequest request) =>
+app.MapMethods("/", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
     var today = CurrentJapanDate();
-    var defaultCheckin = today;
-    var defaultCheckout = today.AddDays(1);
-    return Results.Content(HtmlPages.Home(request, defaultCheckin, defaultCheckout), "text/html; charset=utf-8");
+    var body = HtmlPages.Home(request, today, today.AddDays(1));
+    await WriteTextResponse(context, request, body, "text/html; charset=utf-8");
 });
 
-app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
+app.MapMethods("/healthz", new[] { "GET", "HEAD" }, () => Results.Ok(new { status = "ok" }));
 
 app.MapGet("/favicon.svg", () => Results.Text("""
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -129,35 +146,38 @@ app.MapGet("/site.webmanifest", (HttpRequest request) =>
     });
 });
 
-app.MapGet("/affiliate-disclosure", (HttpRequest request) =>
+app.MapMethods("/affiliate-disclosure", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/privacy", (HttpRequest request) =>
+app.MapMethods("/privacy", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Privacy(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Privacy(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/terms", (HttpRequest request) =>
+app.MapMethods("/terms", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Terms(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Terms(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/guides/missed-last-train", (HttpRequest request) =>
+app.MapMethods("/guides/missed-last-train", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Guide(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Guide(request), "text/html; charset=utf-8");
 });
 
 foreach (var landingPage in landingPages)
 {
-    app.MapGet(landingPage.Path, (HttpRequest request) =>
+    var path = landingPage.Path;
+    var page = landingPage;
+    app.MapMethods(path, new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
     {
-        return Results.Content(HtmlPages.AreaLanding(request, landingPage), "text/html; charset=utf-8");
+        await WriteTextResponse(context, request, HtmlPages.AreaLanding(request, page), "text/html; charset=utf-8");
     });
 }
 
-app.MapGet("/search", async (
+app.MapMethods("/search", new[] { "GET", "HEAD" }, async (
+    HttpContext context,
     HttpRequest httpRequest,
     RakutenTravelClient client,
     string? place,
@@ -171,28 +191,34 @@ app.MapGet("/search", async (
     var parsedCheckout = ParseDate(checkout) ?? parsedCheckin.AddDays(1);
     var searchRadius = Math.Clamp(radius ?? 1.0, 0.5, 3.0);
 
+    async Task WriteHtml(string html, int statusCode)
+    {
+        context.Response.StatusCode = statusCode;
+        await WriteTextResponse(context, httpRequest, html, "text/html; charset=utf-8");
+    }
+
     if (string.IsNullOrWhiteSpace(place))
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "場所を入力してください。", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8",
-            statusCode: StatusCodes.Status400BadRequest);
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     if (parsedCheckin < today)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "チェックイン日は今日以降を指定してください。", today, today.AddDays(1)),
-            "text/html; charset=utf-8",
-            statusCode: StatusCodes.Status400BadRequest);
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     if (parsedCheckout <= parsedCheckin)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "チェックアウト日はチェックイン日の翌日以降を指定してください。", parsedCheckin, parsedCheckin.AddDays(1)),
-            "text/html; charset=utf-8",
-            statusCode: StatusCodes.Status400BadRequest);
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     try
@@ -203,23 +229,21 @@ app.MapGet("/search", async (
             parsedCheckout,
             searchRadius), cancellationToken);
 
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchResults(httpRequest, place.Trim(), parsedCheckin, parsedCheckout, searchRadius, results),
-            "text/html; charset=utf-8");
+            StatusCodes.Status200OK);
     }
     catch (InvalidOperationException ex)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, ex.Message, parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8",
-            statusCode: StatusCodes.Status503ServiceUnavailable);
+            StatusCodes.Status503ServiceUnavailable);
     }
     catch (HttpRequestException ex)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, $"検索APIへの接続に失敗しました: {ex.Message}", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8",
-            statusCode: StatusCodes.Status503ServiceUnavailable);
+            StatusCodes.Status503ServiceUnavailable);
     }
 });
 
@@ -275,12 +299,16 @@ app.MapMethods("/sitemap.xml", new[] { "GET", "HEAD" }, async (HttpContext conte
     await WriteTextResponse(context, request, body, "application/xml; charset=utf-8");
 });
 
+// IndexNow key file must be publicly fetchable; fall back to the Blueprint default.
 var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
-if (!string.IsNullOrWhiteSpace(indexNowKey))
+if (string.IsNullOrWhiteSpace(indexNowKey))
 {
-    var keyPath = $"/{indexNowKey.Trim()}.txt";
-    app.MapGet(keyPath, () => Results.Text(indexNowKey.Trim(), "text/plain; charset=utf-8"));
+    indexNowKey = "shudenhotelindex2026";
 }
+
+var trimmedIndexNowKey = indexNowKey.Trim();
+app.MapMethods($"/{trimmedIndexNowKey}.txt", new[] { "GET", "HEAD" }, () =>
+    Results.Text(trimmedIndexNowKey, "text/plain; charset=utf-8"));
 
 app.Run();
 
@@ -308,16 +336,7 @@ static DateOnly CurrentJapanDate()
     return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
 }
 
-static string Origin(HttpRequest request)
-{
-    var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
-    if (!string.IsNullOrWhiteSpace(configured))
-    {
-        return configured.TrimEnd('/');
-    }
-
-    return $"{request.Scheme}://{request.Host}";
-}
+static string Origin(HttpRequest request) => PublicUrls.Origin(request);
 
 static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPages)
 {
@@ -363,6 +382,41 @@ internal sealed record LandingPage(
     string Place,
     string Heading,
     string BodyText);
+
+internal static class PublicUrls
+{
+    public static string Origin(HttpRequest request)
+    {
+        var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
+        string origin;
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            origin = configured.Trim().TrimEnd('/');
+        }
+        else
+        {
+            var scheme = request.Headers.TryGetValue("X-Forwarded-Proto", out var forwarded)
+                && !string.IsNullOrWhiteSpace(forwarded)
+                ? forwarded.ToString().Split(',')[0].Trim()
+                : request.Scheme;
+            origin = $"{scheme}://{request.Host}";
+        }
+
+        // Production must never emit http:// in canonical / sitemap / OGP (GSC split).
+        if (origin.StartsWith("http://shudenhotel.jp", StringComparison.OrdinalIgnoreCase)
+            || origin.StartsWith("http://www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+        {
+            origin = "https" + origin[4..];
+        }
+
+        if (origin.StartsWith("https://www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+        {
+            origin = "https://shudenhotel.jp" + origin["https://www.shudenhotel.jp".Length..];
+        }
+
+        return origin.TrimEnd('/');
+    }
+}
 
 internal static class HtmlPages
 {
@@ -1046,16 +1100,7 @@ internal static class HtmlPages
         return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
     }
 
-    private static string Origin(HttpRequest request)
-    {
-        var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
-        if (!string.IsNullOrWhiteSpace(configured))
-        {
-            return configured.TrimEnd('/');
-        }
-
-        return $"{request.Scheme}://{request.Host}";
-    }
+    private static string Origin(HttpRequest request) => PublicUrls.Origin(request);
 
     private static string OriginFromCanonical(string canonicalUrl)
     {

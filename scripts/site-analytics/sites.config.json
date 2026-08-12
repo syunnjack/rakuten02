@@ -4,10 +4,11 @@
     "repo": "syunnjack/rakuten02",
     "domain": "https://shudenhotel.jp/",
     "stack": "aspnet-render",
-    "status": "completed",
+    "status": "gsc-https-canonical-fix-pending-deploy",
     "ga4": "G-542370310",
     "searchConsole": "verified",
-    "sitemap": "success"
+    "sitemap": "success",
+    "note": "2026-08-12: force https origin, noindex /search, IndexNow key fallback, HEAD support"
   },
   {
     "id": "darekore",
@@ -50,14 +51,15 @@
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-render",
-    "status": "live-gsc-only-ga4-secret-pending",
+    "status": "live-ga4-gsc-robots-vc-fix-pending",
     "httpsEnforced": "2026-08-09",
     "dnsVerified": "2026-08-06",
+    "ga4Live": "G-WPET51XMKW",
     "deployDoc": "patches/machi-list/DEPLOY-GITHUB-PAGES-DNS.md",
     "postDnsDoc": "patches/machi-list/POST-DNS-GITHUB-PAGES.md",
     "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "HTTPS 有効。GA4 Secret 設定後 Deploy 再実行",
+    "dnsNote": "HTTPS+GA4+GSC live。空ページ robots 競合とホーム YOUR_VC_* を修正中",
     "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION"
@@ -71,10 +73,10 @@
     "repo": "syunnjack/kousokubus-benri",
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
-    "status": "live-leaflet-0003",
-    "liveVerified": "2026-08-10",
+    "status": "live-placeholder-ga4-gsc",
+    "liveVerified": "2026-08-12",
     "patchApplied": "2026-08-06",
-    "patches": ["0002", "0003", "0004-optional"],
+    "patches": ["0002", "0003", "0004-optional", "0005-placeholder-guard"],
     "deployDoc": "patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md",
     "leafletDoc": "patches/kousokubus-benri/APPLY-0003-LEAFLET.md",
     "windowsDevDoc": "patches/kousokubus-benri/WINDOWS-DEV.md",
@@ -87,8 +89,8 @@
     ],
     "patch": "patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch",
     "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
-    "patchNote": "0001 fails on current layout.tsx — use 0002",
+    "patchNote": "0001 fails on current layout.tsx — use 0002. Live emits Japanese placeholders until Site Creator env is fixed.",
     "indexNowKey": "busselectindex2026",
-    "note": "Search Console サイトマップ送信のみ残り"
+    "note": "Site Creator の GA4/GSC が日本語プレースホルダ。コード側で拒否＋title absolute 修正"
   }
 ]
