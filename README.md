@@ -106,6 +106,8 @@ Renderで公開する場合は `render.yaml` をBlueprintとして読み込み�
 
 ## 開発支援（BOOTH）
 
+<!-- booth-support:readme -->
+
 有料ツール・特典コンテンツは [BOOTH（chitamaru）](https://chitamaru.booth.pm/) で販売しています。応援購入いただけると開発の継続に役立ちます。
 
 Web版フッターにも BOOTH への導線を表示します。ショップURLは環境変数 `BOOTH_SHOP_URL` で変更できます（未設定時は `https://chitamaru.booth.pm`）。
@@ -119,9 +121,3 @@ Web版フッターにも BOOTH への導線を表示します。ショップURL�
 - `/robots.txt` のSitemap URLが `https://shudenhotel.jp/sitemap.xml` になっていることを確認
 - `/og-image.svg` と `/favicon.svg` が表示されることを確認
 - `/areas/*`, `/venues/*`, `/guides/*` のLPが200で返ることを確認
-
-<!-- booth-support:readme -->
-
-## 開発支援（BOOTH）
-
-有料ツール・特典コンテンツは [BOOTH（chitamaru）](https://chitamaru.booth.pm/) で販売しています。応援購入いただけると開発の継続に役立ちます。
