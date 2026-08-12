@@ -331,6 +331,30 @@
     <priority>0.75</priority>
   </url>
   <url>
+    <loc>https://togepass.jp/shop</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://togepass.jp/shop/pass-notes</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://togepass.jp/shop/beginner-checklist</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://togepass.jp/shop/support-pack</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://togepass.jp/about</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>

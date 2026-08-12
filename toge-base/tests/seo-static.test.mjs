@@ -79,19 +79,36 @@ test("arcade location pages export nationwide data", async () => {
 
 test("booth soft revenue paths are present", async () => {
   const html = await readOut("index.html");
-  assert.match(html, /BOOTH/);
-  assert.match(html, /booth\.pm|PASS NOTES|峠メモ/);
-  assert.match(html, /nofollow sponsored noopener/);
+  assert.match(html, /BOOTH|ショップ/);
+  assert.match(html, /booth\.pm|PASS NOTES|峠メモ|SHOP/);
+  assert.match(html, /nofollow sponsored noopener|\/shop/);
 
   const guide = await readOut("guides/akina.html").catch(() =>
     readOut("guides/akina/index.html"),
   );
-  assert.match(guide, /BOOTH|PASS NOTES/);
+  assert.match(guide, /BOOTH|PASS NOTES|ショップ/);
 
   const disclosure = await readOut("affiliate-disclosure.html").catch(() =>
     readOut("affiliate-disclosure/index.html"),
   );
   assert.match(disclosure, /BOOTH/);
+});
+
+test("shop pages list three booth products", async () => {
+  const shop = await readOut("shop.html").catch(() =>
+    readOut("shop/index.html"),
+  );
+  assert.match(shop, /秋名・碓氷 練習メモセット/);
+  assert.match(shop, /壁接触を減らす初心者チェックリスト/);
+  assert.match(shop, /運営応援パック/);
+  assert.match(shop, /BOOTHで購入/);
+  assert.match(shop, /Product|ItemList/);
+
+  const notes = await readOut("shop/pass-notes.html").catch(() =>
+    readOut("shop/pass-notes/index.html"),
+  );
+  assert.match(notes, /秋名山の進入チェック/);
+  assert.match(notes, /nofollow sponsored noopener/);
 });
 
 test("package identity is toge-base", async () => {

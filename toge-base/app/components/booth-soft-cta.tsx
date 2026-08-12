@@ -15,7 +15,7 @@ export function BoothSoftCta({
     return (
       <p className="booth-inline">
         <span className="booth-pr">PR</span>
-        練習メモは{" "}
+        練習メモは <a href="/shop">ショップ</a> /{" "}
         <a href={BOOTH_SHOP_URL} target="_blank" rel={boothRel}>
           BOOTH
         </a>{" "}
@@ -38,12 +38,10 @@ export function BoothSoftCta({
           </h3>
           <p>
             サイトの攻略は無料のまま。手元に残したい人向けに、{item.label}
-            などをBOOTHで静かに公開しています。
+            などをショップで公開しています。
           </p>
         </div>
-        <a href={item.href} target="_blank" rel={boothRel}>
-          BOOTHで見る ↗
-        </a>
+        <a href={`/shop/${item.id}`}>詳細を見る →</a>
       </aside>
     );
   }
@@ -52,21 +50,21 @@ export function BoothSoftCta({
     <aside className="booth-strip" aria-label="BOOTHショップ">
       <div className="booth-strip-copy">
         <span className="booth-pr">PR</span>
-        <p className="kicker">BOOTH</p>
+        <p className="kicker">SHOP / BOOTH</p>
         <p>
-          攻略本文は無料。応援したいときだけ、峠メモやチェックリストをBOOTHからどうぞ。
+          攻略本文は無料。応援したいときだけ、峠メモやチェックリストをどうぞ。
         </p>
       </div>
       <div className="booth-strip-items">
         {BOOTH_ITEMS.map((item) => (
-          <a key={item.id} href={item.href} target="_blank" rel={boothRel}>
+          <a key={item.id} href={`/shop/${item.id}`}>
             <b>{item.label}</b>
             <span>{item.blurb}</span>
           </a>
         ))}
       </div>
-      <a className="booth-strip-shop" href={BOOTH_SHOP_URL} target="_blank" rel={boothRel}>
-        ショップを開く →
+      <a className="booth-strip-shop" href="/shop">
+        ショップを見る →
       </a>
     </aside>
   );

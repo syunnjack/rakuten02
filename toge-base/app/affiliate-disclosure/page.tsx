@@ -32,6 +32,9 @@ export default function AffiliateDisclosurePage() {
         </ul>
         <h2>BOOTH</h2>
         <p>
+          サイト内カタログ: <Link href="/shop">/shop</Link>
+        </p>
+        <p>
           運営ショップ:{" "}
           <a
             href={BOOTH_SHOP_URL}
@@ -42,7 +45,7 @@ export default function AffiliateDisclosurePage() {
           </a>
         </p>
         <p>
-          峠メモ・チェックリスト・応援パックなど、任意購入のデジタル商品を扱うことがあります。URLは環境変数で差し替え可能です。
+          峠メモ・チェックリスト・応援パックなど、任意購入のデジタル商品を扱うことがあります。決済はBOOTH上で行い、商品URLは環境変数で差し替え可能です。
         </p>
         <h2>お問い合わせ</h2>
         <p>

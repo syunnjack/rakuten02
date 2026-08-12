@@ -473,26 +473,21 @@ export default function TogeApp() {
       <aside className="booth-strip" aria-label="BOOTHショップ">
         <div className="booth-strip-copy">
           <span className="booth-pr">PR</span>
-          <p className="kicker">BOOTH</p>
+          <p className="kicker">SHOP / BOOTH</p>
           <p>
-            攻略本文は無料。応援したいときだけ、峠メモやチェックリストをBOOTHからどうぞ。
+            攻略本文は無料。応援したいときだけ、峠メモやチェックリストをどうぞ。
           </p>
         </div>
         <div className="booth-strip-items">
           {BOOTH_ITEMS.map((item) => (
-            <a key={item.id} href={item.href} target="_blank" rel={boothRel}>
+            <a key={item.id} href={`/shop/${item.id}`}>
               <b>{item.label}</b>
               <span>{item.blurb}</span>
             </a>
           ))}
         </div>
-        <a
-          className="booth-strip-shop"
-          href={revenueLinks.booth}
-          target="_blank"
-          rel={boothRel}
-        >
-          ショップを開く →
+        <a className="booth-strip-shop" href="/shop">
+          ショップを見る →
         </a>
       </aside>
 
@@ -767,9 +762,9 @@ export default function TogeApp() {
           <article className="gear-guide booth-plan">
             <div className="revenue-label pr">PR / BOOTH</div>
             <p className="kicker">PASS NOTES</p>
-            <h3>BOOTHで峠メモ</h3>
+            <h3>デジタル商品ショップ</h3>
             <p>
-              サイトの攻略は無料のまま。手元に残したい人向けに、練習メモやチェックリストをBOOTHで静かに公開しています。
+              サイトの攻略は無料のまま。手元に残したい人向けに、練習メモ・チェックリスト・応援パックを用意しています。
             </p>
             <div className="gear-items">
               {BOOTH_ITEMS.map((item, index) => (
@@ -778,15 +773,10 @@ export default function TogeApp() {
                 </span>
               ))}
             </div>
-            <a
-              className="revenue-cta secondary-cta"
-              href={revenueLinks.booth}
-              target="_blank"
-              rel={boothRel}
-            >
-              BOOTHを見る ↗
+            <a className="revenue-cta secondary-cta" href="/shop">
+              商品一覧を見る →
             </a>
-            <small>購入が運営の継続につながります（任意）</small>
+            <small>購入はBOOTHで完結／任意です</small>
           </article>
           <article className="partner-plan">
             <div className="revenue-label sponsor">FOR PARTNERS</div>
@@ -852,13 +842,7 @@ export default function TogeApp() {
         <div>
           <a href="#guides">攻略</a>
           <a href="/arcades">設置店舗</a>
-          <a
-            href={revenueLinks.booth}
-            target="_blank"
-            rel={boothRel}
-          >
-            BOOTH
-          </a>
+          <a href="/shop">ショップ</a>
           <a href="/about">サイトについて</a>
           <a href="/privacy">プライバシー</a>
           <a href="/affiliate-disclosure">広告表記</a>

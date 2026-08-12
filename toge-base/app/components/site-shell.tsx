@@ -34,6 +34,9 @@ export function SiteShell({
           >
             店舗
           </Link>
+          <Link className={active === "shop" ? "active" : ""} href="/shop">
+            ショップ
+          </Link>
           <Link className={active === "about" ? "active" : ""} href="/about">
             について
           </Link>
@@ -61,6 +64,7 @@ export function SiteShell({
           <Link href="/privacy">プライバシー</Link>
           <Link href="/terms">利用規約</Link>
           <Link href="/affiliate-disclosure">広告表記</Link>
+          <Link href="/shop">ショップ</Link>
           <a href={BOOTH_SHOP_URL} target="_blank" rel={boothRel}>
             BOOTH
           </a>

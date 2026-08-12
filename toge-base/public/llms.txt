@@ -12,6 +12,7 @@
 - 秋名山、碓氷峠、いろは坂、八方ヶ原などのコース攻略の要点
 - 初心者向け車種（AE86 / EG6 / FD3S など）の特徴比較
 - 頭文字D THE ARCADE筐体の全国設置ゲームセンター一覧（都道府県別）
+- BOOTH連携の任意購入デジタル商品（峠メモ／チェックリスト／応援パック）
 - マイガレージによる進捗記録（ブラウザ保存のUGC）
 - 攻略情報・質問・対戦募集のコミュニティ投稿
 
@@ -25,6 +26,10 @@
 ## 主要ページ
 
 - [ホーム](https://togepass.jp/): 攻略・店舗・車種・コミュニティの入口
+- [ショップ](https://togepass.jp/shop): BOOTHデジタル商品一覧
+- [峠メモセット](https://togepass.jp/shop/pass-notes)
+- [初心者チェックリスト](https://togepass.jp/shop/beginner-checklist)
+- [運営応援パック](https://togepass.jp/shop/support-pack)
 - [全国設置店舗](https://togepass.jp/arcades)
 - [東京都の設置店舗](https://togepass.jp/arcades/tokyo)
 - [大阪府の設置店舗](https://togepass.jp/arcades/osaka)
