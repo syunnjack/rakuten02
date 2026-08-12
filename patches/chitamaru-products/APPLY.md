@@ -17,6 +17,10 @@
 | `BOOTH-LISTINGS.md` | 未出品の出品文・価格・納品チェックリスト |
 | `STORE-COPY.md` | ストア3入口・ヒーロー・FAQ文案 |
 | `PHASE2-MONTHLY.md` | Phase2 個人月額（終電ホテル Pro）選定 |
+| `PRODUCT-IDEAS.md` | 追加アイデア原案 |
+| `REPOS.md` | **新規78リポ**の配置・GitHub push・ストア反映 |
+| `repos/chitamaru-*/` | おすすめ順スキャフォールド（各独立リポ構成） |
+| `catalog/new-products.json` | 78製品メタデータ |
 
 ## ワンライナー
 

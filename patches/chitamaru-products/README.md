@@ -4,10 +4,11 @@ BOOTH（`https://chitamaru.booth.pm`）で販売する商品データと適用�
 
 ## 進め方（順番）
 
-1. **`BOOTH-LISTINGS.md`** — 未出品の出品文・価格・納品チェック（いまここを実行）
+1. **`BOOTH-LISTINGS.md`** — 未出品の出品文・価格・納品チェック
 2. **`STORE-COPY.md`** — ストア「個人おすすめ3入口」コピー（`store-page.tsx` 反映済み）
 3. **`PHASE2-MONTHLY.md`** — 個人月額は「終電ホテル Pro ¥480」に一本化
-4. **`APPLY.md`** — `tsumiage-log` へパッチ適用
+4. **`REPOS.md`** — 新規78製品スキャフォールド＋GitHub一括push＋ストア反映
+5. **`APPLY.md`** — `tsumiage-log` へパッチ適用
 
 ---
 

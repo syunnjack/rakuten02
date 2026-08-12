@@ -2,11 +2,15 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import storeData from "../data/store-videos.json"
 import { resolveVideoAssetUrl } from "../lib/video-assets"
-import { storeProductCategories, storeProducts } from "./store-products"
+import {
+  recommendedNewProducts,
+  storeProductCategories,
+  storeProducts,
+} from "./store-products"
 
 const pageTitle = "知多丸ストア | 積み上げログ"
 const pageDescription =
-  "知多丸の買い切りツール。副業アフィリエイト・個人開発・せどり向けに厳選したWebアプリとテンプレートをBOOTHで販売しています。"
+  "知多丸の買い切り・月額・B2B候補ツールをBOOTHで販売。副業・せどり・終電ホテル・個人開発など、おすすめ順に揃えています。"
 
 const personalEntries = [
   {
@@ -91,7 +95,7 @@ function TrialLink({ href, label }: { href: string; label: string }) {
 
 function ProductCard({ product }: { product: (typeof storeProducts)[number] }) {
   return (
-    <article className="store-video-card">
+    <article className="store-video-card" id={`product-${product.slug}`}>
       <div
         style={{
           background: product.gradient,
@@ -238,8 +242,11 @@ export default function StorePage() {
           副業・個人開発・せどり。まず自分の収益と運用を整えるツールだけをBOOTHで。
         </p>
         <div className="store-hero-cta">
-          <a className="store-hero-cta-primary" href="#personal-entries">
-            おすすめ3つの入口へ
+          <a className="store-hero-cta-primary" href="#recommend-rank">
+            おすすめ順で見る
+          </a>
+          <a className="store-hero-cta-secondary" href="#personal-entries">
+            3つの入口へ
           </a>
           <a
             className="store-hero-cta-secondary"
@@ -249,6 +256,42 @@ export default function StorePage() {
           >
             BOOTHショップを開く ↗
           </a>
+        </div>
+      </section>
+
+      <section className="store-recommend" id="recommend-rank">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">
+              <span />
+              おすすめ順
+            </p>
+            <h2>ニーズの強い順に {recommendedNewProducts.length} 製品</h2>
+          </div>
+          <p>既存ラインに加え、新規ラインを優先度順で掲載しています。</p>
+        </div>
+        <ol className="store-recommend-list">
+          {recommendedNewProducts.map((product) => (
+            <li key={product.slug}>
+              <a href={`#product-${product.slug}`}>
+                <span className="store-recommend-rank">
+                  #{String(product.recommendRank ?? 0).padStart(2, "0")}
+                </span>
+                <span className="store-recommend-main">
+                  <strong>
+                    {product.emoji} {product.title}
+                  </strong>
+                  <span>{product.sublabel}</span>
+                </span>
+                <span className="store-recommend-price">{product.price}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <div className="store-video-grid store-recommend-grid">
+          {recommendedNewProducts.map((product) => (
+            <ProductCard key={`rec-${product.slug}`} product={product} />
+          ))}
         </div>
       </section>
 
@@ -280,10 +323,14 @@ export default function StorePage() {
         </ol>
       </section>
 
-      {/* ── ソフトウェア製品（カテゴリ別）── */}
+      {/* ── カテゴリ別（既存＋新規。カードidはおすすめ順と共有）── */}
       {storeProductCategories.map((cat) => {
         const products = storeProducts.filter((p) => p.category === cat.id)
         if (products.length === 0) return null
+        // おすすめ順セクションで既に出した新規はカテゴリでは既存のみ＋新規の重複を避けるため
+        // カテゴリでは全件表示（既存16の居場所確保）。新規カードは id 重複を避けるためキーだけ変える
+        const legacy = products.filter((p) => p.recommendRank == null)
+        const newer = products.filter((p) => p.recommendRank != null)
         return (
           <section className="store-products-section" id={`cat-${cat.id}`} key={cat.id}>
             <div className="section-heading">
@@ -294,13 +341,30 @@ export default function StorePage() {
                 </p>
                 <h2>{cat.label}</h2>
               </div>
-              <p>{products.length}製品</p>
+              <p>
+                {products.length}製品
+                {newer.length > 0 ? `（うち新規 ${newer.length}）` : ""}
+              </p>
             </div>
-            <div className="store-video-grid">
-              {products.map((product) => (
-                <ProductCard key={product.slug} product={product} />
-              ))}
-            </div>
+            {legacy.length > 0 && (
+              <div className="store-video-grid">
+                {legacy.map((product) => (
+                  <ProductCard key={product.slug} product={product} />
+                ))}
+              </div>
+            )}
+            {newer.length > 0 && (
+              <p className="store-category-new-note">
+                このカテゴリの新規 {newer.length} 製品は上の「おすすめ順」に掲載しています。
+                {newer.slice(0, 5).map((p) => (
+                  <a key={p.slug} href={`#product-${p.slug}`}>
+                    {" "}
+                    #{p.recommendRank} {p.label}
+                  </a>
+                ))}
+                {newer.length > 5 ? " …" : ""}
+              </p>
+            )}
           </section>
         )
       })}
