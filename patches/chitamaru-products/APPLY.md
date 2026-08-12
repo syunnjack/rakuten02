@@ -6,9 +6,17 @@
 |---------------|--------|
 | `GlobalNav.tsx` | `app/components/GlobalNav.tsx` |
 | `globals.css` | `app/globals.css` |
-| `store-page.tsx` | `app/store/page.tsx` |
+| `store-page.tsx` | `app/store/page.tsx`（個人おすすめ3入口 + FAQ更新済み） |
 | `store-products.ts` | `app/store/store-products.ts` **（新規）** |
 | `store-videos.json` | `app/data/store-videos.json` |
+
+運用ドキュメント（リポ内参照用・tsumiage-logへコピー不要）:
+
+| ファイル | 内容 |
+|----------|------|
+| `BOOTH-LISTINGS.md` | 未出品の出品文・価格・納品チェックリスト |
+| `STORE-COPY.md` | ストア3入口・ヒーロー・FAQ文案 |
+| `PHASE2-MONTHLY.md` | Phase2 個人月額（終電ホテル Pro）選定 |
 
 ## ワンライナー
 
