@@ -1,6 +1,17 @@
-# プロジェクト引き継ぎ — 2026-08-10 更新
+# プロジェクト引き継ぎ — 2026-08-12 更新
 
 **残り作業一覧:** `docs/REMAINING-WORK.md`（最新チェックリスト）
+
+---
+
+## S. Sitemap Auto（サイトマップ自動送信）— 2026-08-12 追加
+
+| 項目 | 内容 |
+|------|------|
+| ソース | `sitemap-auto/`（CLI + GitHub Actions） |
+| 単体 repo | [syunnjack/sitemap-auto](https://github.com/syunnjack/sitemap-auto)（空 → `docs/SETUP-REPO.md` で初回 push） |
+| 機能 | sitemap 差分検知 → GSC API 送信 + IndexNow |
+| ストア | 積み上げログ `/store` へ掲載パッチ: `patches/tsumiage-log/` |
 
 ---
 

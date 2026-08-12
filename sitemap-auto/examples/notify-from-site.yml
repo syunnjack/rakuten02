@@ -1,0 +1,20 @@
+# 各サイトリポジトリに置く例:
+# 記事・ページを main に push したら sitemap-auto ハブへ通知する
+name: Notify sitemap-auto
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch content-published
+        env:
+          GH_TOKEN: ${{ secrets.SITEMAP_AUTO_DISPATCH_TOKEN }}
+        run: |
+          gh api repos/syunnjack/sitemap-auto/dispatches \
+            -f event_type=content-published \
+            -f client_payload[site]='YOUR_SITE_ID'

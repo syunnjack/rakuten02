@@ -1,0 +1,61 @@
+diff --git a/app/store/page.tsx b/app/store/page.tsx
+index ec2a2c0..7e678a2 100644
+--- a/app/store/page.tsx
++++ b/app/store/page.tsx
+@@ -100,7 +100,7 @@ export default function StorePage() {
+       {
+         "@type": "Question",
+         name: "ソフトウェア製品の動作環境は？",
+-        acceptedAnswer: { "@type": "Answer", text: "SEO管理ダッシュボード ProはGoogleアカウントとNext.js環境が必要です。時短レシピ支援アプリは楽天APIキーとNext.js環境（Vercelなど）が必要です。" },
++        acceptedAnswer: { "@type": "Answer", text: "SEO管理ダッシュボード ProはGoogleアカウントとNext.js環境が必要です。時短レシピ支援アプリは楽天APIキーとNext.js環境（Vercelなど）が必要です。Sitemap AutoはNode.js 20以上と、Google Search Console API用のサービスアカウント（任意でIndexNowキー）が必要です。" },
+       },
+     ],
+   }
+@@ -301,6 +301,47 @@ export default function StorePage() {
+             </div>
+           </article>
+ 
++          {/* Sitemap Auto */}
++          <article className="store-video-card">
++            <div style={{ background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)', minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px 12px 0 0' }}>
++              <div style={{ textAlign: 'center', color: 'white', padding: '24px' }}>
++                <div style={{ fontSize: '48px', marginBottom: '12px' }}>🗺️</div>
++                <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Sitemap Auto</div>
++                <div style={{ fontSize: '13px', opacity: 0.85, marginTop: '6px' }}>記事更新 → サイトマップ自動送信</div>
++              </div>
++            </div>
++            <div className="store-video-body">
++              <span className="store-video-badge">オープンソース / 運用ツール</span>
++              <h2>Sitemap Auto</h2>
++              <p>
++                サイトの記事やページが更新されたら、sitemap.xml の差分を検知して
++                Google Search Console と IndexNow へ自動送信するツールです。
++                複数サイトを sites.json でまとめて監視でき、GitHub Actions からも実行できます。
++              </p>
++              <ul style={{ fontSize: '13px', color: '#555', marginTop: '12px', lineHeight: '2', listStyle: 'none', padding: 0 }}>
++                <li>✅ サイトマップ差分（新規URL / lastmod）を自動検知</li>
++                <li>✅ Search Console API でサイトマップ再送信</li>
++                <li>✅ IndexNow で変更URLを検索エンジンへ通知</li>
++                <li>✅ 定期実行・手動実行・repository_dispatch 対応</li>
++              </ul>
++              <a
++                className="store-buy-button"
++                href="https://github.com/syunnjack/sitemap-auto"
++                target="_blank"
++                rel="noopener noreferrer"
++              >
++                GitHubで使う（無料）
++              </a>
++              <p className="store-price-note">
++                リポジトリ:{" "}
++                <a href="https://github.com/syunnjack/sitemap-auto" target="_blank" rel="noopener noreferrer" style={{ color: '#0f766e', textDecoration: 'underline' }}>
++                  syunnjack/sitemap-auto
++                </a>
++                {" "}| MIT License
++              </p>
++            </div>
++          </article>
++
+         </div>
+       </section>
+ 

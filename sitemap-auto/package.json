@@ -1,0 +1,29 @@
+{
+  "name": "sitemap-auto",
+  "version": "1.0.0",
+  "description": "記事・サイトマップ更新を検知し、Google Search Console / IndexNow へ自動送信するツール",
+  "type": "module",
+  "bin": {
+    "sitemap-auto": "./bin/sitemap-auto.mjs"
+  },
+  "scripts": {
+    "start": "node ./bin/sitemap-auto.mjs run",
+    "check": "node ./bin/sitemap-auto.mjs check",
+    "submit": "node ./bin/sitemap-auto.mjs submit --force",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "sitemap",
+    "search-console",
+    "indexnow",
+    "seo",
+    "github-actions"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "google-auth-library": "^9.15.1"
+  }
+}

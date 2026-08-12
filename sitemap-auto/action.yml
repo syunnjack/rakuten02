@@ -1,0 +1,68 @@
+name: Sitemap Auto Submit
+description: Detect sitemap/article updates and submit to Google Search Console + IndexNow
+author: syunnjack
+branding:
+  icon: send
+  color: orange
+
+inputs:
+  config:
+    description: Path to sites.json
+    required: false
+    default: sites.json
+  site:
+    description: Optional site id to process
+    required: false
+    default: ""
+  force:
+    description: Submit even when unchanged
+    required: false
+    default: "false"
+  dry_run:
+    description: Do not submit; print actions only
+    required: false
+    default: "false"
+  wait:
+    description: Wait for sitemap to become available before run
+    required: false
+    default: "false"
+  gsc_service_account_json:
+    description: Google service account JSON (raw or base64)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+
+    - name: Install sitemap-auto
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --omit=dev
+
+    - name: Run sitemap-auto
+      shell: bash
+      working-directory: ${{ github.workspace }}
+      env:
+        GSC_SERVICE_ACCOUNT_JSON: ${{ inputs.gsc_service_account_json }}
+        SITEMAP_AUTO_STATE: ${{ github.workspace }}/.sitemap-auto/state.json
+      run: |
+        set -euo pipefail
+        ARGS=(run --config "${{ inputs.config }}")
+        if [ -n "${{ inputs.site }}" ]; then
+          ARGS+=(--site "${{ inputs.site }}")
+        fi
+        if [ "${{ inputs.force }}" = "true" ]; then
+          ARGS+=(--force)
+        fi
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          ARGS+=(--dry-run)
+        fi
+        if [ "${{ inputs.wait }}" = "true" ]; then
+          ARGS+=(--wait)
+        fi
+        node "${{ github.action_path }}/bin/sitemap-auto.mjs" "${ARGS[@]}"

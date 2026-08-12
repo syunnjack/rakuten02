@@ -1,0 +1,50 @@
+{
+  "sites": [
+    {
+      "id": "example",
+      "name": "Example Site",
+      "siteUrl": "https://example.com/",
+      "sitemapUrl": "https://example.com/sitemap.xml",
+      "gscProperty": "https://example.com/",
+      "indexNowKey": "exampleindex2026",
+      "indexNowKeyLocation": "https://example.com/exampleindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "darekore",
+      "name": "ダレコレ",
+      "siteUrl": "https://darekore.jp/",
+      "sitemapUrl": "https://darekore.jp/sitemap.xml",
+      "gscProperty": "https://darekore.jp/",
+      "indexNowKey": "darekoreindex2026",
+      "indexNowKeyLocation": "https://darekore.jp/darekoreindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "goalpilot",
+      "name": "GoalPilot",
+      "siteUrl": "https://goalpilot.jp/",
+      "sitemapUrl": "https://goalpilot.jp/sitemap.xml",
+      "gscProperty": "https://goalpilot.jp/",
+      "enabled": true
+    },
+    {
+      "id": "busselect",
+      "name": "バスセレクト",
+      "siteUrl": "https://busselect.jp/",
+      "sitemapUrl": "https://busselect.jp/sitemap.xml",
+      "gscProperty": "https://busselect.jp/",
+      "indexNowKey": "busselectindex2026",
+      "indexNowKeyLocation": "https://busselect.jp/busselectindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "togebase",
+      "name": "TOGE BASE",
+      "siteUrl": "https://togepass.jp/",
+      "sitemapUrl": "https://togepass.jp/sitemap.xml",
+      "gscProperty": "sc-domain:togepass.jp",
+      "enabled": false
+    }
+  ]
+}
