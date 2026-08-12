@@ -1,0 +1,119 @@
+From 6e9a9e464da73e263cd5055e508636aa4e51bfcc Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Wed, 12 Aug 2026 23:47:35 +0000
+Subject: [PATCH] Expand sitemap, remove vercel robots, add SoftwareApplication
+ JSON-LD
+
+---
+ app/layout.tsx    | 16 ++++++++++++----
+ app/page.tsx      | 16 ++++++++++++++++
+ app/sitemap.ts    | 15 +++++++++++++--
+ public/robots.txt |  4 ----
+ 4 files changed, 41 insertions(+), 10 deletions(-)
+ delete mode 100644 public/robots.txt
+
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 514b773..4db57fe 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -5,18 +5,26 @@ export const metadata: Metadata = {
+   metadataBase: new URL('https://goalpilot.jp'),
+   title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+   description: '逆算スケジュール、3分タスク、ご褒美設計、挫折リスク検知に加え、仕事・人間関係・お金・健康などのAI悩み相談も。目標達成を幅広く支援するアプリ。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/'
++  },
+   openGraph: {
+-    title: 'GoalPilot',
++    title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+     description: '三日坊主を前提に、目標達成まで戻してくれるアプリ。',
+-    url: 'https://goalpilot.jp',
++    url: 'https://goalpilot.jp/',
+     siteName: 'GoalPilot',
+-    type: 'website'
++    type: 'website',
++    locale: 'ja_JP'
+   },
+   twitter: {
+     card: 'summary_large_image',
+-    title: 'GoalPilot',
++    title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+     description: '三日坊主を前提に、目標達成まで戻してくれるアプリ。'
+   },
++  robots: {
++    index: true,
++    follow: true
++  },
+   verification: {
+     google: 'Z0i0l-P_Rt-j5c-b31w9z3XWfqI_SZOJ-E6LUdYTNZc'
+   }
+diff --git a/app/page.tsx b/app/page.tsx
+index 7e3c56b..0284284 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,8 +1,24 @@
+ import { GoalPilotClient } from '@/components/GoalPilotClient'
+ 
++const jsonLd = {
++  '@context': 'https://schema.org',
++  '@type': 'SoftwareApplication',
++  name: 'GoalPilot',
++  applicationCategory: 'LifestyleApplication',
++  operatingSystem: 'Web',
++  url: 'https://goalpilot.jp/',
++  description:
++    '三日坊主を前提に、逆算スケジュール・3分タスク・ご褒美設計・挫折リスク検知で目標達成まで戻してくれるアプリ。',
++  inLanguage: 'ja',
++}
++
+ export default function Page() {
+   return (
+     <main>
++      <script
++        type="application/ld+json"
++        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
++      />
+       <section className="hero">
+         <div>
+           <p className="eyebrow">GoalPilot / Anti-give-up planner</p>
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index 3394ea3..5534561 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -4,10 +4,21 @@ export const dynamic = "force-static";
+ 
+ export default function sitemap(): MetadataRoute.Sitemap {
+   const baseUrl = "https://goalpilot.jp";
+-  const paths = ["/", "/diagnosis/", "/templates/", "/consult/", "/share/", "/pro/"];
++  const paths = [
++    "/",
++    "/diagnosis/",
++    "/templates/",
++    "/consult/",
++    "/share/",
++    "/pro/",
++    "/line/",
++    "/partners/reward/",
++  ];
++  const now = new Date();
+   return paths.map((path) => ({
+     url: `${baseUrl}${path}`,
+-    changeFrequency: "weekly",
++    lastModified: now,
++    changeFrequency: "weekly" as const,
+     priority: path === "/" ? 1 : 0.6,
+   }));
+ }
+diff --git a/public/robots.txt b/public/robots.txt
+deleted file mode 100644
+index a4794f2..0000000
+--- a/public/robots.txt
++++ /dev/null
+@@ -1,4 +0,0 @@
+-User-agent: *
+-Allow: /
+-
+-Sitemap: https://goal-pilot-app.vercel.app/sitemap.xml
+-- 
+2.43.0
+

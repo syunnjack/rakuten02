@@ -30,7 +30,21 @@ curl -sI -X HEAD https://shudenhotel.jp/ | head -1  # 200
 curl -sI https://shudenhotel.jp/shudenhotelindex2026.txt | head -1  # 200
 ```
 
+## 他サイトパッチ
+
+他リポジトリへの push 権限がないため、修正は `patches/` に同梱。
+
+適用手順: `patches/APPLY-GSC-2026-08-12.md`
+
+| サイト | パッチ |
+|--------|--------|
+| busselect | `patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch` |
+| darekore | `patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch` |
+| machi-list | `patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch` |
+| goalpilot | `patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch` |
+
 ## ユーザー側（エージェント不可）
 
+- 上記パッチを各リポジトリへ `git am` → push → デプロイ
 - Search Console で各プロパティのサイトマップ再送信 / カバレッジ確認
 - busselect: Site Creator の `NEXT_PUBLIC_GOOGLE_*` を実トークンへ差し替え（プレースホルダ文字を削除）

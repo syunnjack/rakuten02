@@ -1,0 +1,50 @@
+From d68ad80e2bb8a36e361c3e015ef732d9974d2e0c Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Wed, 12 Aug 2026 23:47:13 +0000
+Subject: [PATCH] Fix robots meta conflict and ValueCommerce placeholder IDs
+
+---
+ index.html                     | 2 +-
+ scripts/site-analytics-head.js | 7 ++++---
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/index.html b/index.html
+index 1a7b301..61d8ca6 100644
+--- a/index.html
++++ b/index.html
+@@ -210,7 +210,7 @@
+       </section>
+ 
+       <section id="quickTools" class="quick-tools" aria-label="便利な確認">
+-        <a href="https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=YOUR_VC_SID&amp;pid=YOUR_VC_PID&amp;vc_url=https%3A%2F%2Fwww.hotpepper.jp%2FSA33%2F" class="tool-link">予約できる店</a>
++        <a href="https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3771711&amp;pid=892675357&amp;vc_url=https%3A%2F%2Fwww.hotpepper.jp%2FSA33%2F" class="tool-link">予約できる店</a>
+         <a href="https://search.rakuten.co.jp/search/mall/%E3%82%AF%E3%83%BC%E3%83%9D%E3%83%B3/" class="tool-link">クーポンを探す</a>
+         <a href="https://www.navitime.co.jp/parking/" class="tool-link">近くの駐車場</a>
+         <a href="https://www.hotpepper.jp/SA33/" class="tool-link">周辺の飲食店</a>
+diff --git a/scripts/site-analytics-head.js b/scripts/site-analytics-head.js
+index 8e8e10f..cfd9358 100644
+--- a/scripts/site-analytics-head.js
++++ b/scripts/site-analytics-head.js
+@@ -7,15 +7,16 @@ function escapeHtml(value) {
+ }
+ 
+ function siteAnalyticsHead() {
+-  const parts = ['    <meta name="robots" content="index, follow">'];
++  // robots is owned by pageShell so empty pages can stay noindex without conflict.
++  const parts = [];
+ 
+   const verification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+-  if (verification) {
++  if (verification && /^[A-Za-z0-9_-]{10,100}$/.test(verification) && !/[\u3040-\u30ff\u3400-\u9fff\s]/.test(verification)) {
+     parts.push(`    <meta name="google-site-verification" content="${escapeHtml(verification)}">`);
+   }
+ 
+   const measurementId = process.env.GOOGLE_ANALYTICS_MEASUREMENT_ID?.trim();
+-  if (measurementId) {
++  if (measurementId && /^G-[A-Z0-9]+$/i.test(measurementId)) {
+     const id = escapeHtml(measurementId);
+     parts.push(`    <script async src="https://www.googletagmanager.com/gtag/js?id=${id}"></script>`);
+     parts.push(`    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${id}');</script>`);
+-- 
+2.43.0
+

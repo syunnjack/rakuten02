@@ -1,0 +1,115 @@
+From 6dce50f200389307ac969bf6688943296f75af85 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Wed, 12 Aug 2026 23:46:52 +0000
+Subject: [PATCH] Reject placeholder GA4/GSC tokens and fix homepage title
+
+Site Creator currently has Japanese placeholder env values that were
+emitting invalid verification and gtag tags. Only accept real tokens,
+use absolute homepage title, normalize sitemap homepage slash, and
+emit hostname-only robots Host.
+---
+ app/layout.tsx |  6 +++---
+ app/page.tsx   | 11 ++++++++---
+ app/robots.ts  |  4 ++--
+ lib/site.ts    | 20 +++++++++++++++++++-
+ 4 files changed, 32 insertions(+), 9 deletions(-)
+
+diff --git a/app/layout.tsx b/app/layout.tsx
+index ba39a2f..d7e3418 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -1,10 +1,10 @@
+ import type { Metadata } from "next";
+ import Script from "next/script";
+-import { SITE_URL } from "../lib/site";
++import { SITE_URL, realGa4Id, realGscToken } from "../lib/site";
+ import "./globals.css";
+ 
+-const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID;
+-const gscToken = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
++const gaId = realGa4Id(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID);
++const gscToken = realGscToken(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION);
+ 
+ export const metadata: Metadata = {
+   metadataBase: new URL(SITE_URL),
+diff --git a/app/page.tsx b/app/page.tsx
+index 2941336..6b14a9d 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -7,7 +7,8 @@ import { todayInJst } from "../lib/jst";
+ export const dynamic = "force-dynamic";
+ 
+ export const metadata: Metadata = {
+-  title: "NOLU | 高速バスを、価格だけで選ばない。",
++  // absolute: avoid layout title template appending another "| NOLU"
++  title: { absolute: "NOLU | 高速バスを、価格だけで選ばない。" },
+   description:
+     "料金・快眠度・定時性・設備・口コミを一度に比較。あなたに合う夜行バス・高速バスを見つける移動品質ナビ。",
+ };
+@@ -16,11 +17,15 @@ const jsonLd = {
+   "@context": "https://schema.org",
+   "@type": "WebSite",
+   name: "NOLU",
++  url: siteUrl("/"),
+   description: "高速バス・夜行バスの移動品質比較ナビ",
+   potentialAction: {
+     "@type": "SearchAction",
+-    target: siteUrl("/search?from={from}&to={to}"),
+-    "query-input": ["required name=from", "required name=to"],
++    target: {
++      "@type": "EntryPoint",
++      urlTemplate: siteUrl("/search?from={from}&to={to}"),
++    },
++    "query-input": "required name=from",
+   },
+ };
+ 
+diff --git a/app/robots.ts b/app/robots.ts
+index f95ca68..6cd6e2d 100644
+--- a/app/robots.ts
++++ b/app/robots.ts
+@@ -1,10 +1,10 @@
+ import type { MetadataRoute } from "next";
+-import { SITE_URL, siteUrl } from "../lib/site";
++import { SITE_HOST, siteUrl } from "../lib/site";
+ 
+ export default function robots(): MetadataRoute.Robots {
+   return {
+     rules: [{ userAgent: "*", allow: "/", disallow: ["/admin/", "/api/"] }],
+     sitemap: siteUrl("/sitemap.xml"),
+-    host: SITE_URL,
++    host: SITE_HOST,
+   };
+ }
+diff --git a/lib/site.ts b/lib/site.ts
+index 34c1228..e49f28f 100644
+--- a/lib/site.ts
++++ b/lib/site.ts
+@@ -10,5 +10,23 @@ export const SITE_HOST = new URL(SITE_URL).host;
+ 
+ /** SITE_URL からの絶対URLを組み立てる。path は "/routes" のように先頭スラッシュ付きで渡す。 */
+ export function siteUrl(path = ""): string {
+-  return `${SITE_URL}${path}`;
++  if (!path || path === "/") {
++    return `${SITE_URL}/`;
++  }
++  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
++}
++
++/** GA4 Measurement ID. Reject unset / Japanese doc placeholders. */
++export function realGa4Id(value?: string | null): string | undefined {
++  const v = value?.trim();
++  if (!v) return undefined;
++  return /^G-[A-Z0-9]+$/i.test(v) ? v : undefined;
++}
++
++/** GSC HTML-tag token. Reject Japanese / spaces / docs placeholders. */
++export function realGscToken(value?: string | null): string | undefined {
++  const v = value?.trim();
++  if (!v) return undefined;
++  if (/[\u3040-\u30ff\u3400-\u9fff\s]/.test(v)) return undefined;
++  return /^[A-Za-z0-9_-]{10,100}$/.test(v) ? v : undefined;
+ }
+-- 
+2.43.0
+
