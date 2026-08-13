@@ -55,3 +55,14 @@ python3 products/generate.py
 ```
 
 各 `products/chitamaru-*/` が独立リポの中身です。rakuten02 に置いているのは **配布用の正本** で、GitHub 側が公開リポです。
+
+## BOOTH 出品（続き）
+
+```bash
+python3 products/generate_listings.py   # 出品文 + store-16-products.ts
+chmod +x products/pack-booth-zips.sh
+./products/pack-booth-zips.sh           # products/dist-zips/*.zip
+```
+
+今すぐ出す4本（¥580）: Content Brief Packs / Midnight Spot / Trip Route Stay / OpenClose Radar。  
+文案は `products/BOOTH-LISTINGS.md`。
