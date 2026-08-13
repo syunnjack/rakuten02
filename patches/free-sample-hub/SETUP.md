@@ -1,5 +1,11 @@
 # free-sample-hub — セットアップ（PowerShell はユーザー側）
 
+**現行ルート:** [Devin PR #1](https://github.com/syunnjack/free-sample-hub/pull/1) をマージ（ローカル 0001–0003 は現行 main と衝突）。
+
+```bash
+bash scripts/site-analytics/complete-dti-rollout.sh
+```
+
 パッチ適用〜ローカル確認は PowerShell で実施。手順は `patches/DEPLOY-WINDOWS.md` セクション 2 を参照。
 
 ## パッチ（0001 → 0002 → 0003 の順）

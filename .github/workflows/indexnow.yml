@@ -26,26 +26,35 @@ jobs:
           done
           echo "Timed out waiting for deployment; submitting URLs anyway"
 
-      - name: Submit URLs to IndexNow
+      - name: Submit URLs to IndexNow (Bing + Yandex)
         env:
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: |
           set +e
           KEY="${INDEXNOW_KEY:-shudenhotelindex2026}"
           PAYLOAD=$(cat <<EOF
-          {"host":"shudenhotel.jp","key":"${KEY}","keyLocation":"https://shudenhotel.jp/${KEY}.txt","urlList":["https://shudenhotel.jp/","https://shudenhotel.jp/guides/missed-last-train","https://shudenhotel.jp/guides/taxi-or-hotel","https://shudenhotel.jp/guides/after-live-hotel","https://shudenhotel.jp/guides/nomikai-after-hotel","https://shudenhotel.jp/areas/shinjuku-last-train","https://shudenhotel.jp/areas/shibuya-tonight-hotel","https://shudenhotel.jp/areas/tokyo-station-tonight-hotel","https://shudenhotel.jp/areas/yokohama-last-train","https://shudenhotel.jp/areas/ikebukuro-last-train","https://shudenhotel.jp/areas/ueno-tonight-hotel","https://shudenhotel.jp/areas/shinagawa-business-hotel","https://shudenhotel.jp/areas/namba-last-train","https://shudenhotel.jp/venues/tokyo-dome-after-live","https://shudenhotel.jp/venues/saitama-super-arena-after-live","https://shudenhotel.jp/venues/yokohama-arena-after-live","https://shudenhotel.jp/venues/makuhari-messe-after-event"]}
+          {"host":"shudenhotel.jp","key":"${KEY}","keyLocation":"https://shudenhotel.jp/${KEY}.txt","urlList":["https://shudenhotel.jp/","https://shudenhotel.jp/guides/missed-last-train","https://shudenhotel.jp/guides/taxi-or-hotel","https://shudenhotel.jp/guides/after-live-hotel","https://shudenhotel.jp/guides/nomikai-after-hotel","https://shudenhotel.jp/areas/shinjuku-last-train","https://shudenhotel.jp/areas/shibuya-tonight-hotel","https://shudenhotel.jp/areas/tokyo-station-tonight-hotel","https://shudenhotel.jp/areas/yokohama-last-train","https://shudenhotel.jp/areas/ikebukuro-last-train","https://shudenhotel.jp/areas/ueno-tonight-hotel","https://shudenhotel.jp/areas/shinagawa-business-hotel","https://shudenhotel.jp/areas/namba-last-train","https://shudenhotel.jp/areas/osaka-station-last-train","https://shudenhotel.jp/areas/kyoto-station-tonight-hotel","https://shudenhotel.jp/areas/nagoya-station-last-train","https://shudenhotel.jp/venues/tokyo-dome-after-live","https://shudenhotel.jp/venues/saitama-super-arena-after-live","https://shudenhotel.jp/venues/yokohama-arena-after-live","https://shudenhotel.jp/venues/makuhari-messe-after-event"]}
           EOF
           )
-          for attempt in 1 2 3 4 5; do
-            code="$(curl -sS -o /tmp/indexnow.json -w '%{http_code}' -X POST "https://api.indexnow.org/indexnow" \
-              -H "Content-Type: application/json; charset=utf-8" \
-              -d "$PAYLOAD" || echo 000)"
-            echo "Attempt $attempt -> HTTP $code"
-            cat /tmp/indexnow.json; echo
-            if [[ "$code" == "200" || "$code" == "202" ]]; then
-              exit 0
-            fi
-            sleep $((attempt * 20))
+          ok=0
+          for ep in "https://api.indexnow.org/indexnow" "https://yandex.com/indexnow"; do
+            for attempt in 1 2 3; do
+              code="$(curl -sS -o /tmp/indexnow.json -w '%{http_code}' -X POST "$ep" \
+                -H "Content-Type: application/json; charset=utf-8" \
+                -d "$PAYLOAD" || echo 000)"
+              echo "$ep attempt $attempt -> HTTP $code"
+              cat /tmp/indexnow.json; echo
+              if [[ "$code" == "200" || "$code" == "202" ]]; then
+                ok=1
+                break
+              fi
+              sleep $((attempt * 15))
+            done
           done
-          echo "IndexNow still failing; key may need Cloudflare allowlist for IndexNow crawlers"
+          if [[ "$ok" -eq 1 ]]; then
+            echo "At least one IndexNow endpoint accepted the payload"
+            exit 0
+          fi
+          echo "Bing may need Webmaster domain verification (UserForbiddedToAccessSite)."
+          echo "Yandex/others may still accept; key file GET should be HTTP 200."
           exit 0

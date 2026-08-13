@@ -4,12 +4,21 @@ DTI affstats CSV インポート、サムネイル/MP4 推定、サンプル動�
 
 ## 適用手順
 
+パッチ 0001 / 0002 は **PR #1 で master に取り込み済み**です。再適用しないでください。
+
+残りの SEO/HTTPS/詳細ページは Devin PR をマージ:
+
 ```bash
-git clone https://github.com/syunnjack/hey-douga-guide.git
-cd hey-douga-guide
-for p in 0001 0002; do
-  curl -L "https://github.com/syunnjack/rakuten02/raw/master/patches/hey-douga-guide/${p}-"*.patch | git am
-done
+bash scripts/site-analytics/complete-dti-rollout.sh
+```
+
+- [#2](https://github.com/syunnjack/hey-douga-guide/pull/2) canonical / robots from APP_URL
+- [#3](https://github.com/syunnjack/hey-douga-guide/pull/3) https sample media
+- [#4](https://github.com/syunnjack/hey-douga-guide/pull/4) crawlable work/provider pages
+
+本番:
+
+```bash
 php artisan migrate
 php artisan dti:import-csv database/seeders/data/dti-movies.csv --verify-sample
 ```

@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 # Submit homepage + sitemap URLs (and up to 50 sitemap locs) to IndexNow.
+# Posts to api.indexnow.org (Bing + partners) and yandex.com/indexnow.
+# Bing may return 403 UserForbiddedToAccessSite until the domain is verified in
+# Bing Webmaster Tools (or Bingbot organically binds the key). That is not a
+# broken key file when GET /{key}.txt returns 200 with the key body.
 set -euo pipefail
+
+ENDPOINTS=(
+  "https://api.indexnow.org/indexnow"
+  "https://yandex.com/indexnow"
+)
 
 submit() {
   local host="$1" key="$2"
@@ -18,7 +27,6 @@ submit() {
   urls+=("https://${host}/")
   urls+=("$sitemap")
 
-  # Pull up to 48 additional locs from sitemap
   local locs
   locs="$(curl -fsSL --max-time 30 "$sitemap" | rg -o '<loc>[^<]+</loc>' | sed -E 's#</?loc>##g' | head -n 48 || true)"
   while IFS= read -r loc; do
@@ -26,7 +34,6 @@ submit() {
     urls+=("$loc")
   done <<<"$locs"
 
-  # Dedupe
   mapfile -t urls < <(printf '%s\n' "${urls[@]}" | awk '!seen[$0]++')
 
   local json_urls
@@ -44,16 +51,31 @@ print(json.dumps({
 PY
 )"
 
-  local code
-  code="$(curl -sS -o /tmp/indexnow-resp.txt -w '%{http_code}' -X POST 'https://api.indexnow.org/indexnow' \
-    -H 'Content-Type: application/json; charset=utf-8' \
-    -d "$payload" || echo 000)"
-  echo "IndexNow $host -> HTTP $code (${#urls[@]} urls)"
-  head -c 200 /tmp/indexnow-resp.txt; echo
+  local any_ok=0
+  local ep code
+  for ep in "${ENDPOINTS[@]}"; do
+    code="$(curl -sS -o /tmp/indexnow-resp.txt -w '%{http_code}' -X POST "$ep" \
+      -H 'Content-Type: application/json; charset=utf-8' \
+      -d "$payload" || echo 000)"
+    local short="${ep#https://}"
+    short="${short%%/*}"
+    echo "IndexNow $host via $short -> HTTP $code (${#urls[@]} urls)"
+    if [[ "$code" == "200" || "$code" == "202" ]]; then
+      any_ok=1
+    elif [[ "$code" == "403" ]] && rg -q 'UserForbiddedToAccessSite' /tmp/indexnow-resp.txt 2>/dev/null; then
+      echo "  note: Bing key binding pending — verify host in Bing Webmaster Tools, then re-run"
+      head -c 200 /tmp/indexnow-resp.txt; echo
+    else
+      head -c 200 /tmp/indexnow-resp.txt; echo
+    fi
+  done
+
+  if [[ "$any_ok" -eq 0 ]]; then
+    echo "WARN $host: no IndexNow endpoint accepted the payload"
+  fi
 }
 
 submit "darekore.jp" "darekoreindex2026"
 submit "machi-list.jp" "machilistindex2026"
 submit "busselect.jp" "busselectindex2026"
-# shudenhotel key is 404 until PR #34 is deployed
 submit "shudenhotel.jp" "shudenhotelindex2026"

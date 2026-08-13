@@ -37,7 +37,11 @@ $existingPrs = @(
   @{ Repo = "syunnjack/kousokubus-benri"; Number = 1; Note = "title absolute + search noindex" },
   @{ Repo = "syunnjack/task-dashboard"; Number = 8; Note = "percent-encode actress URLs" },
   @{ Repo = "syunnjack/machi-list"; Number = 1; Note = "shop detail pages + sitemap" },
-  @{ Repo = "syunnjack/goal-pilot-app"; Number = 1; Note = "canonicals + sitemap routes" }
+  @{ Repo = "syunnjack/goal-pilot-app"; Number = 1; Note = "canonicals + sitemap routes" },
+  @{ Repo = "syunnjack/hey-douga-guide"; Number = 2; Note = "canonical/robots from APP_URL" },
+  @{ Repo = "syunnjack/hey-douga-guide"; Number = 3; Note = "https sample media" },
+  @{ Repo = "syunnjack/hey-douga-guide"; Number = 4; Note = "crawlable work/provider pages" },
+  @{ Repo = "syunnjack/free-sample-hub"; Number = 1; Note = "DTI CSV import + https samples" }
 )
 
 Write-Host "`n== Merge existing Devin PRs ==" -ForegroundColor Cyan
@@ -142,6 +146,8 @@ if (Get-Command bash -ErrorAction SilentlyContinue) {
 Write-Host "`n== Manual leftovers ==" -ForegroundColor Yellow
 Write-Host "1. busselect Site Creator: set real NEXT_PUBLIC_GOOGLE_* (remove Japanese placeholders)"
 Write-Host "2. Search Console: resubmit sitemap.xml for all 5 properties"
-Write-Host "3. After busselect redeploy, re-run check-sites.ps1"
+Write-Host "3. Bing Webmaster: verify shudenhotel.jp (clears IndexNow Bing 403)"
+Write-Host "4. DTI: merge hey-douga #2/#3/#4 and free-sample-hub #1 (included above)"
+Write-Host "5. After busselect redeploy, re-run check-sites.ps1"
 Write-Host "`nok=$ok fail=$fail"
 if ($fail -gt 0) { exit 1 }

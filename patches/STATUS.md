@@ -21,11 +21,20 @@
 
 | サイト | 状態 |
 |--------|------|
-| shudenhotel | ✅ PR #34/#35 本番反映（https / GA4 / GSC / FAQ） |
+| shudenhotel | ✅ PR #34–#38: https / GA4 / GSC / FAQ / 関西・名古屋LP |
 | darekore | パッチ `0005` 適用待ち |
 | goalpilot | パッチ `0002` 適用待ち |
 | machi-list | パッチ `0003` 適用待ち |
 | busselect | パッチ `0005` + Site Creator 実トークン待ち |
+
+---
+
+## トラック B — DTI
+
+| リポ | 状態 |
+|------|------|
+| hey-douga-guide | master に CSV import 済。残り Devin #2/#3/#4 + 本番 migrate |
+| free-sample-hub | Devin #1 をマージ（`complete-dti-rollout.sh`） |
 
 ---
 

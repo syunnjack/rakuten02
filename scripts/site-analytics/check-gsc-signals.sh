@@ -114,12 +114,39 @@ for entry in "${sites[@]}"; do
         notes+=("sitemap-has-search")
         warn=$((warn + 1))
       fi
+      robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+      if ! printf '%s' "$robots" | rg -q 'Disallow: /search'; then
+        notes+=("robots-allows-search")
+        warn=$((warn + 1))
+      fi
     fi
   fi
 
   if printf '%s' "$html" | rg -q 'GA4測定ID|Search Console HTMLタグのcontent値|YOUR_VC_SID'; then
     notes+=("placeholder-text")
     critical=$((critical + 1))
+  fi
+
+  # Thin / duplicated titles that need patch deploy
+  title="$(printf '%s' "$html" | rg -o '<title>[^<]*</title>' | head -1 | sed -E 's#</?title>##g' || true)"
+  if [[ -z "$title" ]]; then
+    title="$(printf '%s' "$html" | rg -o '\"children\":\"[^\"]+\"' | head -1 || true)"
+  fi
+  if [[ "$name" == "darekore.jp" && "$title" == "この子だれ？" ]]; then
+    notes+=("thin-title")
+    warn=$((warn + 1))
+  fi
+  if [[ "$name" == "busselect.jp" && "$title" == "NOLU |"*"| NOLU" ]]; then
+    notes+=("dup-title")
+    warn=$((warn + 1))
+  fi
+  if [[ "$name" == "busselect.jp" ]]; then
+    search_robots="$(curl -fsSL --max-time 15 "${url%/}/search?from=tokyo&to=osaka" 2>/dev/null \
+      | rg -o 'name=\"robots\" content=\"[^\"]+\"|\"name\":\"robots\",\"content\":\"[^\"]+\"' | head -1 || true)"
+    if printf '%s' "$search_robots" | rg -q 'index, follow'; then
+      notes+=("search-still-indexable")
+      warn=$((warn + 1))
+    fi
   fi
 
   if [[ ${#notes[@]} -eq 0 ]]; then
