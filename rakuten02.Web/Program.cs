@@ -300,7 +300,7 @@ app.MapMethods("/sitemap.xml", new[] { "GET", "HEAD" }, async (HttpContext conte
     await WriteTextResponse(context, request, body, "application/xml; charset=utf-8");
 });
 
-// IndexNow key file must be publicly fetchable; fall back to the Blueprint default.
+// IndexNow key file: emit with Content-Length (Bing validators reject chunked/no-length).
 var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
 if (string.IsNullOrWhiteSpace(indexNowKey))
 {
@@ -308,8 +308,11 @@ if (string.IsNullOrWhiteSpace(indexNowKey))
 }
 
 var trimmedIndexNowKey = indexNowKey.Trim();
-app.MapMethods($"/{trimmedIndexNowKey}.txt", new[] { "GET", "HEAD" }, () =>
-    Results.Text(trimmedIndexNowKey, "text/plain; charset=utf-8"));
+app.MapMethods($"/{trimmedIndexNowKey}.txt", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
+{
+    // Trailing newline matches working IndexNow hosts (e.g. darekore).
+    await WriteTextResponse(context, request, trimmedIndexNowKey + "\n", "text/plain; charset=utf-8");
+});
 
 app.Run();
 
