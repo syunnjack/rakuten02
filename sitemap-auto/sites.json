@@ -1,0 +1,60 @@
+{
+  "sites": [
+    {
+      "id": "darekore",
+      "name": "ダレコレ",
+      "siteUrl": "https://darekore.jp/",
+      "sitemapUrl": "https://darekore.jp/sitemap.xml",
+      "gscProperty": "https://darekore.jp/",
+      "indexNowKey": "darekoreindex2026",
+      "indexNowKeyLocation": "https://darekore.jp/darekoreindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "goalpilot",
+      "name": "GoalPilot",
+      "siteUrl": "https://goalpilot.jp/",
+      "sitemapUrl": "https://goalpilot.jp/sitemap.xml",
+      "gscProperty": "https://goalpilot.jp/",
+      "enabled": true
+    },
+    {
+      "id": "busselect",
+      "name": "バスセレクト",
+      "siteUrl": "https://busselect.jp/",
+      "sitemapUrl": "https://busselect.jp/sitemap.xml",
+      "gscProperty": "https://busselect.jp/",
+      "indexNowKey": "busselectindex2026",
+      "indexNowKeyLocation": "https://busselect.jp/busselectindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "machilist",
+      "name": "町リスト",
+      "siteUrl": "https://machi-list.jp/",
+      "sitemapUrl": "https://machi-list.jp/sitemap.xml",
+      "gscProperty": "https://machi-list.jp/",
+      "indexNowKey": "machilistindex2026",
+      "indexNowKeyLocation": "https://machi-list.jp/machilistindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "shudenhotel",
+      "name": "終電ホテル",
+      "siteUrl": "https://shudenhotel.jp/",
+      "sitemapUrl": "https://shudenhotel.jp/sitemap.xml",
+      "gscProperty": "https://shudenhotel.jp/",
+      "indexNowKey": "shudenhotelindex2026",
+      "indexNowKeyLocation": "https://shudenhotel.jp/shudenhotelindex2026.txt",
+      "enabled": true
+    },
+    {
+      "id": "togebase",
+      "name": "TOGE BASE",
+      "siteUrl": "https://togepass.jp/",
+      "sitemapUrl": "https://togepass.jp/sitemap.xml",
+      "gscProperty": "sc-domain:togepass.jp",
+      "enabled": false
+    }
+  ]
+}
