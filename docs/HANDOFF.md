@@ -1,26 +1,28 @@
-# プロジェクト引き継ぎ — 2026-08-10 更新
+# プロジェクト引き継ぎ — 2026-08-12 更新
 
-**残り作業一覧:** `docs/REMAINING-WORK.md`（最新チェックリスト）
+**残り作業一覧:** `docs/REMAINING-WORK.md`  
+**GSC 改善ログ:** `docs/GSC-PERFORMANCE.md`
 
 ---
 
-## A. カスタムドメイン — 現状（ライブ確認 2026-08-10）
+## A. カスタムドメイン — 現状（ライブ確認 2026-08-12）
 
 | サイト | ドメイン | 公開 | GA4 | GSC | 残り |
 |--------|----------|------|-----|-----|------|
-| 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | なし |
-| ダレコレ | darekore.jp | ✅ | ✅ | ✅ | **サイトマップ送信** |
-| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ | **サイトマップ送信** |
-| 町リスト | machi-list.jp | ✅ HTTPS | ❌ | ✅ | **GA4 Secret + Deploy** |
-| バスセレクト | busselect.jp | ✅ | ✅ | ✅ | **サイトマップ送信**（Leaflet 0003 適用済） |
+| 終電ホテル | shudenhotel.jp | ✅ | ✅ | ✅ | https canonical 等のコード修正をデプロイ |
+| ダレコレ | darekore.jp | ✅ | ✅ | ✅ | SEO PR（title / noindex query / sitemap） |
+| GoalPilot | goalpilot.jp | ✅ | ✅ | ✅ | sitemap / OG / robots PR |
+| 町リスト | machi-list.jp | ✅ HTTPS | ✅ | ✅ | robots 競合・VC SID 修正（GA4 注入済） |
+| バスセレクト | busselect.jp | ✅ | ❌ | ❌ | プレースホルダ除去＋Site Creator 実トークン |
 
 ### busselect パッチ履歴
 
 | パッチ | 内容 | 状態 |
 |--------|------|------|
-| 0002 | GA4 / GSC / IndexNow | ✅ |
+| 0002 | GA4 / GSC / IndexNow | ✅ 適用済だが env がプレースホルダ |
 | 0003 | Leaflet ルート地図 | ✅ 本番確認済 |
-| 0004 | Windows `npm run dev` | 任意（`WINDOWS-DEV.md`） |
+| 0004 | Windows `npm run dev` | 任意 |
+| 0005 | placeholder 拒否 + title absolute | 本ラウンド |
 
 ---
 
@@ -46,21 +48,3 @@ cd C:\Users\syunn\rakuten02
 git pull origin master
 .\scripts\site-analytics\check-sites.ps1
 ```
-
----
-
-## 主要ファイル
-
-| 用途 | パス |
-|------|------|
-| **残り作業** | `docs/REMAINING-WORK.md` |
-| ドメインロールアウト | `docs/SITE-ROLLOUT.md` |
-| machi-list GA4 修正 | `patches/machi-list/POST-DNS-GITHUB-PAGES.md` |
-| busselect | `patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md` |
-| DTI Windows | `patches/DEPLOY-WINDOWS.md` |
-
----
-
-## 関連 PR（rakuten02）
-
-#20–#25 マージ済（busselect パッチ、Leaflet、Windows dev fix 含む）

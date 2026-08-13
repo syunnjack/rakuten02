@@ -1,7 +1,8 @@
 # プロジェクト全体ステータス
 
-最終更新: **2026-08-10**  
-**チェックリスト:** `docs/REMAINING-WORK.md`
+最終更新: **2026-08-12**  
+**チェックリスト:** `docs/REMAINING-WORK.md`  
+**GSC 改善:** `docs/GSC-PERFORMANCE.md`
 
 ---
 
@@ -9,11 +10,11 @@
 
 | サイト | 状態 |
 |--------|------|
-| shudenhotel | ✅ 完了 |
-| darekore | サイトマップ送信待ち |
-| goalpilot | サイトマップ送信待ち |
-| machi-list | HTTPS ✅ / **GA4 Secret 待ち** |
-| busselect | ✅ 公開 / Leaflet ✅ / サイトマップ送信任意 |
+| shudenhotel | GSC 向けコード修正（デプロイ待ち） |
+| darekore | SEO PR 進行 |
+| goalpilot | SEO PR 進行 |
+| machi-list | GA4 live / robots・VC 修正 PR |
+| busselect | GA4/GSC プレースホルダ修正 PR |
 
 ---
 
@@ -28,15 +29,7 @@
 
 ## ユーザー作業（優先順）
 
-1. machi-list `GOOGLE_ANALYTICS_MEASUREMENT_ID` + Deploy
-2. Search Console サイトマップ（darekore / goalpilot / busselect）
-3. hey-douga 本番 migrate/import
-4. free-sample-hub パッチ適用
-
----
-
-## エージェント（2026-08-10）
-
-- ライブ確認: 全5ドメイン HTTPS 200
-- `docs/REMAINING-WORK.md` 新規
-- HANDOFF / STATUS / sites.config 更新
+1. shudenhotel デプロイ後、Search Console で sitemap 再送信
+2. busselect Site Creator に実 GA4/GSC トークン設定
+3. 他4サイトの PR マージ＆デプロイ
+4. hey-douga 本番 migrate/import
