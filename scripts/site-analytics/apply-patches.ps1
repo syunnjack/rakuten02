@@ -30,6 +30,12 @@ $jobs = @(
     Optional = $true
   },
   @{
+    Name = "machi-list (FAQ JSON-LD / og / query robots)"
+    Dir  = "machi-list"
+    Patch = "$patchBase/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch"
+    Optional = $true
+  },
+  @{
     Name = "goal-pilot-app (sitemap + JSON-LD)"
     Dir  = "goal-pilot-app"
     Patch = "$patchBase/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch"

@@ -52,7 +52,7 @@
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-render",
-    "status": "live-ga4-gsc-robots-vc-fix-pending",
+    "status": "gsc-vc-faq-patch-pending",
     "httpsEnforced": "2026-08-09",
     "dnsVerified": "2026-08-06",
     "ga4Live": "G-WPET51XMKW",
@@ -60,7 +60,9 @@
     "postDnsDoc": "patches/machi-list/POST-DNS-GITHUB-PAGES.md",
     "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "HTTPS+GA4+GSC live。空ページ robots 競合とホーム YOUR_VC_* を修正中",
+    "patch": "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch",
+    "patch4": "patches/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch",
+    "dnsNote": "HTTPS+GA4+GSC live。0003+0004 と Devin #1 で YOUR_VC_* / FAQ / 店舗詳細を直す",
     "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION"

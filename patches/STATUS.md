@@ -24,7 +24,7 @@
 | shudenhotel | ✅ PR #34–#38: https / GA4 / GSC / FAQ / 関西・名古屋・福岡・札幌・神戸LP |
 | darekore | パッチ `0005` 適用待ち |
 | goalpilot | パッチ `0002`+`0003` 適用待ち |
-| machi-list | パッチ `0003` 適用待ち |
+| machi-list | パッチ `0003`+`0004` 適用待ち |
 | busselect | パッチ `0005` + Site Creator 実トークン待ち |
 
 ---

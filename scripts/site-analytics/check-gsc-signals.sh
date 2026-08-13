@@ -140,6 +140,17 @@ for entry in "${sites[@]}"; do
     notes+=("dup-title")
     warn=$((warn + 1))
   fi
+  if [[ "$name" == "machi-list.jp" ]]; then
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+    robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+    if ! printf '%s' "$robots" | rg -q 'Disallow: /\*\?\*'; then
+      notes+=("robots-allows-query")
+      warn=$((warn + 1))
+    fi
+  fi
   if [[ "$name" == "goalpilot.jp" ]]; then
     inner="$(curl -fsSL --max-time 15 "${url%/}/diagnosis/" 2>/dev/null || true)"
     inner_canon="$(printf '%s' "$inner" | rg -o 'rel="canonical" href="[^"]+"' | head -1 | sed -E 's/.*href="([^"]+)".*/\1/' || true)"

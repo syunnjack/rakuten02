@@ -75,8 +75,11 @@ $jobs = @(
   @{
     Dir = "machi-list"
     Base = "main"
-    Patch = "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch"
-    Title = "GSC: fix robots conflict and ValueCommerce placeholders"
+    Patch = @(
+      "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch",
+      "patches/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch"
+    )
+    Title = "GSC: fix VC placeholders, FAQ JSON-LD, og tags, query robots"
   },
   @{
     Dir = "goal-pilot-app"

@@ -24,7 +24,7 @@
 | shudenhotel.jp | ✅ | ✅ | ✅ | GSC sitemap 再送信 / Bing Webmaster |
 | darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` + Devin #8 |
 | goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002`+`0003` |
-| machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`（YOUR_VC_*） |
+| machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`+`0004` + Devin #1 |
 | busselect.jp | ✅ | ❌ | ❌ | パッチ `0005` + Devin #1 + Site Creator |
 
 パッチ適用（最短）: `docs/GSC-FINISH.md` のワンショットスクリプト。

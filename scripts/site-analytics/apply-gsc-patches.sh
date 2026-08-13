@@ -39,7 +39,7 @@ fi
 jobs=(
   "kousokubus-benri|main|patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch|GSC: reject placeholder GA4/GSC tokens and fix title"
   "task-dashboard|main|patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch,patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch|GSC: richer title, FAQ JSON-LD, noindex search queries"
-  "machi-list|main|patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch|GSC: fix robots conflict and ValueCommerce placeholders"
+  "machi-list|main|patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch,patches/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch|GSC: fix VC placeholders, FAQ JSON-LD, og tags, query robots"
   "goal-pilot-app|main|patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch,patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch|GSC: per-route canonicals, FAQ JSON-LD, IndexNow"
 )
 
