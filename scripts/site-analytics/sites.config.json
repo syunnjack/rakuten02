@@ -4,11 +4,12 @@
     "repo": "syunnjack/rakuten02",
     "domain": "https://shudenhotel.jp/",
     "stack": "aspnet-render",
-    "status": "gsc-https-canonical-fix-pending-deploy",
+    "status": "completed",
     "ga4": "G-542370310",
     "searchConsole": "verified",
     "sitemap": "success",
-    "note": "2026-08-12: force https origin, noindex /search, IndexNow key fallback, HEAD support"
+    "liveVerified": "2026-08-13",
+    "note": "PR #34 live: https canonical, GA4/GSC fallbacks, FAQ, IndexNow key 200"
   },
   {
     "id": "darekore",
