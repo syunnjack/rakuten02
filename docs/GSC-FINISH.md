@@ -49,10 +49,10 @@ UI で先にマージする場合も darekore / machi-list の Devin PR でOK（
 
 | Key | 操作 |
 |-----|------|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | `GA4測定ID` を削除 → 実 `G-...` |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 日本語プレースホルダ削除 → 実トークン |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | `GA4測定ID` を削除 → 実 `G-...`（または変数ごと削除） |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 不要なら削除可（layout に検証トークンがハードコード済み） |
 
-未取得なら **変数ごと削除**（パッチ適用後は偽タグが出ない）。
+未取得なら **GA4 変数ごと削除**（パッチ適用後は偽タグが出ない）。
 
 ### B. Search Console サイトマップ再送信
 
