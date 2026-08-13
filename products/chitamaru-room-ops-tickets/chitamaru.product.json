@@ -1,0 +1,39 @@
+{
+  "rank": 16,
+  "repo": "chitamaru-room-ops-tickets",
+  "slug": "room-ops-tickets",
+  "title": "ROOM Ops Tickets",
+  "titleJa": "楽天ROOM 週次改善チケット",
+  "emoji": "🛠️",
+  "mode": "tickets",
+  "phase": 1,
+  "form": "P",
+  "price": "¥4,800",
+  "priceMonthly": "週次継続は要見積",
+  "priceB2B": "法人運用パッケージ",
+  "category": "affiliate",
+  "who": "ROOMツール購入者で、投稿の差し替えを任せたい人",
+  "prototype": "syunnjack/rakuafi-tool",
+  "boothItem": "room-ops-tickets",
+  "tagline": "週次で投稿・差し替えを1チケットずつ頼める。",
+  "features": [
+    "改善チケットの申込フォーム",
+    "作業範囲のチェックリスト",
+    "見積が立てやすい1回 ¥4,800",
+    "ROOMツールへのアップセル"
+  ],
+  "seedKind": "roomops",
+  "faqs": [
+    [
+      "ツール本体との違いは？",
+      "本体は買い切りWebアプリ。これは運用代行のPPVです。"
+    ],
+    [
+      "納品物は？",
+      "投稿文差し替え案とチェック結果。申込内容はローカルに残します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-room-ops-tickets",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-room-ops-tickets/",
+  "boothUrl": "https://chitamaru.booth.pm/items/room-ops-tickets"
+}

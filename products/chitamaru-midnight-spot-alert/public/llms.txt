@@ -1,0 +1,5 @@
+# Midnight Spot Alert
+
+終電を逃した夜に、休憩・食事・仮眠の候補をすぐ出す。
+
+Price: ¥580

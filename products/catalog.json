@@ -1,0 +1,494 @@
+{
+  "owner": "syunnjack",
+  "strategy": {
+    "finalGoal": "B2B listing and SaaS",
+    "now": "Personal buy-now foundation on BOOTH",
+    "phases": [
+      "Phase 1: personal one-time (BOOTH)",
+      "Phase 2: personal monthly (alerts)",
+      "Phase 3: B2B listing / install / ops"
+    ]
+  },
+  "products": [
+    {
+      "rank": 1,
+      "repo": "chitamaru-hotel-price-watch",
+      "slug": "hotel-price-watch",
+      "title": "Hotel Price Watch",
+      "titleJa": "宿泊空室・値下げアラート",
+      "emoji": "🏨",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "¥980",
+      "priceB2B": "掲載 ¥2,480〜 / 代理店連携",
+      "category": "hotel",
+      "who": "出張・旅行で今安い／空いている宿を即取りたい人",
+      "prototype": "syunnjack/hotel-price-watch",
+      "boothItem": "hotel-price-watch",
+      "tagline": "エリアと上限金額を保存して、空室と値下げの瞬間を逃さない。",
+      "features": [
+        "エリア・日程・上限金額のウォッチ登録",
+        "空室・値下げシードの条件一致表示",
+        "保存ウォッチのローカル管理",
+        "予約アフィ／有料通知への導線"
+      ],
+      "seedKind": "hotel",
+      "faqs": [
+        ["無料と有料の違いは？", "閲覧は無料。条件保存と通知は買い切りキット、継続通知は月額 Pro です。"],
+        ["B2Bはいつ？", "個人のウォッチ実績ができてから、ホテル掲載枠として拡張します。"]
+      ]
+    },
+    {
+      "rank": 2,
+      "repo": "chitamaru-job-match-alert",
+      "slug": "job-match-alert",
+      "title": "Job Match Alert",
+      "titleJa": "求人条件一致通知",
+      "emoji": "💼",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "¥980",
+      "priceB2B": "掲載・採用課金 ¥2,480〜",
+      "category": "job",
+      "who": "転職活動を通知で回したい人（新着・締切・面接枠）",
+      "prototype": "syunnjack/job-match-alert",
+      "boothItem": "job-match-alert",
+      "tagline": "希望条件を一度保存すれば、一致した求人だけを追える。",
+      "features": [
+        "職種・年収・勤務地・リモート条件",
+        "新着・締切・面接枠の一致表示",
+        "保存条件のローカル管理",
+        "後の採用媒体・人材紹介課金へ接続"
+      ],
+      "seedKind": "job",
+      "faqs": [
+        ["誰向け？", "通知で転職を回したい個人。事業所掲載は Phase 3 です。"],
+        ["成果報酬は？", "個人の継続利用が見えてから、掲載・採用課金に拡張します。"]
+      ]
+    },
+    {
+      "rank": 3,
+      "repo": "chitamaru-subsidy-alert-hub",
+      "slug": "subsidy-alert-hub",
+      "title": "Subsidy Alert Hub",
+      "titleJa": "補助金・助成金期限通知",
+      "emoji": "📋",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥2,480",
+      "priceMonthly": "¥2,480",
+      "priceB2B": "事務所導入 ¥2,480〜",
+      "category": "biz",
+      "who": "個人事業主・小規模事業者（期限が命）",
+      "prototype": "syunnjack/subsidy-alert-hub",
+      "boothItem": "subsidy-alert-hub",
+      "tagline": "締切が命の補助金を、期限順で見逃さない。",
+      "features": [
+        "制度名・対象・締切の一覧",
+        "残り日数ソート",
+        "ウォッチ登録",
+        "士業相談への橋渡し枠"
+      ],
+      "seedKind": "subsidy",
+      "faqs": [
+        ["個人事業主でも使える？", "はい。Phase 1 は個人事業主の買い切り。事務所向けは同じ画面の複数顧客版です。"],
+        ["通知上限は？", "買い切りはローカル保存。月額・B2Bで件数上限を制御します。"]
+      ]
+    },
+    {
+      "rank": 4,
+      "repo": "chitamaru-nearqueue",
+      "slug": "nearqueue",
+      "title": "NearQueue",
+      "titleJa": "受付番号・待ち時間システム",
+      "emoji": "🎟️",
+      "mode": "queue",
+      "phase": 3,
+      "form": "S",
+      "price": "¥3,800",
+      "priceMonthly": "¥3,800",
+      "priceB2B": "店舗SaaS ¥3,800〜 / 導入 ¥19,800〜",
+      "category": "b2b",
+      "who": "美容・飲食・医療など、順番待ちを改善したい店舗",
+      "prototype": "syunnjack/reservation-waiting-time-v1",
+      "boothItem": "nearqueue",
+      "tagline": "近くの店舗で番号を取り、待ち時間を自分の時間に変える。",
+      "features": [
+        "来店者の受付番号発行（デモ）",
+        "待ち組数・目安時間",
+        "スタッフボード（呼び出し／案内済）",
+        "受付後のクーポン枠"
+      ],
+      "seedKind": "queue",
+      "faqs": [
+        ["個人向けに売る？", "デモは無料公開。売上は店舗ライセンスが本体です。"],
+        ["既存の reservation-waiting-time-v1 は？", "プロトタイプ。本リポが商品名・価格・導入導線を持った独立製品です。"]
+      ]
+    },
+    {
+      "rank": 5,
+      "repo": "chitamaru-work-bar-navi",
+      "slug": "work-bar-navi",
+      "title": "Work Bar Navi",
+      "titleJa": "夜のお店／仕事／エリアナビ",
+      "emoji": "🌃",
+      "mode": "listings",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "掲載 ¥2,480",
+      "priceB2B": "掲載パッケージ ¥2,480〜（運用代行可）",
+      "category": "local",
+      "who": "夜勤・短時間・飲み／仕事導線をまとめたい層",
+      "prototype": "syunnjack/work-bar-navi",
+      "boothItem": "work-bar-navi",
+      "tagline": "エリア×業態で、夜の仕事とお店を一本のナビにする。",
+      "features": [
+        "エリア・業態フィルター",
+        "求人／店舗カード",
+        "スポンサー枠のプレースホルダ",
+        "送客・掲載課金の導線"
+      ],
+      "seedKind": "workbar",
+      "faqs": [
+        ["個人の買い切りは何？", "エリアナビの使い方キットとローカル保存。掲載課金は店舗向けです。"],
+        ["収益の柱は？", "最終的にはスポンサー・掲載・送客アフィです。"]
+      ]
+    },
+    {
+      "rank": 6,
+      "repo": "chitamaru-midnight-spot-alert",
+      "slug": "midnight-spot-alert",
+      "title": "Midnight Spot Alert",
+      "titleJa": "終電後スポット通知",
+      "emoji": "🌙",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥580",
+      "priceMonthly": "¥580",
+      "priceB2B": "飲食・宿泊の掲載課金",
+      "category": "hotel",
+      "who": "終電後の休憩／食事／仮眠を探す人",
+      "prototype": "syunnjack/midnight-spot-alert",
+      "boothItem": "midnight-spot-alert",
+      "tagline": "終電を逃した夜に、休憩・食事・仮眠の候補をすぐ出す。",
+      "features": [
+        "駅・種別（休憩／食事／仮眠）",
+        "終電後スポットのシード検索",
+        "ウォッチ保存",
+        "終電ホテルへの送客"
+      ],
+      "seedKind": "midnight",
+      "faqs": [
+        ["終電ホテルとの違いは？", "ホテル以外（サウナ・漫画喫茶・飲食）を先に出す補完ラインです。"],
+        ["月額は？", "Phase 2 で通知月額 ¥580。今は買い切りガイドとして出します。"]
+      ]
+    },
+    {
+      "rank": 7,
+      "repo": "chitamaru-welfare-job-alert",
+      "slug": "welfare-job-alert",
+      "title": "Welfare Job Alert",
+      "titleJa": "福祉系求人通知",
+      "emoji": "🤝",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "求職者 ¥980 / 事業所 ¥2,480",
+      "priceB2B": "事業所掲載 ¥2,480〜",
+      "category": "job",
+      "who": "障害者雇用・福祉領域の就職／採用",
+      "prototype": "syunnjack/welfare-job-alert",
+      "boothItem": "welfare-job-alert",
+      "tagline": "福祉・障害者雇用に特化した条件一致だけを追う。",
+      "features": [
+        "職種・雇用形態・配慮条件",
+        "事業所シードの一致表示",
+        "求職者ウォッチ",
+        "事業所掲載枠（準備）"
+      ],
+      "seedKind": "welfare",
+      "faqs": [
+        ["なぜ特化？", "総合求人より競合が少なく、条件一致の価値がはっきりしています。"],
+        ["B2Bは？", "求職者の利用実績を見て事業所掲載に拡張します。"]
+      ]
+    },
+    {
+      "rank": 8,
+      "repo": "chitamaru-busstay",
+      "slug": "busstay",
+      "title": "BusStay",
+      "titleJa": "バス到着後の宿探し",
+      "emoji": "🚌",
+      "mode": "listings",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "データPro ¥980",
+      "priceB2B": "掲載 ¥2,480〜",
+      "category": "hotel",
+      "who": "高速バス到着後に近い宿を即探したい人",
+      "prototype": "syunnjack/bus-arrival-guide",
+      "boothItem": "busstay",
+      "tagline": "到着バスターミナルから徒歩圏の宿だけを出す。",
+      "features": [
+        "到着地点の選択",
+        "徒歩分数での絞り込み",
+        "今夜空きシード",
+        "宿泊予約アフィ導線"
+      ],
+      "seedKind": "busstay",
+      "faqs": [
+        ["bus-arrival-guide との関係は？", "プロトタイプ。BusStay が商品名・価格を持った独立リポです。"],
+        ["終電ホテルとの違いは？", "鉄道の終電ではなく、高速バス到着後の徒歩圏に特化します。"]
+      ]
+    },
+    {
+      "rank": 9,
+      "repo": "chitamaru-trip-route-stay",
+      "slug": "trip-route-stay",
+      "title": "Trip Route Stay",
+      "titleJa": "移動×宿×スポットの旅ルート支援",
+      "emoji": "🗺️",
+      "mode": "planner",
+      "phase": 1,
+      "form": "B",
+      "price": "¥580",
+      "priceMonthly": "Pro ¥2,480",
+      "priceB2B": "送客アフィ・掲載",
+      "category": "travel",
+      "who": "旅のルート設計を効率化したい人",
+      "prototype": "syunnjack/trip-route-stay",
+      "boothItem": "trip-route-stay",
+      "tagline": "移動・宿・ローカルスポットを1本の旅程にする。",
+      "features": [
+        "出発・到着・日数の入力",
+        "スポット＋宿のテンプレ旅程",
+        "コピー用 itinerary",
+        "宿泊・スポットの monetization 枠"
+      ],
+      "seedKind": "trip",
+      "faqs": [
+        ["買い切りで何が届く？", "旅程テンプレとルート組み立てUIです。Pro で保存数と自動提案が増えます。"],
+        ["収益は？", "今はテンプレ買い切り。後から宿・スポット送客です。"]
+      ]
+    },
+    {
+      "rank": 10,
+      "repo": "chitamaru-open-close-radar",
+      "slug": "open-close-radar",
+      "title": "Open/Close Radar",
+      "titleJa": "開店閉店レーダー＋通知",
+      "emoji": "📡",
+      "mode": "watch",
+      "phase": 1,
+      "form": "B",
+      "price": "¥580",
+      "priceMonthly": "¥580",
+      "priceB2B": "店舗掲載 ¥2,480〜",
+      "category": "local",
+      "who": "地域の開店閉店速報を追う生活者＋露出したい店舗",
+      "prototype": "syunnjack/open-close-radar",
+      "boothItem": "open-close-radar",
+      "tagline": "近所の開店・閉店を、UGCと通知で速報する。",
+      "features": [
+        "地域の開店／閉店シード",
+        "UGC投稿（ローカル保存）",
+        "ウォッチ",
+        "店舗掲載・スポンサー枠"
+      ],
+      "seedKind": "openclose",
+      "faqs": [
+        ["情報の鮮度は？", "MVPはシード＋UGC。通知月額で継続率を見てから自動収集します。"],
+        ["店舗側は？", "個人の速報が回ってから掲載課金にします。"]
+      ]
+    },
+    {
+      "rank": 11,
+      "repo": "chitamaru-comicstay",
+      "slug": "comicstay",
+      "title": "ComicStay",
+      "titleJa": "漫画喫茶／ネットカフェ UGC検索",
+      "emoji": "📚",
+      "mode": "listings",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "キーワード広告",
+      "priceB2B": "掲載プラン ¥2,480〜",
+      "category": "local",
+      "who": "個室・シャワー・深夜滞在などの条件で探したい人",
+      "prototype": "syunnjack/manga-cafe-finder",
+      "boothItem": "comicstay",
+      "tagline": "個室・シャワー・深夜滞在。条件で漫画喫茶を探す。",
+      "features": [
+        "個室／シャワー／深夜のフィルター",
+        "UGCメモ",
+        "施設カード",
+        "掲載・キーワード広告枠"
+      ],
+      "seedKind": "comic",
+      "faqs": [
+        ["manga-cafe-finder との関係は？", "プロトタイプ。ComicStay が商品名の独立リポです。"],
+        ["終電後スポットとの違いは？", "漫画喫茶に特化し、滞在条件フィルターが本体です。"]
+      ]
+    },
+    {
+      "rank": 12,
+      "repo": "chitamaru-my-dartslive",
+      "slug": "my-dartslive",
+      "title": "My Dartslive",
+      "titleJa": "ダーツ施設横断 UGC",
+      "emoji": "🎯",
+      "mode": "listings",
+      "phase": 1,
+      "form": "B",
+      "price": "¥2,480",
+      "priceMonthly": "クーポン枠",
+      "priceB2B": "施設掲載 ¥2,480〜",
+      "category": "hobby",
+      "who": "大会／クーポン／深夜営業などで施設を探す層",
+      "prototype": "syunnjack/my-dartslive",
+      "boothItem": "my-dartslive",
+      "tagline": "大会・クーポン・深夜。ダーツ施設を横断して探す。",
+      "features": [
+        "施設条件フィルター",
+        "大会・クーポン・深夜タグ",
+        "UGC",
+        "施設掲載課金枠"
+      ],
+      "seedKind": "darts",
+      "faqs": [
+        ["なぜ ¥2,480？", "UGC・大会・クーポンまで揃う横断検索で、本気で施設を探す層向けです。"],
+        ["B2Bは？", "個人利用のあと、施設掲載とクーポン枠です。"]
+      ]
+    },
+    {
+      "rank": 13,
+      "repo": "chitamaru-eki-genre-map",
+      "slug": "eki-genre-map",
+      "title": "Eki Genre Map",
+      "titleJa": "駅×ジャンルのローカル発見マップ",
+      "emoji": "🚉",
+      "mode": "listings",
+      "phase": 1,
+      "form": "B",
+      "price": "¥980",
+      "priceMonthly": "ローカル広告",
+      "priceB2B": "掲載 ¥1,980〜",
+      "category": "local",
+      "who": "近場で何があるかを駅から探したい人",
+      "prototype": "syunnjack/eki-genre-map",
+      "boothItem": "eki-genre-map",
+      "tagline": "駅名とジャンルを選ぶだけで、近場の候補が出る。",
+      "features": [
+        "駅×ジャンルのマトリクス",
+        "スポットカード",
+        "お気に入り保存",
+        "ローカル広告・掲載枠"
+      ],
+      "seedKind": "eki",
+      "faqs": [
+        ["まちリストとの違いは？", "駅起点×ジャンル発見に特化しています。"],
+        ["掲載単価は？", "B2Bは ¥1,980〜。個人の発見ツールは ¥980 買い切りです。"]
+      ]
+    },
+    {
+      "rank": 14,
+      "repo": "chitamaru-content-brief-packs",
+      "slug": "content-brief-packs",
+      "title": "Content Brief Packs",
+      "titleJa": "業界別コンテンツブリーフ素材集",
+      "emoji": "📝",
+      "mode": "briefs",
+      "phase": 1,
+      "form": "B",
+      "price": "¥580",
+      "priceMonthly": "シリーズ追加 ¥580",
+      "priceB2B": "制作会社向けセット",
+      "category": "content",
+      "who": "不動産／転職／飲食の記事を量産したい個人",
+      "prototype": "syunnjack/content-brief-engine",
+      "boothItem": "content-brief-packs",
+      "tagline": "業界別テンプレで、ブリーフをすぐ書き出せる。",
+      "features": [
+        "不動産・転職・飲食の3パック",
+        "見出し・検索意図・CTAの雛形",
+        "コピー出力",
+        "シリーズ追加販売"
+      ],
+      "seedKind": "briefs",
+      "faqs": [
+        ["既存の Content Brief Engine は？", "本体ツールは既掲載。本リポは業界別素材の分岐商品です。"],
+        ["なぜ ¥580？", "試し買い単価。業界を増やして複数買いを取ります。"]
+      ]
+    },
+    {
+      "rank": 15,
+      "repo": "chitamaru-seo-dashboard-agency",
+      "slug": "seo-dashboard-agency",
+      "title": "SEO Dashboard Agency",
+      "titleJa": "SEO管理ダッシュボード Agency",
+      "emoji": "📊",
+      "mode": "dashboard",
+      "phase": 3,
+      "form": "S",
+      "price": "¥3,800",
+      "priceMonthly": "¥9,800〜",
+      "priceB2B": "複数顧客 Agency ¥9,800〜",
+      "category": "seo-ops",
+      "who": "複数サイト／複数顧客のSEOを見る個人と制作会社",
+      "prototype": null,
+      "boothItem": "seo-dashboard-agency",
+      "tagline": "顧客ごとの順位・指摘・月次レポを1画面に。",
+      "features": [
+        "複数顧客カード",
+        "仮想の順位・流入サマリー",
+        "指摘チケット",
+        "月次レポート下書き"
+      ],
+      "seedKind": "seo",
+      "faqs": [
+        ["個人 Pro との違いは？", "個人 Pro は自サイト。Agency は複数顧客とレポ・チケットです。"],
+        ["今すぐ売るか？", "個人 Pro の実績後。リポは先に独立させておきます。"]
+      ]
+    },
+    {
+      "rank": 16,
+      "repo": "chitamaru-room-ops-tickets",
+      "slug": "room-ops-tickets",
+      "title": "ROOM Ops Tickets",
+      "titleJa": "楽天ROOM 週次改善チケット",
+      "emoji": "🛠️",
+      "mode": "tickets",
+      "phase": 1,
+      "form": "P",
+      "price": "¥4,800",
+      "priceMonthly": "週次継続は要見積",
+      "priceB2B": "法人運用パッケージ",
+      "category": "affiliate",
+      "who": "ROOMツール購入者で、投稿の差し替えを任せたい人",
+      "prototype": "syunnjack/rakuafi-tool",
+      "boothItem": "room-ops-tickets",
+      "tagline": "週次で投稿・差し替えを1チケットずつ頼める。",
+      "features": [
+        "改善チケットの申込フォーム",
+        "作業範囲のチェックリスト",
+        "見積が立てやすい1回 ¥4,800",
+        "ROOMツールへのアップセル"
+      ],
+      "seedKind": "roomops",
+      "faqs": [
+        ["ツール本体との違いは？", "本体は買い切りWebアプリ。これは運用代行のPPVです。"],
+        ["納品物は？", "投稿文差し替え案とチェック結果。申込内容はローカルに残します。"]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+name: Create Chitamaru product GitHub repos
+
+# Creates 16 independent product repositories and pushes main.
+# Requires repository secret CROSS_REPO_PAT (classic PAT with repo scope).
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: "1-based start rank"
+        required: true
+        default: "1"
+      limit:
+        description: "How many repos to create in this run"
+        required: true
+        default: "16"
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require CROSS_REPO_PAT
+        id: gate
+        env:
+          CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
+        run: |
+          if [ -z "${CROSS_REPO_PAT}" ]; then
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+            echo "CROSS_REPO_PAT is not set. Add a classic PAT with repo scope."
+          else
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.missing == 'false'
+        with:
+          python-version: "3.12"
+
+      - name: Generate sources and create GitHub repos
+        if: steps.gate.outputs.missing == 'false'
+        env:
+          CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
+          START: ${{ github.event.inputs.start }}
+          LIMIT: ${{ github.event.inputs.limit }}
+        run: |
+          set -euo pipefail
+          chmod +x products/create-github-repos.sh
+          ./products/create-github-repos.sh

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://syunnjack.github.io/chitamaru-busstay/

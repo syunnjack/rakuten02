@@ -1,0 +1,39 @@
+{
+  "rank": 10,
+  "repo": "chitamaru-open-close-radar",
+  "slug": "open-close-radar",
+  "title": "Open/Close Radar",
+  "titleJa": "開店閉店レーダー＋通知",
+  "emoji": "📡",
+  "mode": "watch",
+  "phase": 1,
+  "form": "B",
+  "price": "¥580",
+  "priceMonthly": "¥580",
+  "priceB2B": "店舗掲載 ¥2,480〜",
+  "category": "local",
+  "who": "地域の開店閉店速報を追う生活者＋露出したい店舗",
+  "prototype": "syunnjack/open-close-radar",
+  "boothItem": "open-close-radar",
+  "tagline": "近所の開店・閉店を、UGCと通知で速報する。",
+  "features": [
+    "地域の開店／閉店シード",
+    "UGC投稿（ローカル保存）",
+    "ウォッチ",
+    "店舗掲載・スポンサー枠"
+  ],
+  "seedKind": "openclose",
+  "faqs": [
+    [
+      "情報の鮮度は？",
+      "MVPはシード＋UGC。通知月額で継続率を見てから自動収集します。"
+    ],
+    [
+      "店舗側は？",
+      "個人の速報が回ってから掲載課金にします。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-open-close-radar",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-open-close-radar/",
+  "boothUrl": "https://chitamaru.booth.pm/items/open-close-radar"
+}

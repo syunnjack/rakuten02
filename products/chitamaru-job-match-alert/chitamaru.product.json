@@ -1,0 +1,39 @@
+{
+  "rank": 2,
+  "repo": "chitamaru-job-match-alert",
+  "slug": "job-match-alert",
+  "title": "Job Match Alert",
+  "titleJa": "求人条件一致通知",
+  "emoji": "💼",
+  "mode": "watch",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "¥980",
+  "priceB2B": "掲載・採用課金 ¥2,480〜",
+  "category": "job",
+  "who": "転職活動を通知で回したい人（新着・締切・面接枠）",
+  "prototype": "syunnjack/job-match-alert",
+  "boothItem": "job-match-alert",
+  "tagline": "希望条件を一度保存すれば、一致した求人だけを追える。",
+  "features": [
+    "職種・年収・勤務地・リモート条件",
+    "新着・締切・面接枠の一致表示",
+    "保存条件のローカル管理",
+    "後の採用媒体・人材紹介課金へ接続"
+  ],
+  "seedKind": "job",
+  "faqs": [
+    [
+      "誰向け？",
+      "通知で転職を回したい個人。事業所掲載は Phase 3 です。"
+    ],
+    [
+      "成果報酬は？",
+      "個人の継続利用が見えてから、掲載・採用課金に拡張します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-job-match-alert",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-job-match-alert/",
+  "boothUrl": "https://chitamaru.booth.pm/items/job-match-alert"
+}

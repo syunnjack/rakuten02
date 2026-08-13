@@ -1,0 +1,39 @@
+{
+  "rank": 8,
+  "repo": "chitamaru-busstay",
+  "slug": "busstay",
+  "title": "BusStay",
+  "titleJa": "バス到着後の宿探し",
+  "emoji": "🚌",
+  "mode": "listings",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "データPro ¥980",
+  "priceB2B": "掲載 ¥2,480〜",
+  "category": "hotel",
+  "who": "高速バス到着後に近い宿を即探したい人",
+  "prototype": "syunnjack/bus-arrival-guide",
+  "boothItem": "busstay",
+  "tagline": "到着バスターミナルから徒歩圏の宿だけを出す。",
+  "features": [
+    "到着地点の選択",
+    "徒歩分数での絞り込み",
+    "今夜空きシード",
+    "宿泊予約アフィ導線"
+  ],
+  "seedKind": "busstay",
+  "faqs": [
+    [
+      "bus-arrival-guide との関係は？",
+      "プロトタイプ。BusStay が商品名・価格を持った独立リポです。"
+    ],
+    [
+      "終電ホテルとの違いは？",
+      "鉄道の終電ではなく、高速バス到着後の徒歩圏に特化します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-busstay",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-busstay/",
+  "boothUrl": "https://chitamaru.booth.pm/items/busstay"
+}

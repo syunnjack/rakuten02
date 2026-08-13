@@ -1,0 +1,39 @@
+{
+  "rank": 3,
+  "repo": "chitamaru-subsidy-alert-hub",
+  "slug": "subsidy-alert-hub",
+  "title": "Subsidy Alert Hub",
+  "titleJa": "補助金・助成金期限通知",
+  "emoji": "📋",
+  "mode": "watch",
+  "phase": 1,
+  "form": "B",
+  "price": "¥2,480",
+  "priceMonthly": "¥2,480",
+  "priceB2B": "事務所導入 ¥2,480〜",
+  "category": "biz",
+  "who": "個人事業主・小規模事業者（期限が命）",
+  "prototype": "syunnjack/subsidy-alert-hub",
+  "boothItem": "subsidy-alert-hub",
+  "tagline": "締切が命の補助金を、期限順で見逃さない。",
+  "features": [
+    "制度名・対象・締切の一覧",
+    "残り日数ソート",
+    "ウォッチ登録",
+    "士業相談への橋渡し枠"
+  ],
+  "seedKind": "subsidy",
+  "faqs": [
+    [
+      "個人事業主でも使える？",
+      "はい。Phase 1 は個人事業主の買い切り。事務所向けは同じ画面の複数顧客版です。"
+    ],
+    [
+      "通知上限は？",
+      "買い切りはローカル保存。月額・B2Bで件数上限を制御します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-subsidy-alert-hub",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-subsidy-alert-hub/",
+  "boothUrl": "https://chitamaru.booth.pm/items/subsidy-alert-hub"
+}

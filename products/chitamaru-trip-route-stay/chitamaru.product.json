@@ -1,0 +1,39 @@
+{
+  "rank": 9,
+  "repo": "chitamaru-trip-route-stay",
+  "slug": "trip-route-stay",
+  "title": "Trip Route Stay",
+  "titleJa": "移動×宿×スポットの旅ルート支援",
+  "emoji": "🗺️",
+  "mode": "planner",
+  "phase": 1,
+  "form": "B",
+  "price": "¥580",
+  "priceMonthly": "Pro ¥2,480",
+  "priceB2B": "送客アフィ・掲載",
+  "category": "travel",
+  "who": "旅のルート設計を効率化したい人",
+  "prototype": "syunnjack/trip-route-stay",
+  "boothItem": "trip-route-stay",
+  "tagline": "移動・宿・ローカルスポットを1本の旅程にする。",
+  "features": [
+    "出発・到着・日数の入力",
+    "スポット＋宿のテンプレ旅程",
+    "コピー用 itinerary",
+    "宿泊・スポットの monetization 枠"
+  ],
+  "seedKind": "trip",
+  "faqs": [
+    [
+      "買い切りで何が届く？",
+      "旅程テンプレとルート組み立てUIです。Pro で保存数と自動提案が増えます。"
+    ],
+    [
+      "収益は？",
+      "今はテンプレ買い切り。後から宿・スポット送客です。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-trip-route-stay",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-trip-route-stay/",
+  "boothUrl": "https://chitamaru.booth.pm/items/trip-route-stay"
+}

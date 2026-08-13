@@ -1,0 +1,39 @@
+{
+  "rank": 1,
+  "repo": "chitamaru-hotel-price-watch",
+  "slug": "hotel-price-watch",
+  "title": "Hotel Price Watch",
+  "titleJa": "宿泊空室・値下げアラート",
+  "emoji": "🏨",
+  "mode": "watch",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "¥980",
+  "priceB2B": "掲載 ¥2,480〜 / 代理店連携",
+  "category": "hotel",
+  "who": "出張・旅行で今安い／空いている宿を即取りたい人",
+  "prototype": "syunnjack/hotel-price-watch",
+  "boothItem": "hotel-price-watch",
+  "tagline": "エリアと上限金額を保存して、空室と値下げの瞬間を逃さない。",
+  "features": [
+    "エリア・日程・上限金額のウォッチ登録",
+    "空室・値下げシードの条件一致表示",
+    "保存ウォッチのローカル管理",
+    "予約アフィ／有料通知への導線"
+  ],
+  "seedKind": "hotel",
+  "faqs": [
+    [
+      "無料と有料の違いは？",
+      "閲覧は無料。条件保存と通知は買い切りキット、継続通知は月額 Pro です。"
+    ],
+    [
+      "B2Bはいつ？",
+      "個人のウォッチ実績ができてから、ホテル掲載枠として拡張します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-hotel-price-watch",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-hotel-price-watch/",
+  "boothUrl": "https://chitamaru.booth.pm/items/hotel-price-watch"
+}

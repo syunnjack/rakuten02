@@ -113,3 +113,8 @@ Renderで公開する場合は `render.yaml` をBlueprintとして読み込み�
 - `/robots.txt` のSitemap URLが `https://shudenhotel.jp/sitemap.xml` になっていることを確認
 - `/og-image.svg` と `/favicon.svg` が表示されることを確認
 - `/areas/*`, `/venues/*`, `/guides/*` のLPが200で返ることを確認
+
+## 知多丸 独立製品リポジトリ（16本）
+
+追加候補（Hotel Price Watch / NearQueue / BusStay 等）は `products/` に **1商品1リポ** のソースがあります。  
+GitHub への新規作成手順は [products/README.md](products/README.md)、戦略と価格は [docs/PRODUCT-STRATEGY.md](docs/PRODUCT-STRATEGY.md) です。
