@@ -42,3 +42,14 @@
 
 ライブ台帳: `docs/RANKING-SITES.md`（ColorfulBOX 稼働 / WPX DNS 待ち）
 `bash scripts/site-analytics/check-ranking-signals.sh`
+
+---
+
+## ユーザー作業（優先順）
+
+1. `.\scripts\site-analytics\complete-gsc-rollout.ps1`（または CROSS_REPO_PAT）
+2. busselect Site Creator 実トークン
+3. Search Console sitemap 再送信 ×5
+4. Bing Webmaster（shudenhotel IndexNow）
+5. ColorfulBOX 3 件 API キー復旧 / WPX 17 件 DNS
+6. （任意）sitemap-auto 単体 repo + GSC SA
