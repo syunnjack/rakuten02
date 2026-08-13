@@ -1194,7 +1194,7 @@ internal static class HtmlPages
   "@type": "ListItem",
   "position": {{index + 1}},
   "name": "{{Json(hotel.Name)}}",
-  "url": "{{origin}}/search?place={{Uri.EscapeDataString(place)}}"
+  "url": "{{SearchCanonical(origin, place)}}"
 }
 """);
         }

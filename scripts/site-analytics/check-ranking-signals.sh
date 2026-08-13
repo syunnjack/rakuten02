@@ -5,10 +5,15 @@ set -euo pipefail
 
 sites=(
   "sosolu.pro|https://sosolu.pro/"
-  "sosolu.tokyo|https://sosolu.tokyo/"
-  "sosoru.tokyo|https://sosoru.tokyo/"
+  "sosolu.link|https://sosolu.link/"
+  "sosolu.email|https://sosolu.email/"
+  "sosolu.help|https://sosolu.help/"
+  "sosolu.org|https://sosolu.org/"
   "sosolu.net|https://sosolu.net/"
+  "sosolu.tokyo|https://sosolu.tokyo/"
   "sosolu.xyz|https://sosolu.xyz/"
+  "sosoru.click|https://sosoru.click/"
+  "sosoru.tokyo|https://sosoru.tokyo/"
   "sosoru.org|https://sosoru.org/"
   "sosoru.asia|https://sosoru.asia/"
 )

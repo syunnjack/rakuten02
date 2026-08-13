@@ -16,10 +16,10 @@ jobs:
   apply-patches:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - repo: hey-douga-guide
-            # 0001/0002 already on master; apply open Devin follow-ups
             patch_glob: "patches/hey-douga-guide/000[345]*.patch"
           - repo: free-sample-hub
             patch_glob: "patches/free-sample-hub/0004*.patch"
@@ -32,6 +32,8 @@ jobs:
       - name: Apply patches
         run: |
           set -euo pipefail
+          git config --global user.email "cursoragent@cursor.com"
+          git config --global user.name "Cursor Agent"
           cd /tmp/${{ matrix.repo }}
           shopt -s nullglob
           patches=($GITHUB_WORKSPACE/${{ matrix.patch_glob }})
