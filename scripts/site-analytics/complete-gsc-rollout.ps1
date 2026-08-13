@@ -37,7 +37,6 @@ $existingPrs = @(
   @{ Repo = "syunnjack/kousokubus-benri"; Number = 1; Note = "title absolute + search noindex" },
   @{ Repo = "syunnjack/task-dashboard"; Number = 8; Note = "percent-encode actress URLs" },
   @{ Repo = "syunnjack/machi-list"; Number = 1; Note = "shop detail pages + sitemap" },
-  @{ Repo = "syunnjack/goal-pilot-app"; Number = 1; Note = "canonicals + sitemap routes" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 2; Note = "canonical/robots from APP_URL" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 3; Note = "https sample media" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 4; Note = "crawlable work/provider pages" },
@@ -82,8 +81,11 @@ $jobs = @(
   @{
     Dir = "goal-pilot-app"
     Base = "main"
-    Patch = "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch"
-    Title = "GSC: expand sitemap, remove vercel robots, add JSON-LD"
+    Patch = @(
+      "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch",
+      "patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch"
+    )
+    Title = "GSC: per-route canonicals, FAQ JSON-LD, IndexNow"
   }
 )
 

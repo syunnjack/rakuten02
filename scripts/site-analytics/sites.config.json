@@ -30,11 +30,13 @@
     "repo": "syunnjack/goal-pilot-app",
     "domain": "https://goalpilot.jp/",
     "stack": "nextjs-xserver",
-    "status": "gsc-sitemap-pending",
+    "status": "gsc-canonical-faq-patch-pending",
     "ga4": "G-02C2YQ4WYE",
-    "searchConsole": "tag-live-unverified",
-    "patch": "patches/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch",
-    "note": "Search Console でサイトマップ送信のみ"
+    "searchConsole": "tag-live",
+    "patch": "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch",
+    "patch3": "patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch",
+    "indexNowKey": "goalpilotindex2026",
+    "note": "本番は og:url のみ。0002+0003 が Devin #1 を包含（ページ単位 canonical / FAQ / IndexNow）"
   },
   {
     "id": "rakuafi-tool",

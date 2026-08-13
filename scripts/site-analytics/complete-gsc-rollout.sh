@@ -36,7 +36,6 @@ merge_pr() {
 merge_pr syunnjack/kousokubus-benri 1 "title absolute + search noindex"
 merge_pr syunnjack/task-dashboard 8 "percent-encode actress URLs"
 merge_pr syunnjack/machi-list 1 "shop detail pages + sitemap"
-merge_pr syunnjack/goal-pilot-app 1 "canonicals + sitemap routes"
 
 echo
 echo "== DTI Devin PRs =="

@@ -37,12 +37,12 @@ bash scripts/site-analytics/complete-gsc-rollout.sh
    - [kousokubus-benri#1](https://github.com/syunnjack/kousokubus-benri/pull/1)  
    - [task-dashboard#8](https://github.com/syunnjack/task-dashboard/pull/8)  
    - [machi-list#1](https://github.com/syunnjack/machi-list/pull/1)  
-   - [goal-pilot-app#1](https://github.com/syunnjack/goal-pilot-app/pull/1)  
-   - DTI: hey-douga-guide #2/#3/#4, free-sample-hub #1
-2. rakuten02 パッチ（busselect `0005` / darekore `0005`+`0006` / machi-list `0003` / goalpilot `0002`）を適用 → PR → マージ
+   - DTI: hey-douga-guide #2/#3/#4, free-sample-hub #1  
+   - goal-pilot-app#1 は **マージしない**（`0002`+`0003` が canonical / sitemap を包含し、同時適用すると衝突する）
+2. rakuten02 パッチ（busselect `0005` / darekore `0005`+`0006` / machi-list `0003` / goalpilot `0002`+`0003`）を適用 → PR → マージ
 3. ライブ信号チェック + IndexNow（Bing + Yandex）
 
-UI で先にマージする場合も同じ4 PR でOK（その後スクリプト再実行）。
+UI で先にマージする場合も busselect / darekore / machi-list の Devin PR でOK（goalpilot は `0002`+`0003` のみ。その後スクリプト再実行）。
 
 ## 手動3点（スクリプト後）
 

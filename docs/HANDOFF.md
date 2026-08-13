@@ -23,7 +23,7 @@
 |--------|------|-----|-----|------|
 | shudenhotel.jp | ✅ | ✅ | ✅ | GSC sitemap 再送信 / Bing Webmaster |
 | darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` + Devin #8 |
-| goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002` + Devin #1 |
+| goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002`+`0003` |
 | machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`（YOUR_VC_*） |
 | busselect.jp | ✅ | ❌ | ❌ | パッチ `0005` + Devin #1 + Site Creator |
 

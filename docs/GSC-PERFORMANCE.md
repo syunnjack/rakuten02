@@ -8,7 +8,7 @@
 | 2 | busselect.jp | ❌ GA4 プレースホルダ / search indexable（GSC タグは本番で有効） | パッチ `0005` + Devin #1 + Site Creator GA4 |
 | 3 | darekore.jp | 🟡 title 薄い / sitemap 未エンコード | パッチ `0005`+`0006` + Devin #8 |
 | 4 | machi-list.jp | 🟡 YOUR_VC_* 残 | パッチ `0003` + Devin #1 |
-| 5 | goalpilot.jp | 🟡 canonical は og:url 経由 | パッチ `0002` + Devin #1 |
+| 5 | goalpilot.jp | 🟡 canonical は og:url 経由 / 下層 NOCANON | パッチ `0002`+`0003`（Devin #1 は不要） |
 
 ## shudenhotel.jp — 本番確認（2026-08-13）
 
@@ -34,9 +34,9 @@ IndexNow Bing     = 403 until Bing Webmaster verify
 | サイト | パッチ |
 |--------|--------|
 | busselect | `patches/kousokubus-benri/0005-...` |
-| darekore | `patches/task-dashboard/0005-...` |
+| darekore | `patches/task-dashboard/0005-...` + `0006-...` |
 | machi-list | `patches/machi-list/0003-...` |
-| goalpilot | `patches/goal-pilot-app/0002-...` |
+| goalpilot | `patches/goal-pilot-app/0002-...` + `0003-...` |
 
 ## IndexNow
 
@@ -46,6 +46,7 @@ IndexNow Bing     = 403 until Bing Webmaster verify
 | machi-list.jp | 200 | 202 |
 | busselect.jp | 200 | 202 |
 | shudenhotel.jp | 403（Webmaster 未バインド） | 200/202 |
+| goalpilot.jp | キー未公開（`0003` 適用後） | キー未公開 |
 
 `bash scripts/site-analytics/submit-indexnow.sh`
 

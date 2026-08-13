@@ -1,0 +1,260 @@
+From 93b33d2de6c3385ebb4fbc0d4d95a716e24a5232 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 14:53:15 +0000
+Subject: [PATCH] Add per-route canonicals, FAQ JSON-LD, and IndexNow key
+
+Root layout no longer canonicalizes every page to the homepage.
+Each route emits its own canonical and og:url, homepage JSON-LD
+includes Organization and FAQPage, and the IndexNow key file is public.
+---
+ app/consult/page.tsx          |  8 ++++-
+ app/diagnosis/page.tsx        |  8 ++++-
+ app/layout.tsx                |  4 ---
+ app/line/page.tsx             |  8 ++++-
+ app/page.tsx                  | 65 ++++++++++++++++++++++++++++++-----
+ app/partners/reward/page.tsx  |  8 ++++-
+ app/pro/page.tsx              |  8 ++++-
+ app/share/page.tsx            |  8 ++++-
+ app/templates/page.tsx        |  8 ++++-
+ public/goalpilotindex2026.txt |  1 +
+ 10 files changed, 107 insertions(+), 19 deletions(-)
+ create mode 100644 public/goalpilotindex2026.txt
+
+diff --git a/app/consult/page.tsx b/app/consult/page.tsx
+index 7ecda4f..06502bf 100644
+--- a/app/consult/page.tsx
++++ b/app/consult/page.tsx
+@@ -4,7 +4,13 @@ import { ConsultClient } from '@/components/ConsultClient'
+ 
+ export const metadata: Metadata = {
+   title: 'AI悩み相談 - GoalPilot',
+-  description: '仕事、人間関係、お金、健康、勉強、家族、恋愛、習慣まで。悩み・相談・提案依頼をAIに書くと、要約とアドバイス、今日3分でできる一歩を提案します。'
++  description: '仕事、人間関係、お金、健康、勉強、家族、恋愛、習慣まで。悩み・相談・提案依頼をAIに書くと、要約とアドバイス、今日3分でできる一歩を提案します。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/consult/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/consult/',
++  },
+ }
+ 
+ const examples = [
+diff --git a/app/diagnosis/page.tsx b/app/diagnosis/page.tsx
+index 32a91c6..68b240b 100644
+--- a/app/diagnosis/page.tsx
++++ b/app/diagnosis/page.tsx
+@@ -4,7 +4,13 @@ import { QuitPatternDiagnosis } from '@/components/QuitPatternDiagnosis'
+ 
+ export const metadata: Metadata = {
+   title: '三日坊主タイプ診断 - GoalPilot',
+-  description: '目標が続かない原因を10問で診断。初動停止、燃え尽き、報酬不足、復帰不能、ひとり後回しのタイプ別に対策を提案します。'
++  description: '目標が続かない原因を10問で診断。初動停止、燃え尽き、報酬不足、復帰不能、ひとり後回しのタイプ別に対策を提案します。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/diagnosis/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/diagnosis/',
++  },
+ }
+ 
+ export default function DiagnosisPage() {
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 4db57fe..cf5830e 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -5,13 +5,9 @@ export const metadata: Metadata = {
+   metadataBase: new URL('https://goalpilot.jp'),
+   title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+   description: '逆算スケジュール、3分タスク、ご褒美設計、挫折リスク検知に加え、仕事・人間関係・お金・健康などのAI悩み相談も。目標達成を幅広く支援するアプリ。',
+-  alternates: {
+-    canonical: 'https://goalpilot.jp/'
+-  },
+   openGraph: {
+     title: 'GoalPilot - 三日坊主を戻す目標必達アプリ',
+     description: '三日坊主を前提に、目標達成まで戻してくれるアプリ。',
+-    url: 'https://goalpilot.jp/',
+     siteName: 'GoalPilot',
+     type: 'website',
+     locale: 'ja_JP'
+diff --git a/app/line/page.tsx b/app/line/page.tsx
+index eec44cb..a7b5038 100644
+--- a/app/line/page.tsx
++++ b/app/line/page.tsx
+@@ -2,7 +2,13 @@ import type { Metadata } from 'next'
+ 
+ export const metadata: Metadata = {
+   title: 'LINE通知で三日坊主を防ぐ - GoalPilot',
+-  description: 'GoalPilotのLINE通知設計。朝の3分スタート、2日目の復帰通知、週次レビューで目標の挫折を防ぎます。'
++  description: 'GoalPilotのLINE通知設計。朝の3分スタート、2日目の復帰通知、週次レビューで目標の挫折を防ぎます。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/line/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/line/',
++  },
+ }
+ 
+ const flows = [
+diff --git a/app/page.tsx b/app/page.tsx
+index 0284284..38976ee 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,15 +1,64 @@
++import type { Metadata } from 'next'
++
+ import { GoalPilotClient } from '@/components/GoalPilotClient'
+ 
++export const metadata: Metadata = {
++  alternates: {
++    canonical: 'https://goalpilot.jp/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/',
++  },
++}
++
+ const jsonLd = {
+   '@context': 'https://schema.org',
+-  '@type': 'SoftwareApplication',
+-  name: 'GoalPilot',
+-  applicationCategory: 'LifestyleApplication',
+-  operatingSystem: 'Web',
+-  url: 'https://goalpilot.jp/',
+-  description:
+-    '三日坊主を前提に、逆算スケジュール・3分タスク・ご褒美設計・挫折リスク検知で目標達成まで戻してくれるアプリ。',
+-  inLanguage: 'ja',
++  '@graph': [
++    {
++      '@type': 'SoftwareApplication',
++      name: 'GoalPilot',
++      applicationCategory: 'LifestyleApplication',
++      operatingSystem: 'Web',
++      url: 'https://goalpilot.jp/',
++      description:
++        '三日坊主を前提に、逆算スケジュール・3分タスク・ご褒美設計・挫折リスク検知で目標達成まで戻してくれるアプリ。',
++      inLanguage: 'ja',
++    },
++    {
++      '@type': 'Organization',
++      name: 'GoalPilot',
++      url: 'https://goalpilot.jp/',
++    },
++    {
++      '@type': 'FAQPage',
++      mainEntity: [
++        {
++          '@type': 'Question',
++          name: '三日坊主でも目標を達成できますか？',
++          acceptedAnswer: {
++            '@type': 'Answer',
++            text: 'GoalPilotは続く人向けではなく、続かなかった翌日に戻れる設計です。3分タスク、復帰ボタン、挫折リスク検知で再開のハードルを下げます。',
++          },
++        },
++        {
++          '@type': 'Question',
++          name: '無料で使えますか？',
++          acceptedAnswer: {
++            '@type': 'Answer',
++            text: '3分スタートや診断、テンプレートは無料で使えます。AI逆算、通知、週次レビューはProプランの想定です。',
++          },
++        },
++        {
++          '@type': 'Question',
++          name: 'どんな目標に使えますか？',
++          acceptedAnswer: {
++            '@type': 'Answer',
++            text: '資格、英語、ダイエット、副業、貯金、仕事、人間関係、健康など20ジャンルのテンプレートと、ジャンルを問わないAI悩み相談に対応しています。',
++          },
++        },
++      ],
++    },
++  ],
+ }
+ 
+ export default function Page() {
+diff --git a/app/partners/reward/page.tsx b/app/partners/reward/page.tsx
+index 6993e33..0fe686b 100644
+--- a/app/partners/reward/page.tsx
++++ b/app/partners/reward/page.tsx
+@@ -2,7 +2,13 @@ import type { Metadata } from 'next'
+ 
+ export const metadata: Metadata = {
+   title: 'ご褒美アフィリエイト - GoalPilot',
+-  description: '目標達成のご褒美として、本、文具、ガジェット、体験ギフト、旅行、カフェなどを提案する収益導線。'
++  description: '目標達成のご褒美として、本、文具、ガジェット、体験ギフト、旅行、カフェなどを提案する収益導線。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/partners/reward/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/partners/reward/',
++  },
+ }
+ 
+ const rewards = [
+diff --git a/app/pro/page.tsx b/app/pro/page.tsx
+index b58a93c..7adc983 100644
+--- a/app/pro/page.tsx
++++ b/app/pro/page.tsx
+@@ -2,7 +2,13 @@ import type { Metadata } from 'next'
+ 
+ export const metadata: Metadata = {
+   title: 'GoalPilot Pro - AI逆算と通知で目標達成',
+-  description: 'GoalPilot Proの料金導線。AI逆算、LINE通知、復帰モード自動化、複数目標、週次レビューを提供します。'
++  description: 'GoalPilot Proの料金導線。AI逆算、LINE通知、復帰モード自動化、複数目標、週次レビューを提供します。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/pro/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/pro/',
++  },
+ }
+ 
+ const features = [
+diff --git a/app/share/page.tsx b/app/share/page.tsx
+index 024ea6f..d760799 100644
+--- a/app/share/page.tsx
++++ b/app/share/page.tsx
+@@ -2,7 +2,13 @@ import type { Metadata } from 'next'
+ 
+ export const metadata: Metadata = {
+   title: 'SNS進捗カード - GoalPilot',
+-  description: 'GoalPilotの進捗共有カード。継続日数だけでなく、復帰できた日を称えるSNS導線です。'
++  description: 'GoalPilotの進捗共有カード。継続日数だけでなく、復帰できた日を称えるSNS導線です。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/share/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/share/',
++  },
+ }
+ 
+ export default function SharePage() {
+diff --git a/app/templates/page.tsx b/app/templates/page.tsx
+index f5dcd1e..6b01062 100644
+--- a/app/templates/page.tsx
++++ b/app/templates/page.tsx
+@@ -2,7 +2,13 @@ import type { Metadata } from 'next'
+ 
+ export const metadata: Metadata = {
+   title: '目標テンプレート集 - GoalPilot',
+-  description: '資格、英語、ダイエット、副業、貯金、仕事、人間関係、メンタル、家族、恋愛、受験、禁煙まで。20ジャンルの三日坊主対策テンプレート集。'
++  description: '資格、英語、ダイエット、副業、貯金、仕事、人間関係、メンタル、家族、恋愛、受験、禁煙まで。20ジャンルの三日坊主対策テンプレート集。',
++  alternates: {
++    canonical: 'https://goalpilot.jp/templates/',
++  },
++  openGraph: {
++    url: 'https://goalpilot.jp/templates/',
++  },
+ }
+ 
+ const templates = [
+diff --git a/public/goalpilotindex2026.txt b/public/goalpilotindex2026.txt
+new file mode 100644
+index 0000000..7a9d424
+--- /dev/null
++++ b/public/goalpilotindex2026.txt
+@@ -0,0 +1 @@
++goalpilotindex2026
+-- 
+2.43.0
+

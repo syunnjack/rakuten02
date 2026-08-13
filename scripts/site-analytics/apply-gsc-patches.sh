@@ -3,6 +3,7 @@
 # Auth: CROSS_REPO_PAT (repo-scoped classic PAT) or an already-authenticated gh/git.
 #
 # Also merges helpful open Devin PRs first when MERGE_EXISTING_PRS=true (default).
+# goal-pilot-app#1 is skipped: 0002+0003 supersede its canonicals/sitemap and would conflict.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -24,8 +25,7 @@ if [[ "$MERGE_EXISTING_PRS" == "true" ]]; then
   for item in \
     "syunnjack/kousokubus-benri|1" \
     "syunnjack/task-dashboard|8" \
-    "syunnjack/machi-list|1" \
-    "syunnjack/goal-pilot-app|1"
+    "syunnjack/machi-list|1"
   do
     IFS='|' read -r repo number <<<"$item"
     if gh pr merge "$number" --repo "$repo" --merge 2>/dev/null; then
@@ -40,7 +40,7 @@ jobs=(
   "kousokubus-benri|main|patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch|GSC: reject placeholder GA4/GSC tokens and fix title"
   "task-dashboard|main|patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch,patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch|GSC: richer title, FAQ JSON-LD, noindex search queries"
   "machi-list|main|patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch|GSC: fix robots conflict and ValueCommerce placeholders"
-  "goal-pilot-app|main|patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch|GSC: expand sitemap, remove vercel robots, add JSON-LD"
+  "goal-pilot-app|main|patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch,patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch|GSC: per-route canonicals, FAQ JSON-LD, IndexNow"
 )
 
 mkdir -p "$WORK"

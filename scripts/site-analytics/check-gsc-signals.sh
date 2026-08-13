@@ -140,6 +140,24 @@ for entry in "${sites[@]}"; do
     notes+=("dup-title")
     warn=$((warn + 1))
   fi
+  if [[ "$name" == "goalpilot.jp" ]]; then
+    inner="$(curl -fsSL --max-time 15 "${url%/}/diagnosis/" 2>/dev/null || true)"
+    inner_canon="$(printf '%s' "$inner" | rg -o 'rel="canonical" href="[^"]+"' | head -1 | sed -E 's/.*href="([^"]+)".*/\1/' || true)"
+    if [[ -z "$inner_canon" ]]; then
+      inner_canon="$(printf '%s' "$inner" | rg -o '\"rel\":\"canonical\",\"href\":\"[^\"]+\"' | head -1 | sed -E 's/.*"href":"([^"]+)".*/\1/' || true)"
+    fi
+    if [[ -z "$inner_canon" ]]; then
+      notes+=("inner-no-canonical")
+      warn=$((warn + 1))
+    elif [[ "$inner_canon" == "https://goalpilot.jp/" || "$inner_canon" == "https://goalpilot.jp" ]]; then
+      notes+=("inner-canonical-home")
+      warn=$((warn + 1))
+    fi
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+  fi
   if [[ "$name" == "busselect.jp" ]]; then
     search_robots="$(curl -fsSL --max-time 15 "${url%/}/search?from=tokyo&to=osaka" 2>/dev/null \
       | rg -o 'name=\"robots\" content=\"[^\"]+\"|\"name\":\"robots\",\"content\":\"[^\"]+\"' | head -1 || true)"

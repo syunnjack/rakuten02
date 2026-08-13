@@ -36,6 +36,12 @@ $jobs = @(
     Optional = $true
   },
   @{
+    Name = "goal-pilot-app (per-route canonicals / FAQ / IndexNow)"
+    Dir  = "goal-pilot-app"
+    Patch = "$patchBase/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch"
+    Optional = $true
+  },
+  @{
     Name = "kousokubus-benri (busselect placeholder guard)"
     Dir  = "kousokubus-benri"
     Patch = "$patchBase/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
