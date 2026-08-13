@@ -39,7 +39,12 @@ git pull origin master
 | free-sample-hub | sosoru.asia | GA4/GSC ライブ。パッチ `0004` = Devin #1 | マージ + migrate |
 
 ```bash
+# Prefer: merges Devin PRs then git am leftovers
+bash scripts/site-analytics/apply-dti-patches.sh
+# or
 bash scripts/site-analytics/complete-dti-rollout.sh
+# dry-run
+PUSH=false MERGE_EXISTING_PRS=false bash scripts/site-analytics/apply-dti-patches.sh
 ```
 
 ---
@@ -50,9 +55,12 @@ bash scripts/site-analytics/complete-dti-rollout.sh
 
 | グループ | 残り |
 |----------|------|
-| ColorfulBOX 10 | 3 件の API キー復旧（duga/gravure/mature） |
+| ColorfulBOX 10 | trailing-slash canonical パッチ適用 / 3 件の API キー復旧（duga/gravure/mature） / GA4 `.env` 3 件 |
 | WPX 17 | DNS を本番サーバーへ |
 
+Canonical パッチ: `patches/ranking-sites/README.md`
+
 ```bash
+PUSH=false bash scripts/site-analytics/apply-ranking-canonical-patches.sh
 bash scripts/site-analytics/check-ranking-signals.sh
 ```

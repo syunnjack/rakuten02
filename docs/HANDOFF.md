@@ -22,7 +22,7 @@
 | サイト | 公開 | GA4 | GSC | 残り |
 |--------|------|-----|-----|------|
 | shudenhotel.jp | ✅ | ✅ | ✅ | GSC sitemap 再送信 / Bing Webmaster |
-| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` + Devin #8 |
+| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005`+`0006` + Devin #8 |
 | goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002`+`0003` |
 | machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`+`0004` + Devin #1 |
 | busselect.jp | ✅ | ❌ | ✅ GSC | パッチ `0005`+`0006` + Site Creator GA4 |
@@ -39,4 +39,6 @@
 
 ## B. DTI / C. ランキング
 
-従来どおり `docs/REMAINING-WORK.md` 参照。
+- DTI: `bash scripts/site-analytics/apply-dti-patches.sh`（Devin マージ + 0003–0005 / free-sample `0004`）
+- Ranking trailing-slash: `patches/ranking-sites/README.md` / `apply-ranking-canonical-patches.sh`
+- 詳細は `docs/REMAINING-WORK.md` / `docs/RANKING-SITES.md`

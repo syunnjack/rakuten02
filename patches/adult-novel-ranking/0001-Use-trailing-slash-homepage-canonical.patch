@@ -1,0 +1,40 @@
+From 0e89e09df0e5cd1799210ed2600460888aa30803 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 17:08:54 +0000
+Subject: [PATCH] Use trailing slash homepage canonical
+
+---
+ docs/SEARCH-CONSOLE.md            | 7 +++++++
+ resources/views/welcome.blade.php | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+ create mode 100644 docs/SEARCH-CONSOLE.md
+
+diff --git a/docs/SEARCH-CONSOLE.md b/docs/SEARCH-CONSOLE.md
+new file mode 100644
+index 0000000..0fe51b0
+--- /dev/null
++++ b/docs/SEARCH-CONSOLE.md
+@@ -0,0 +1,7 @@
++# Search Console — sosolu.email
++
++`sosolu.email` (this site) still needs a **real** Google Search Console ownership
++verification token (`google-site-verification` meta or HTML file).
++
++Do **not** invent or copy a token from another property. Add the token only after
++creating/verifying the property in Search Console for `https://sosolu.email/`.
+diff --git a/resources/views/welcome.blade.php b/resources/views/welcome.blade.php
+index 47fce39..e7937ec 100644
+--- a/resources/views/welcome.blade.php
++++ b/resources/views/welcome.blade.php
+@@ -5,7 +5,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>官能小説ランキング｜レビュー評価の高いFANZA官能小説まとめ</title>
+   <meta name="description" content="FANZAの官能小説を、実際のレビュー評価が高い順にランキング形式でチェックできます。18歳未満閲覧禁止。">
+-  <link rel="canonical" href="{{ url()->current() }}">
++  <link rel="canonical" href="{{ request()->is('/') ? rtrim(config('app.url'), '/').'/' : url()->current() }}">
+   <meta property="og:site_name" content="官能小説ランキング">
+   <meta property="og:type" content="website">
+   <meta property="og:title" content="官能小説ランキング｜レビュー評価の高いFANZA官能小説まとめ">
+-- 
+2.43.0
+

@@ -1,0 +1,25 @@
+From 1eb97433eaf82479f86fd1ada19bdf195b9bb068 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 17:08:53 +0000
+Subject: [PATCH] Use trailing slash homepage canonical
+
+---
+ resources/views/welcome.blade.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/resources/views/welcome.blade.php b/resources/views/welcome.blade.php
+index ae38907..b0207ef 100644
+--- a/resources/views/welcome.blade.php
++++ b/resources/views/welcome.blade.php
+@@ -6,7 +6,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>エロ漫画ランキング｜レビュー評価の高いFANZAコミックまとめ</title>
+   <meta name="description" content="FANZAのアダルトコミックを、実際のレビュー評価が高い順にランキング形式でチェックできます。18歳未満閲覧禁止。">
+-  <link rel="canonical" href="{{ url()->current() }}">
++  <link rel="canonical" href="{{ request()->is('/') ? rtrim(config('app.url'), '/').'/' : url()->current() }}">
+   <meta property="og:site_name" content="エロ漫画ランキング">
+   <meta property="og:type" content="website">
+   <meta property="og:title" content="エロ漫画ランキング｜レビュー評価の高いFANZAコミックまとめ">
+-- 
+2.43.0
+
