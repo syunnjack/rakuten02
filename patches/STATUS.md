@@ -1,7 +1,13 @@
 # プロジェクト全体ステータス
 
+<<<<<<< HEAD
 最終更新: **2026-08-12**  
 **チェックリスト:** `docs/REMAINING-WORK.md`
+=======
+最終更新: **2026-08-13**  
+**チェックリスト:** `docs/REMAINING-WORK.md`  
+**GSC:** `docs/GSC-PERFORMANCE.md`
+>>>>>>> origin/master
 
 ---
 
@@ -19,34 +25,17 @@
 
 | サイト | 状態 |
 |--------|------|
-| shudenhotel | ✅ 完了 |
-| darekore | サイトマップ送信待ち |
-| goalpilot | サイトマップ送信待ち |
-| machi-list | HTTPS ✅ / **GA4 Secret 待ち** |
-| busselect | ✅ 公開 / Leaflet ✅ / サイトマップ送信任意 |
-
----
-
-## トラック B — DTI
-
-| リポジトリ | 状態 |
-|------------|------|
-| hey-douga-guide | PR #1 マージ済 → **本番 migrate 待ち** |
-| free-sample-hub | SETUP 待ち |
+| shudenhotel | ✅ PR #34 本番反映（https / GA4 / GSC / FAQ） |
+| darekore | パッチ `0005` 適用待ち |
+| goalpilot | パッチ `0002` 適用待ち |
+| machi-list | パッチ `0003` 適用待ち |
+| busselect | パッチ `0005` + Site Creator 実トークン待ち |
 
 ---
 
 ## ユーザー作業（優先順）
 
-1. machi-list `GOOGLE_ANALYTICS_MEASUREMENT_ID` + Deploy
-2. Search Console サイトマップ（darekore / goalpilot / busselect）
-3. hey-douga 本番 migrate/import
-4. free-sample-hub パッチ適用
-
----
-
-## エージェント（2026-08-10）
-
-- ライブ確認: 全5ドメイン HTTPS 200
-- `docs/REMAINING-WORK.md` 新規
-- HANDOFF / STATUS / sites.config 更新
+1. `CROSS_REPO_PAT` → Apply GSC patches workflow
+2. busselect Site Creator 実トークン
+3. Search Console sitemap 再送信
+4. hey-douga 本番 migrate

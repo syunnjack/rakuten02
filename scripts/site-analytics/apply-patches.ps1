@@ -3,6 +3,8 @@
 .SYNOPSIS
   rakuten02 のパッチを各リポジトリに順番適用します（git am）。
   各リポジトリは事前に clone 済みであること。
+
+  2026-08-12 GSC 改善パッチ詳細: patches/APPLY-GSC-2026-08-12.md
 #>
 
 $ErrorActionPreference = "Stop"
@@ -10,27 +12,27 @@ $patchBase = "https://github.com/syunnjack/rakuten02/raw/master/patches"
 
 $jobs = @(
   @{
-    Name = "task-dashboard (darekore GSC dispatch)"
+    Name = "task-dashboard (darekore GSC title/noindex/sitemap)"
     Dir  = "task-dashboard"
-    Patch = "$patchBase/task-dashboard/0002-Add-workflow-dispatch-for-Search-Console-token.patch"
+    Patch = "$patchBase/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch"
     Optional = $true
   },
   @{
-    Name = "machi-list (Render)"
+    Name = "machi-list (robots conflict + VC SID)"
     Dir  = "machi-list"
-    Patch = "$patchBase/machi-list/0002-Switch-to-Render-custom-domain.patch"
+    Patch = "$patchBase/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch"
     Optional = $true
   },
   @{
-    Name = "goal-pilot-app"
+    Name = "goal-pilot-app (sitemap + JSON-LD)"
     Dir  = "goal-pilot-app"
-    Patch = "$patchBase/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch"
+    Patch = "$patchBase/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch"
     Optional = $true
   },
   @{
-    Name = "kousokubus-benri (busselect)"
+    Name = "kousokubus-benri (busselect placeholder guard)"
     Dir  = "kousokubus-benri"
-    Patch = "$patchBase/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch"
+    Patch = "$patchBase/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
     Optional = $true
   }
 )
@@ -60,3 +62,4 @@ foreach ($job in $jobs) {
 }
 
 Write-Host "`nDone. Run check-sites.ps1 to verify." -ForegroundColor Green
+Write-Host "Then follow patches/APPLY-GSC-2026-08-12.md for Search Console / Site Creator steps." -ForegroundColor Cyan

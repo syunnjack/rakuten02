@@ -1,0 +1,86 @@
+From ae5432f642f21652231111c7cfe93e4e978b1514 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Wed, 12 Aug 2026 23:47:06 +0000
+Subject: [PATCH] Improve GSC signals: richer title, noindex search queries,
+ encode sitemap
+
+---
+ index.html                         |  7 +++++--
+ scripts/generate-actress-pages.mjs |  2 +-
+ src/App.jsx                        | 12 ++++++++++++
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/index.html b/index.html
+index ea212b7..d940d2d 100644
+--- a/index.html
++++ b/index.html
+@@ -3,17 +3,20 @@
+   <head>
+     <meta charset="UTF-8" />
+     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
++    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
++    <link rel="dns-prefetch" href="https://www.dmm.co.jp" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <meta
+       name="description"
+       content="この子だれ？は、作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。"
+     />
+ 	  <meta name="google-site-verification" content="UkVs5hg-pf8rhHl-6SjNmf5AVU5fHm-ha3eBCk5Y5wA" />
++    <meta name="robots" content="index, follow" />
+     <link rel="canonical" href="https://darekore.jp/" />
+     <meta property="og:type" content="website" />
+     <meta property="og:locale" content="ja_JP" />
+     <meta property="og:site_name" content="この子だれ？" />
+-    <meta property="og:title" content="この子だれ？" />
++    <meta property="og:title" content="この子だれ？｜作品名・品番から出演女優名を検索" />
+     <meta property="og:description" content="作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。" />
+     <meta property="og:url" content="https://darekore.jp/" />
+     <meta name="twitter:card" content="summary" />
+@@ -31,7 +34,7 @@
+         }
+       }
+     </script>
+-    <title>この子だれ？</title>
++    <title>この子だれ？｜作品名・品番・メーカーから出演女優名を検索</title>
+   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5P2QCWYG8V"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5P2QCWYG8V');</script></head>
+   <body>
+     <div id="root"></div>
+diff --git a/scripts/generate-actress-pages.mjs b/scripts/generate-actress-pages.mjs
+index 1af8f03..95f1eab 100644
+--- a/scripts/generate-actress-pages.mjs
++++ b/scripts/generate-actress-pages.mjs
+@@ -232,7 +232,7 @@ async function main() {
+     ),
+     ...pages.map(
+       ({ slug }) =>
+-        `  <url>\n    <loc>${SITE_URL}/actress/${slug}/</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>`
++        `  <url>\n    <loc>${SITE_URL}/actress/${slug.split('/').map(encodeURIComponent).join('/')}/</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>`
+     ),
+   ]
+   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`
+diff --git a/src/App.jsx b/src/App.jsx
+index 54fa12a..9971e12 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -101,6 +101,18 @@ function App() {
+     }
+   }, [query])
+ 
++  useEffect(() => {
++    const robots = document.querySelector('meta[name="robots"]')
++    if (!robots) return
++    if (query.trim()) {
++      robots.setAttribute('content', 'noindex, follow')
++      document.title = `「${query.trim()}」の検索｜この子だれ？`
++    } else {
++      robots.setAttribute('content', 'index, follow')
++      document.title = 'この子だれ？｜作品名・品番・メーカーから出演女優名を検索'
++    }
++  }, [query])
++
+   useEffect(() => {
+     let cancelled = false
+     fetch('/data/actresses.json')
+-- 
+2.43.0
+

@@ -1,9 +1,20 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.HttpOverrides;
 using Rakuten02.Core;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// The TLS terminating proxy forwards plain HTTP, so trust its scheme header to
+// keep canonical, OGP and sitemap URLs on https.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddHttpClient<GeoCodingClient>(client =>
 {
@@ -31,6 +42,25 @@ builder.Services.AddSingleton(_ => new RakutenApiOptions(
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+app.Use(async (context, next) =>
+{
+    // Prefer the apex host so Search Console does not split signals across www.
+    if (string.Equals(context.Request.Host.Host, "www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+    {
+        var target =
+            $"https://shudenhotel.jp{context.Request.PathBase}{context.Request.Path}{context.Request.QueryString}";
+        context.Response.Redirect(target, permanent: true);
+        return;
+    }
+
+    if (string.Equals(context.Request.Host.Host, "shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+    {
+        context.Response.Headers.StrictTransportSecurity = "max-age=31536000; includeSubDomains";
+    }
+
+    await next();
+});
 app.UseStaticFiles();
 
 var landingPages = new[]
@@ -52,15 +82,14 @@ var landingPages = new[]
     new LandingPage("/guides/nomikai-after-hotel", "飲み会後に帰れない時のホテル検索", "飲み会後、終電後、深夜に帰宅が難しい時に近くで今夜泊まれるホテルを探すためのページです。", "新宿駅", "飲み会後に帰れない時のホテル探し", "飲み会後は現在地に近い駅名や繁華街名で探すのが早いです。徒歩圏のホテル、チェックイン可能時間、価格を確認してから予約画面へ進みます。")
 };
 
-app.MapGet("/", (HttpRequest request) =>
+app.MapMethods("/", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
     var today = CurrentJapanDate();
-    var defaultCheckin = today;
-    var defaultCheckout = today.AddDays(1);
-    return Results.Content(HtmlPages.Home(request, defaultCheckin, defaultCheckout), "text/html; charset=utf-8");
+    var body = HtmlPages.Home(request, today, today.AddDays(1));
+    await WriteTextResponse(context, request, body, "text/html; charset=utf-8");
 });
 
-app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
+app.MapMethods("/healthz", new[] { "GET", "HEAD" }, () => Results.Ok(new { status = "ok" }));
 
 app.MapGet("/favicon.svg", () => Results.Text("""
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
@@ -118,35 +147,38 @@ app.MapGet("/site.webmanifest", (HttpRequest request) =>
     });
 });
 
-app.MapGet("/affiliate-disclosure", (HttpRequest request) =>
+app.MapMethods("/affiliate-disclosure", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.AffiliateDisclosure(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/privacy", (HttpRequest request) =>
+app.MapMethods("/privacy", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Privacy(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Privacy(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/terms", (HttpRequest request) =>
+app.MapMethods("/terms", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Terms(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Terms(request), "text/html; charset=utf-8");
 });
 
-app.MapGet("/guides/missed-last-train", (HttpRequest request) =>
+app.MapMethods("/guides/missed-last-train", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
-    return Results.Content(HtmlPages.Guide(request), "text/html; charset=utf-8");
+    await WriteTextResponse(context, request, HtmlPages.Guide(request), "text/html; charset=utf-8");
 });
 
 foreach (var landingPage in landingPages)
 {
-    app.MapGet(landingPage.Path, (HttpRequest request) =>
+    var path = landingPage.Path;
+    var page = landingPage;
+    app.MapMethods(path, new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
     {
-        return Results.Content(HtmlPages.AreaLanding(request, landingPage), "text/html; charset=utf-8");
+        await WriteTextResponse(context, request, HtmlPages.AreaLanding(request, page), "text/html; charset=utf-8");
     });
 }
 
-app.MapGet("/search", async (
+app.MapMethods("/search", new[] { "GET", "HEAD" }, async (
+    HttpContext context,
     HttpRequest httpRequest,
     RakutenTravelClient client,
     string? place,
@@ -160,25 +192,34 @@ app.MapGet("/search", async (
     var parsedCheckout = ParseDate(checkout) ?? parsedCheckin.AddDays(1);
     var searchRadius = Math.Clamp(radius ?? 1.0, 0.5, 3.0);
 
+    async Task WriteHtml(string html, int statusCode)
+    {
+        context.Response.StatusCode = statusCode;
+        await WriteTextResponse(context, httpRequest, html, "text/html; charset=utf-8");
+    }
+
     if (string.IsNullOrWhiteSpace(place))
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "場所を入力してください。", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     if (parsedCheckin < today)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "チェックイン日は今日以降を指定してください。", today, today.AddDays(1)),
-            "text/html; charset=utf-8");
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     if (parsedCheckout <= parsedCheckin)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, "チェックアウト日はチェックイン日の翌日以降を指定してください。", parsedCheckin, parsedCheckin.AddDays(1)),
-            "text/html; charset=utf-8");
+            StatusCodes.Status400BadRequest);
+        return;
     }
 
     try
@@ -189,21 +230,21 @@ app.MapGet("/search", async (
             parsedCheckout,
             searchRadius), cancellationToken);
 
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchResults(httpRequest, place.Trim(), parsedCheckin, parsedCheckout, searchRadius, results),
-            "text/html; charset=utf-8");
+            StatusCodes.Status200OK);
     }
     catch (InvalidOperationException ex)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, ex.Message, parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            StatusCodes.Status503ServiceUnavailable);
     }
     catch (HttpRequestException ex)
     {
-        return Results.Content(
+        await WriteHtml(
             HtmlPages.SearchError(httpRequest, $"検索APIへの接続に失敗しました: {ex.Message}", parsedCheckin, parsedCheckout),
-            "text/html; charset=utf-8");
+            StatusCodes.Status503ServiceUnavailable);
     }
 });
 
@@ -259,12 +300,16 @@ app.MapMethods("/sitemap.xml", new[] { "GET", "HEAD" }, async (HttpContext conte
     await WriteTextResponse(context, request, body, "application/xml; charset=utf-8");
 });
 
+// IndexNow key file must be publicly fetchable; fall back to the Blueprint default.
 var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
-if (!string.IsNullOrWhiteSpace(indexNowKey))
+if (string.IsNullOrWhiteSpace(indexNowKey))
 {
-    var keyPath = $"/{indexNowKey.Trim()}.txt";
-    app.MapGet(keyPath, () => Results.Text(indexNowKey.Trim(), "text/plain; charset=utf-8"));
+    indexNowKey = "shudenhotelindex2026";
 }
+
+var trimmedIndexNowKey = indexNowKey.Trim();
+app.MapMethods($"/{trimmedIndexNowKey}.txt", new[] { "GET", "HEAD" }, () =>
+    Results.Text(trimmedIndexNowKey, "text/plain; charset=utf-8"));
 
 app.Run();
 
@@ -292,16 +337,7 @@ static DateOnly CurrentJapanDate()
     return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
 }
 
-static string Origin(HttpRequest request)
-{
-    var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
-    if (!string.IsNullOrWhiteSpace(configured))
-    {
-        return configured.TrimEnd('/');
-    }
-
-    return $"{request.Scheme}://{request.Host}";
-}
+static string Origin(HttpRequest request) => PublicUrls.Origin(request);
 
 static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPages)
 {
@@ -320,13 +356,8 @@ static string BuildSitemap(string origin, IReadOnlyList<LandingPage> landingPage
         ("/terms", "monthly", "0.3")
     });
 
-    var searchPlaces = new[]
-    {
-        "新宿駅", "渋谷駅", "東京駅", "横浜駅", "池袋駅", "上野駅", "品川駅", "なんば駅",
-        "東京ドーム", "さいたまスーパーアリーナ", "横浜アリーナ", "幕張メッセ"
-    };
-    entries.AddRange(searchPlaces.Select(place =>
-        ($"/search?place={Uri.EscapeDataString(place)}&radius=1.0", "daily", "0.7")));
+    // /search is noindex: it renders live availability for a date range and every one of these
+    // places already has its own landing page above.
 
     var urls = string.Join(Environment.NewLine, entries.Select(entry => $"""
   <url>
@@ -352,6 +383,41 @@ internal sealed record LandingPage(
     string Place,
     string Heading,
     string BodyText);
+
+internal static class PublicUrls
+{
+    public static string Origin(HttpRequest request)
+    {
+        var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
+        string origin;
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            origin = configured.Trim().TrimEnd('/');
+        }
+        else
+        {
+            var scheme = request.Headers.TryGetValue("X-Forwarded-Proto", out var forwarded)
+                && !string.IsNullOrWhiteSpace(forwarded)
+                ? forwarded.ToString().Split(',')[0].Trim()
+                : request.Scheme;
+            origin = $"{scheme}://{request.Host}";
+        }
+
+        // Production must never emit http:// in canonical / sitemap / OGP (GSC split).
+        if (origin.StartsWith("http://shudenhotel.jp", StringComparison.OrdinalIgnoreCase)
+            || origin.StartsWith("http://www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+        {
+            origin = "https" + origin[4..];
+        }
+
+        if (origin.StartsWith("https://www.shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
+        {
+            origin = "https://shudenhotel.jp" + origin["https://www.shudenhotel.jp".Length..];
+        }
+
+        return origin.TrimEnd('/');
+    }
+}
 
 internal static class HtmlPages
 {
@@ -464,6 +530,14 @@ internal static class HtmlPages
     public static string Home(HttpRequest request, DateOnly defaultCheckin, DateOnly defaultCheckout)
     {
         var origin = Origin(request);
+        var faqs = new (string Question, string Answer)[]
+        {
+            ("終電を逃したらどうホテルを探す？", "近い駅名・繁華街名・会場名を入力し、半径1kmから今夜の空室を検索します。見つからなければ1.5km、2kmへ広げます。"),
+            ("タクシーよりホテルの方が安いことはある？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
+            ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。")
+        };
+        var jsonLd = CombineJsonLd(WebApplicationNode(origin), OrganizationNode(origin), FaqJsonLd(faqs));
+
         return Layout(
             title: "終電ホテル | 終電を逃した夜に今夜泊まれる近くのホテルを探す",
             description: "終電を逃した時、ライブ後、飲み会後、出張延長で今夜泊まれるホテルを駅名や地名から探せます。",
@@ -510,8 +584,10 @@ internal static class HtmlPages
     <p>ホテル名、住所、アクセス、レビュー、宿泊プラン、食事条件、料金を一覧で確認できます。予約前に楽天トラベルで最新の空室とチェックイン条件をご確認ください。</p>
   </div>
 </section>
+
+{FaqSection(faqs)}
 """,
-            jsonLd: SoftwareJsonLd(origin));
+            jsonLd: jsonLd);
     }
 
     public static string SearchResults(
@@ -534,7 +610,9 @@ internal static class HtmlPages
         return Layout(
             title,
             description,
-            canonicalUrl: $"{origin}/search?place={Uri.EscapeDataString(place)}&checkin={checkin:yyyy-MM-dd}&checkout={checkout:yyyy-MM-dd}&radius={radius:F1}",
+            // noindex page: consolidate signals on the matching landing page or home.
+            canonicalUrl: SearchCanonical(origin, place),
+            noIndex: true,
             body: $"""
 <section class="search-header">
   <a class="back-link" href="/">検索トップへ</a>
@@ -661,6 +739,7 @@ internal static class HtmlPages
             title: "検索できませんでした | 終電ホテル",
             description: "ホテル空室検索でエラーが発生しました。",
             canonicalUrl: origin + "/",
+            noIndex: true,
             body: $"""
 <section class="search-header">
   <a class="back-link" href="/">検索トップへ</a>
@@ -672,7 +751,7 @@ internal static class HtmlPages
             jsonLd: SoftwareJsonLd(origin));
     }
 
-    private static string Layout(string title, string description, string canonicalUrl, string body, string jsonLd)
+    private static string Layout(string title, string description, string canonicalUrl, string body, string jsonLd, bool noIndex = false)
     {
         return $"""
 <!doctype html>
@@ -682,7 +761,7 @@ internal static class HtmlPages
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="{Html(description)}">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="{(noIndex ? "noindex, follow" : "index, follow")}">
   <link rel="canonical" href="{Html(canonicalUrl)}">
   {GoogleSiteVerificationMeta()}
   <meta property="og:type" content="website">
@@ -701,6 +780,8 @@ internal static class HtmlPages
   <meta name="theme-color" content="#bf0000">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
   <link rel="stylesheet" href="/styles.css">
   {GoogleAnalyticsHead()}
   <script type="application/ld+json">{jsonLd}</script>
@@ -836,10 +917,28 @@ internal static class HtmlPages
 """;
     }
 
+    private static string OrganizationNode(string origin)
+    {
+        return $$"""
+{
+  "@type": "Organization",
+  "name": "終電ホテル",
+  "url": "{{origin}}/",
+  "logo": "{{origin}}/favicon.svg"
+}
+""";
+    }
+
     private static string GoogleAnalyticsHead()
     {
+        // Fall back to the Blueprint measurement ID when Render env drift omits it.
         var measurementId = Environment.GetEnvironmentVariable("GOOGLE_ANALYTICS_MEASUREMENT_ID");
         if (string.IsNullOrWhiteSpace(measurementId))
+        {
+            measurementId = "G-542370310";
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(measurementId.Trim(), @"^G-[A-Z0-9]+$", RegexOptions.IgnoreCase))
         {
             return string.Empty;
         }
@@ -863,9 +962,21 @@ internal static class HtmlPages
     private static string GoogleSiteVerificationMeta()
     {
         var token = Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION");
-        return string.IsNullOrWhiteSpace(token)
-            ? string.Empty
-            : $"""  <meta name="google-site-verification" content="{Html(token.Trim())}">""";
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            // Same token as render.yaml — keep GSC ownership stable if env is unset.
+            token = "z2cnfDF9eYms_B21Y6_3g3p9xQ1CrpzjKK02j2OfeLo";
+        }
+
+        token = token.Trim();
+        if (token.Length < 10
+            || token.Contains(' ', StringComparison.Ordinal)
+            || System.Text.RegularExpressions.Regex.IsMatch(token, @"[\u3040-\u30ff\u3400-\u9fff]"))
+        {
+            return string.Empty;
+        }
+
+        return $"""  <meta name="google-site-verification" content="{Html(token)}">""";
     }
 
     private static (string Question, string Answer)[] LandingFaqs(LandingPage page)
@@ -1032,15 +1143,31 @@ internal static class HtmlPages
         return DateOnly.FromDateTime(DateTime.UtcNow.AddHours(9));
     }
 
-    private static string Origin(HttpRequest request)
-    {
-        var configured = Environment.GetEnvironmentVariable("PUBLIC_BASE_URL");
-        if (!string.IsNullOrWhiteSpace(configured))
-        {
-            return configured.TrimEnd('/');
-        }
+    private static string Origin(HttpRequest request) => PublicUrls.Origin(request);
 
-        return $"{request.Scheme}://{request.Host}";
+    private static string SearchCanonical(string origin, string place)
+    {
+        // Map popular places to static landing pages so noindex search URLs
+        // still reinforce the pages we want indexed.
+        var landings = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["新宿駅"] = "/areas/shinjuku-last-train",
+            ["渋谷駅"] = "/areas/shibuya-tonight-hotel",
+            ["東京駅"] = "/areas/tokyo-station-tonight-hotel",
+            ["横浜駅"] = "/areas/yokohama-last-train",
+            ["池袋駅"] = "/areas/ikebukuro-last-train",
+            ["上野駅"] = "/areas/ueno-tonight-hotel",
+            ["品川駅"] = "/areas/shinagawa-business-hotel",
+            ["なんば駅"] = "/areas/namba-last-train",
+            ["東京ドーム"] = "/venues/tokyo-dome-after-live",
+            ["さいたまスーパーアリーナ"] = "/venues/saitama-super-arena-after-live",
+            ["横浜アリーナ"] = "/venues/yokohama-arena-after-live",
+            ["幕張メッセ"] = "/venues/makuhari-messe-after-event"
+        };
+
+        return landings.TryGetValue(place.Trim(), out var path)
+            ? origin + path
+            : origin + "/";
     }
 
     private static string OriginFromCanonical(string canonicalUrl)
