@@ -39,6 +39,10 @@ merge_pr syunnjack/machi-list 1 "shop detail pages + sitemap"
 merge_pr syunnjack/goal-pilot-app 1 "canonicals + sitemap routes"
 
 echo
+echo "== DTI Devin PRs =="
+bash "$ROOT/scripts/site-analytics/complete-dti-rollout.sh" || true
+
+echo
 echo "== Apply rakuten02 patches =="
 PUSH=true CREATE_PRS=true bash "$ROOT/scripts/site-analytics/apply-gsc-patches.sh"
 
@@ -67,4 +71,5 @@ echo "Done. Manual leftovers:"
 echo "  1) busselect Site Creator: fix/remove NEXT_PUBLIC_GOOGLE_* placeholders"
 echo "  2) Search Console: resubmit sitemap.xml x5"
 echo "  3) Bing Webmaster: verify shudenhotel.jp (clears IndexNow 403)"
+echo "  4) DTI: bash scripts/site-analytics/complete-dti-rollout.sh  (or included above)"
 echo "See docs/GSC-FINISH.md"

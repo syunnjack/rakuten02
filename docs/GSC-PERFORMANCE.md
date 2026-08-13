@@ -4,7 +4,7 @@
 
 | # | サイト | ライブ状態 | 対応 |
 |---|--------|------------|------|
-| 1 | shudenhotel.jp | ✅ https canonical / GA4 / GSC / FAQ / HEAD / IndexNow key | **PR #34–#37 本番反映済** |
+| 1 | shudenhotel.jp | ✅ https canonical / GA4 / GSC / FAQ / 関西・名古屋LP | **本 PR で大阪・京都・名古屋追加** |
 | 2 | busselect.jp | ❌ GA4/GSC プレースホルダ / search が indexable | パッチ `0005` + Devin #1 + Site Creator |
 | 3 | darekore.jp | ✅ 基本OK / title 薄い | パッチ `0005` + Devin #8 |
 | 4 | machi-list.jp | 🟡 YOUR_VC_* 残 | パッチ `0003` + Devin #1 |

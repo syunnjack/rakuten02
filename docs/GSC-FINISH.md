@@ -7,6 +7,7 @@
 | 項目 | 状態 |
 |------|------|
 | shudenhotel.jp https / GA4 / GSC / FAQ / noindex search | ✅ 本番 |
+| 大阪・京都・名古屋ランディング + ItemList + robots Disallow /search | ✅（本 PR） |
 | IndexNow key（早期 middleware + CDN cache） | ✅（本 PR 以降） |
 | IndexNow Yandex 受理（shudenhotel 含む） | ✅ |
 | 他4サイト向けパッチ + `git am` 検証 | ✅ |
@@ -36,7 +37,8 @@ bash scripts/site-analytics/complete-gsc-rollout.sh
    - [kousokubus-benri#1](https://github.com/syunnjack/kousokubus-benri/pull/1)  
    - [task-dashboard#8](https://github.com/syunnjack/task-dashboard/pull/8)  
    - [machi-list#1](https://github.com/syunnjack/machi-list/pull/1)  
-   - [goal-pilot-app#1](https://github.com/syunnjack/goal-pilot-app/pull/1)
+   - [goal-pilot-app#1](https://github.com/syunnjack/goal-pilot-app/pull/1)  
+   - DTI: hey-douga-guide #2/#3/#4, free-sample-hub #1
 2. rakuten02 パッチ `0005/0005/0003/0002` を適用 → PR → マージ
 3. ライブ信号チェック + IndexNow（Bing + Yandex）
 

@@ -114,6 +114,11 @@ for entry in "${sites[@]}"; do
         notes+=("sitemap-has-search")
         warn=$((warn + 1))
       fi
+      robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+      if ! printf '%s' "$robots" | rg -q 'Disallow: /search'; then
+        notes+=("robots-allows-search")
+        warn=$((warn + 1))
+      fi
     fi
   fi
 

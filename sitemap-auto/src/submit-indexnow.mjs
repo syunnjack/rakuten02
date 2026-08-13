@@ -22,6 +22,7 @@ export async function submitIndexNow(site, urls) {
   const endpoints = [
     "https://api.indexnow.org/indexnow",
     "https://www.bing.com/indexnow",
+    "https://yandex.com/indexnow",
   ]
 
   const errors = []

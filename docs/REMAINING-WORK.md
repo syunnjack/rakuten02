@@ -35,8 +35,12 @@ git pull origin master
 
 | リポジトリ | 状態 | 残り |
 |------------|------|------|
-| hey-douga-guide | PR #1 マージ済 | 本番 migrate + import |
-| free-sample-hub | 未セットアップ | パッチ 0001–0003 |
+| hey-douga-guide | PR #1 マージ済。Devin #2/#3/#4 マージ待ち | マージ後に本番 migrate + import |
+| free-sample-hub | Devin #1 が現行（ローカル 0001–0003 は衝突） | Devin #1 マージ + 本番 migrate |
+
+```bash
+bash scripts/site-analytics/complete-dti-rollout.sh
+```
 
 ---
 

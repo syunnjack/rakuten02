@@ -106,6 +106,9 @@ var landingPages = new[]
     new LandingPage("/areas/ueno-tonight-hotel", "上野駅周辺で今夜泊まれるホテル検索", "上野駅周辺で終電後、旅行前後、飲み会後に泊まれるホテルを探せます。御徒町、鶯谷、浅草方面の空室探しに。", "上野駅", "上野駅周辺で今夜泊まるなら", "上野はJR、地下鉄、新幹線アクセスがあり、当日宿泊需要が出やすいエリアです。御徒町や鶯谷方面まで含めると候補が増えます。"),
     new LandingPage("/areas/shinagawa-business-hotel", "品川駅周辺で急な出張延長に泊まれるホテル検索", "品川駅周辺で出張延長、終電後、早朝移動前に泊まれるホテルを探せます。高輪、港南、大崎方面の空室探しに。", "品川駅", "品川駅で急に泊まるなら", "品川駅は出張、空港移動、新幹線移動の前後に宿泊需要が高いエリアです。高輪側と港南側の両方を見ながら探すのがおすすめです。"),
     new LandingPage("/areas/namba-last-train", "なんば駅で終電を逃した時のホテル検索", "なんば駅周辺で飲み会後、観光後、終電後に泊まれるホテルを探せます。心斎橋、日本橋、道頓堀方面の空室探しに。", "なんば駅", "なんばで終電を逃したら", "なんばは繁華街とホテルが近く、深夜でも宿泊ニーズが強いエリアです。心斎橋や日本橋方面まで含めて探すと候補が広がります。"),
+    new LandingPage("/areas/osaka-station-last-train", "大阪駅で終電を逃した時のホテル検索", "大阪駅・梅田周辺で終電後、出張延長、飲み会後に泊まれるホテルを探せます。堂島、中津、福島方面の空室探しに。", "大阪駅", "大阪駅で終電を逃したら", "大阪駅・梅田は繁華街とビジネスホテルが近く、深夜でも宿泊需要が高いエリアです。堂島や中津方面まで含めると候補が増えます。"),
+    new LandingPage("/areas/kyoto-station-tonight-hotel", "京都駅周辺で今夜泊まれるホテル検索", "京都駅周辺で終電後、観光後、深夜到着時に泊まれるホテルを探せます。烏丸、東寺、七条方面の空室探しに。", "京都駅", "京都駅周辺で今夜泊まるなら", "京都駅は新幹線到着や観光の延長で当日宿泊需要が出やすいエリアです。烏丸や東寺方面まで広げると候補を見つけやすくなります。"),
+    new LandingPage("/areas/nagoya-station-last-train", "名古屋駅で終電を逃した時のホテル検索", "名古屋駅周辺で終電後、出張延長、新幹線乗継時に泊まれるホテルを探せます。名駅、栄、金山方面の空室探しに。", "名古屋駅", "名古屋駅で終電を逃したら", "名古屋駅は新幹線乗継と出張需要が高く、名駅周辺に宿泊候補が集中します。見つからない時は栄や金山方面まで検索範囲を広げます。"),
     new LandingPage("/venues/tokyo-dome-after-live", "東京ドームのライブ後に泊まれるホテル検索", "東京ドームのライブ、イベント、野球観戦後に帰れない時のホテル検索ページです。水道橋、後楽園、飯田橋周辺の空室を探せます。", "東京ドーム", "東京ドームの終演後に帰れない時", "終演直後は水道橋駅周辺が混みやすいため、後楽園、飯田橋、御茶ノ水方面まで候補に入れると見つかりやすくなります。"),
     new LandingPage("/venues/saitama-super-arena-after-live", "さいたまスーパーアリーナのライブ後に泊まれるホテル検索", "さいたまスーパーアリーナのライブ、イベント後に泊まれるホテルを探せます。さいたま新都心、大宮、浦和方面の空室探しに。", "さいたまスーパーアリーナ", "さいたまスーパーアリーナの終演後に泊まるなら", "終演後はさいたま新都心駅周辺が混みやすいため、大宮や浦和方面まで広げて探すと候補を見つけやすくなります。"),
     new LandingPage("/venues/yokohama-arena-after-live", "横浜アリーナのライブ後に泊まれるホテル検索", "横浜アリーナのライブ、イベント後に泊まれるホテルを探せます。新横浜、横浜、菊名方面の空室探しに。", "横浜アリーナ", "横浜アリーナの終演後に泊まるなら", "新横浜駅周辺はイベント日程で混みやすいため、横浜駅方面や菊名方面も含めて探すと選択肢が広がります。"),
@@ -118,7 +121,7 @@ var landingPages = new[]
 app.MapMethods("/", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
 {
     var today = CurrentJapanDate();
-    var body = HtmlPages.Home(request, today, today.AddDays(1));
+    var body = HtmlPages.Home(request, today, today.AddDays(1), landingPages);
     await WriteTextResponse(context, request, body, "text/html; charset=utf-8");
 });
 
@@ -286,6 +289,7 @@ app.MapMethods("/robots.txt", new[] { "GET", "HEAD" }, async (HttpContext contex
     var body = $"""
 User-agent: *
 Allow: /
+Disallow: /search
 
 Sitemap: {Origin(request)}/sitemap.xml
 """;
@@ -302,11 +306,13 @@ app.MapMethods("/llms.txt", new[] { "GET", "HEAD" }, async (HttpContext context,
 
 ## Main URLs
 - Home: {origin}/
-- Search: {origin}/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0
 - Missed last train guide: {origin}/guides/missed-last-train
 - Taxi or hotel guide: {origin}/guides/taxi-or-hotel
 - After live hotel guide: {origin}/guides/after-live-hotel
 - Shinjuku area: {origin}/areas/shinjuku-last-train
+- Osaka station: {origin}/areas/osaka-station-last-train
+- Kyoto station: {origin}/areas/kyoto-station-tonight-hotel
+- Nagoya station: {origin}/areas/nagoya-station-last-train
 - Tokyo Dome venue: {origin}/venues/tokyo-dome-after-live
 
 ## Useful Query Intents
@@ -551,16 +557,26 @@ internal static class HtmlPages
             jsonLd: SoftwareJsonLd(origin));
     }
 
-    public static string Home(HttpRequest request, DateOnly defaultCheckin, DateOnly defaultCheckout)
+    public static string Home(
+        HttpRequest request,
+        DateOnly defaultCheckin,
+        DateOnly defaultCheckout,
+        IReadOnlyList<LandingPage> landingPages)
     {
         var origin = Origin(request);
         var faqs = new (string Question, string Answer)[]
         {
             ("終電を逃したらどうホテルを探す？", "近い駅名・繁華街名・会場名を入力し、半径1kmから今夜の空室を検索します。見つからなければ1.5km、2kmへ広げます。"),
             ("タクシーよりホテルの方が安いことはある？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
-            ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。")
+            ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。"),
+            ("終電ホテルは予約サイト？", "空室検索の入口です。予約は楽天トラベルの公式画面で完了します。当サイトでは決済を扱いません。"),
+            ("大阪や京都、名古屋でも使える？", "使えます。大阪駅・梅田、京都駅、名古屋駅、なんばのエリアページから今夜の空室を探せます。")
         };
-        var jsonLd = CombineJsonLd(WebApplicationNode(origin), OrganizationNode(origin), FaqJsonLd(faqs));
+        var jsonLd = CombineJsonLd(
+            WebApplicationNode(origin),
+            OrganizationNode(origin),
+            ItemListJsonLd(origin, landingPages.Select(page => (page.Title, page.Path)).Take(12).ToArray()),
+            FaqJsonLd(faqs));
 
         return Layout(
             title: "終電ホテル | 終電を逃した夜に今夜泊まれる近くのホテルを探す",
@@ -592,6 +608,9 @@ internal static class HtmlPages
     <a href="/guides/nomikai-after-hotel">飲み会後のホテル探し</a>
     <a href="/areas/shinagawa-business-hotel">品川駅で急に泊まる</a>
     <a href="/areas/namba-last-train">なんばで終電を逃した</a>
+    <a href="/areas/osaka-station-last-train">大阪駅・梅田で終電を逃した</a>
+    <a href="/areas/kyoto-station-tonight-hotel">京都駅周辺で今夜泊まる</a>
+    <a href="/areas/nagoya-station-last-train">名古屋駅で終電を逃した</a>
     <a href="/venues/saitama-super-arena-after-live">さいたまアリーナのライブ後</a>
     <a href="/venues/yokohama-arena-after-live">横浜アリーナのライブ後</a>
     <a href="/venues/makuhari-messe-after-event">幕張メッセのイベント後</a>
@@ -1032,6 +1051,26 @@ internal static class HtmlPages
 """;
     }
 
+    private static string ItemListJsonLd(string origin, IReadOnlyList<(string Name, string Path)> items)
+    {
+        var elements = string.Join(",", items.Select((item, index) => $$"""
+{
+  "@type": "ListItem",
+  "position": {{index + 1}},
+  "name": "{{Json(item.Name)}}",
+  "url": "{{origin}}{{item.Path}}"
+}
+"""));
+
+        return $$"""
+{
+  "@type": "ItemList",
+  "name": "終電ホテルの主要ページ",
+  "itemListElement": [{{elements}}]
+}
+""";
+    }
+
     private static string FaqJsonLd(IReadOnlyList<(string Question, string Answer)> faqs)
     {
         var entities = string.Join(",", faqs.Select(faq => $$"""
@@ -1175,14 +1214,32 @@ internal static class HtmlPages
         // still reinforce the pages we want indexed.
         var landings = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            ["新宿"] = "/areas/shinjuku-last-train",
             ["新宿駅"] = "/areas/shinjuku-last-train",
+            ["歌舞伎町"] = "/areas/shinjuku-last-train",
+            ["渋谷"] = "/areas/shibuya-tonight-hotel",
             ["渋谷駅"] = "/areas/shibuya-tonight-hotel",
             ["東京駅"] = "/areas/tokyo-station-tonight-hotel",
+            ["丸の内"] = "/areas/tokyo-station-tonight-hotel",
+            ["八重洲"] = "/areas/tokyo-station-tonight-hotel",
+            ["横浜"] = "/areas/yokohama-last-train",
             ["横浜駅"] = "/areas/yokohama-last-train",
+            ["池袋"] = "/areas/ikebukuro-last-train",
             ["池袋駅"] = "/areas/ikebukuro-last-train",
+            ["上野"] = "/areas/ueno-tonight-hotel",
             ["上野駅"] = "/areas/ueno-tonight-hotel",
+            ["品川"] = "/areas/shinagawa-business-hotel",
             ["品川駅"] = "/areas/shinagawa-business-hotel",
+            ["なんば"] = "/areas/namba-last-train",
             ["なんば駅"] = "/areas/namba-last-train",
+            ["難波"] = "/areas/namba-last-train",
+            ["心斎橋"] = "/areas/namba-last-train",
+            ["大阪駅"] = "/areas/osaka-station-last-train",
+            ["梅田"] = "/areas/osaka-station-last-train",
+            ["京都"] = "/areas/kyoto-station-tonight-hotel",
+            ["京都駅"] = "/areas/kyoto-station-tonight-hotel",
+            ["名古屋"] = "/areas/nagoya-station-last-train",
+            ["名古屋駅"] = "/areas/nagoya-station-last-train",
             ["東京ドーム"] = "/venues/tokyo-dome-after-live",
             ["さいたまスーパーアリーナ"] = "/venues/saitama-super-arena-after-live",
             ["横浜アリーナ"] = "/venues/yokohama-arena-after-live",

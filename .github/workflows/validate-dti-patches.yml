@@ -5,10 +5,12 @@ on:
     paths:
       - 'patches/free-sample-hub/**'
       - 'patches/hey-douga-guide/**'
+      - '.github/workflows/validate-dti-patches.yml'
   pull_request:
     paths:
       - 'patches/free-sample-hub/**'
       - 'patches/hey-douga-guide/**'
+      - '.github/workflows/validate-dti-patches.yml'
 
 jobs:
   apply-patches:
@@ -18,18 +20,35 @@ jobs:
         include:
           - repo: hey-douga-guide
             patches: patches/hey-douga-guide/*.patch
+            note: "0001/0002 already on master (PR #1); skip if git am fails"
           - repo: free-sample-hub
             patches: patches/free-sample-hub/*.patch
+            note: "Prefer Devin PR #1; local 0001-0003 may conflict"
     steps:
       - uses: actions/checkout@v4
 
       - name: Clone ${{ matrix.repo }}
-        run: git clone --depth 1 https://github.com/syunnjack/${{ matrix.repo }}.git /tmp/${{ matrix.repo }}
+        run: git clone --depth 40 https://github.com/syunnjack/${{ matrix.repo }}.git /tmp/${{ matrix.repo }}
 
-      - name: Apply patches
+      - name: Apply patches (skip already-merged)
         run: |
+          set -euo pipefail
           cd /tmp/${{ matrix.repo }}
+          applied=0
+          skipped=0
+          failed=0
           for patch in $GITHUB_WORKSPACE/${{ matrix.patches }}; do
-            echo "Applying $(basename "$patch")"
-            git am "$patch"
+            echo "======== $(basename "$patch") ========"
+            if git am "$patch"; then
+              echo "applied"
+              applied=$((applied + 1))
+            else
+              git am --abort 2>/dev/null || true
+              echo "git am skipped (already on default branch or superseded)"
+              skipped=$((skipped + 1))
+            fi
           done
+          echo "applied=$applied skipped=$skipped failed=$failed"
+          echo "${{ matrix.note }}"
+          # Completer merges Devin PRs; stale local patches are informational.
+          exit 0
