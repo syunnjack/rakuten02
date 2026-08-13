@@ -33,7 +33,6 @@ merge_pr() {
   fi
 }
 
-merge_pr syunnjack/kousokubus-benri 1 "title absolute + search noindex"
 merge_pr syunnjack/task-dashboard 8 "percent-encode actress URLs"
 merge_pr syunnjack/machi-list 1 "shop detail pages + sitemap"
 

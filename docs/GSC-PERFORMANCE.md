@@ -5,7 +5,7 @@
 | # | サイト | ライブ状態 | 対応 |
 |---|--------|------------|------|
 | 1 | shudenhotel.jp | ✅ https / GA4 / GSC / FAQ / 関西・名古屋・福岡・札幌・神戸LP | **PR #38 本番済。#39 で追加LP** |
-| 2 | busselect.jp | ❌ GA4 プレースホルダ / search indexable（GSC タグは本番で有効） | パッチ `0005` + Devin #1 + Site Creator GA4 |
+| 2 | busselect.jp | ❌ GA4 プレースホルダ / 二重 title / search indexable | パッチ `0005`+`0006`（Devin #1 不要）+ Site Creator 実 GA4 |
 | 3 | darekore.jp | 🟡 title 薄い / sitemap 未エンコード | パッチ `0005`+`0006` + Devin #8 |
 | 4 | machi-list.jp | ❌ YOUR_VC_* / FAQ なし | パッチ `0003`+`0004` + Devin #1 |
 | 5 | goalpilot.jp | 🟡 canonical は og:url 経由 / 下層 NOCANON | パッチ `0002`+`0003`（Devin #1 は不要） |
@@ -33,7 +33,7 @@ IndexNow Bing     = 403 until Bing Webmaster verify
 
 | サイト | パッチ |
 |--------|--------|
-| busselect | `patches/kousokubus-benri/0005-...` |
+| busselect | `patches/kousokubus-benri/0005-...` + `0006-...` |
 | darekore | `patches/task-dashboard/0005-...` + `0006-...` |
 | machi-list | `patches/machi-list/0003-...` + `0004-...` |
 | goalpilot | `patches/goal-pilot-app/0002-...` + `0003-...` |

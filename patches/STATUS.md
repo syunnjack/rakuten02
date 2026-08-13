@@ -25,7 +25,7 @@
 | darekore | パッチ `0005` 適用待ち |
 | goalpilot | パッチ `0002`+`0003` 適用待ち |
 | machi-list | パッチ `0003`+`0004` 適用待ち |
-| busselect | パッチ `0005` + Site Creator 実トークン待ち |
+| busselect | パッチ `0005`+`0006` + Site Creator 実 GA4 待ち |
 
 ---
 

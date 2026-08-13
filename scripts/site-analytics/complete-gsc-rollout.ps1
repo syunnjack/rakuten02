@@ -34,7 +34,6 @@ try {
 
 # Open PRs that already fix overlapping GSC issues (merge first when clean).
 $existingPrs = @(
-  @{ Repo = "syunnjack/kousokubus-benri"; Number = 1; Note = "title absolute + search noindex" },
   @{ Repo = "syunnjack/task-dashboard"; Number = 8; Note = "percent-encode actress URLs" },
   @{ Repo = "syunnjack/machi-list"; Number = 1; Note = "shop detail pages + sitemap" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 2; Note = "canonical/robots from APP_URL" },
@@ -60,8 +59,11 @@ $jobs = @(
   @{
     Dir = "kousokubus-benri"
     Base = "main"
-    Patch = "patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
-    Title = "GSC: reject placeholder GA4/GSC tokens and fix title"
+    Patch = @(
+      "patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch",
+      "patches/kousokubus-benri/0006-Noindex-search-add-faq-jsonld-and-fix-layout-canonical.patch"
+    )
+    Title = "GSC: reject fake GA4/GSC, noindex search, FAQ JSON-LD"
   },
   @{
     Dir = "task-dashboard"

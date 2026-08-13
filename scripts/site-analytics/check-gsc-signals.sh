@@ -176,6 +176,20 @@ for entry in "${sites[@]}"; do
       notes+=("search-still-indexable")
       warn=$((warn + 1))
     fi
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+    robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+    if ! printf '%s' "$robots" | rg -q 'Disallow: /search'; then
+      notes+=("robots-allows-search")
+      warn=$((warn + 1))
+    fi
+    sm="$(curl -fsSL --max-time 15 "${url%/}/sitemap.xml" || true)"
+    if printf '%s' "$sm" | rg -q '<loc>[^<]*/search'; then
+      notes+=("sitemap-has-search")
+      warn=$((warn + 1))
+    fi
   fi
 
   if [[ ${#notes[@]} -eq 0 ]]; then

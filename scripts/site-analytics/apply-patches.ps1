@@ -52,6 +52,12 @@ $jobs = @(
     Dir  = "kousokubus-benri"
     Patch = "$patchBase/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
     Optional = $true
+  },
+  @{
+    Name = "kousokubus-benri (busselect search noindex / FAQ)"
+    Dir  = "kousokubus-benri"
+    Patch = "$patchBase/kousokubus-benri/0006-Noindex-search-add-faq-jsonld-and-fix-layout-canonical.patch"
+    Optional = $true
   }
 )
 
