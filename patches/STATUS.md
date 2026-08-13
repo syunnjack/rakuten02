@@ -1,13 +1,8 @@
 # プロジェクト全体ステータス
 
-<<<<<<< HEAD
-最終更新: **2026-08-12**  
-**チェックリスト:** `docs/REMAINING-WORK.md`
-=======
 最終更新: **2026-08-13**  
 **チェックリスト:** `docs/REMAINING-WORK.md`  
-**GSC:** `docs/GSC-PERFORMANCE.md`
->>>>>>> origin/master
+**GSC:** `docs/GSC-PERFORMANCE.md` / `docs/GSC-FINISH.md`
 
 ---
 
@@ -16,7 +11,8 @@
 | 項目 | 状態 |
 |------|------|
 | ソース `sitemap-auto/` | ✅ |
-| 単体 repo へ初回 push | ❌（エージェント権限外 → SETUP-REPO.md） |
+| 単体 repo へ初回 push | ❌（`sitemap-auto/docs/SETUP-REPO.md`） |
+| Secret `GSC_SERVICE_ACCOUNT_JSON` | ❌ |
 | 積み上げログ ストア掲載 | パッチ用意済み `patches/tsumiage-log/` |
 
 ---
@@ -25,7 +21,7 @@
 
 | サイト | 状態 |
 |--------|------|
-| shudenhotel | ✅ PR #34 本番反映（https / GA4 / GSC / FAQ） |
+| shudenhotel | ✅ PR #34/#35 本番反映（https / GA4 / GSC / FAQ） |
 | darekore | パッチ `0005` 適用待ち |
 | goalpilot | パッチ `0002` 適用待ち |
 | machi-list | パッチ `0003` 適用待ち |
@@ -35,7 +31,8 @@
 
 ## ユーザー作業（優先順）
 
-1. `CROSS_REPO_PAT` → Apply GSC patches workflow
+1. `.\scripts\site-analytics\complete-gsc-rollout.ps1`（または CROSS_REPO_PAT workflow）
 2. busselect Site Creator 実トークン
-3. Search Console sitemap 再送信
-4. hey-douga 本番 migrate
+3. Search Console sitemap 再送信 ×5
+4. （任意）sitemap-auto 単体 repo + GSC SA
+5. hey-douga 本番 migrate
