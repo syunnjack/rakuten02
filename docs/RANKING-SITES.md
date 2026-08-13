@@ -12,7 +12,16 @@
 | WPX（*.jp / *.site 系） | 17 ranking | `wp858043.wpx.jp` | サーバー配置済・**DNS 未向** |
 | GitHub 上 `*-ranking` | ~41 | — | ソースあり |
 
-## ColorfulBOX（ライブ・GSC/GA4 確認済サンプル）
+## ColorfulBOX ライブ信号（2026-08-13 `check-ranking-signals.sh`）
+
+`critical=0`。共通 warn: canonical が末尾スラッシュなし。
+
+| ドメイン | GA4 | GSC | メモ |
+|----------|-----|-----|------|
+| sosolu.pro / .link / .help / .org / .xyz | ✅ | ✅ | |
+| sosoru.click / .org / .asia | ✅ | ✅ | DTI: sosoru.org / .asia |
+| sosolu.email | ✅ | ❌ 欠 | verification 追加 |
+| sosolu.net / .tokyo / sosoru.tokyo | ❌ | ✅ | 2026-08-08 API キー空インシデントと一致 |
 
 | リポジトリ | ドメイン | 備考 |
 |------------|----------|------|
