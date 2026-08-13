@@ -65,6 +65,10 @@ docker run --rm -p 8080:8080 `
 
 Render側で `PUBLIC_BASE_URL=https://shudenhotel.jp` と `RAKUTEN_ALLOWED_ORIGIN=https://shudenhotel.jp` は設定済みです。
 
+サービスがBlueprint管理でない場合、`render.yaml` の `envVars` は反映されません。その場合はDashboardのEnvironmentに直接登録します（`DOTNET_hostBuilder__reloadConfigOnChange=false` を含む）。
+
+`RAKUTEN_APPLICATION_ID` と `RAKUTEN_ACCESS_KEY` は、楽天ウェブサービスで**サイトURLに `https://shudenhotel.jp` を登録したアプリ**のペアを使います。別アプリのIDやキーを混ぜると `HTTP_REFERRER_NOT_ALLOWED` になり、検索画面は「楽天APIの認証に失敗しました」を表示します。
+
 `render.yaml` の `domains` にルートドメインを定義しているため、Renderは `www.shudenhotel.jp` も自動追加し、ルートドメインへリダイレクトします。
 
 お名前.comでは、初期パーキング用Aレコード（`150.95.255.38`）を削除し、次を登録します。

@@ -5,6 +5,13 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Rakuten02.Core;
 
+// Containers with a low inotify instance limit make the default config file
+// watchers throw at startup, so disable them unless explicitly overridden.
+if (Environment.GetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange") is null)
+{
+    Environment.SetEnvironmentVariable("DOTNET_hostBuilder__reloadConfigOnChange", "false");
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // The TLS terminating proxy forwards plain HTTP, so trust its scheme header to
