@@ -38,7 +38,7 @@ fi
 
 jobs=(
   "kousokubus-benri|main|patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch|GSC: reject placeholder GA4/GSC tokens and fix title"
-  "task-dashboard|main|patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch|GSC: richer title, noindex search queries, encode sitemap"
+  "task-dashboard|main|patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch,patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch|GSC: richer title, FAQ JSON-LD, noindex search queries"
   "machi-list|main|patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch|GSC: fix robots conflict and ValueCommerce placeholders"
   "goal-pilot-app|main|patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch|GSC: expand sitemap, remove vercel robots, add JSON-LD"
 )
@@ -52,29 +52,37 @@ fail=0
 
 for job in "${jobs[@]}"; do
   IFS='|' read -r repo base patch_rel title <<<"$job"
-  patch="$ROOT/$patch_rel"
   echo "======== $repo ========"
-  if [[ ! -f "$patch" ]]; then
-    echo "MISSING patch: $patch"
-    fail=$((fail + 1))
-    continue
-  fi
-
   dest="$WORK/$repo"
   git clone --depth 40 "$AUTH/syunnjack/${repo}.git" "$dest"
   cd "$dest"
   git checkout -B "$BRANCH" "origin/$base"
-  if ! git am "$patch"; then
-    echo "git am failed for $repo — trying 3-way apply"
-    git am --abort 2>/dev/null || true
-    if git apply --3way "$patch"; then
-      git add -A
-      git commit -m "$title"
-    else
-      echo "apply failed for $repo"
-      fail=$((fail + 1))
-      continue
+  am_ok=1
+  IFS=',' read -r -a patch_list <<<"$patch_rel"
+  for rel in "${patch_list[@]}"; do
+    patch="$ROOT/$rel"
+    echo "---- $(basename "$patch") ----"
+    if [[ ! -f "$patch" ]]; then
+      echo "MISSING patch: $patch"
+      am_ok=0
+      break
     fi
+    if ! git am "$patch"; then
+      echo "git am failed for $rel — trying 3-way apply"
+      git am --abort 2>/dev/null || true
+      if git apply --3way "$patch"; then
+        git add -A
+        git commit -m "$title"
+      else
+        echo "apply failed for $rel"
+        am_ok=0
+        break
+      fi
+    fi
+  done
+  if [[ "$am_ok" -ne 1 ]]; then
+    fail=$((fail + 1))
+    continue
   fi
 
   if [[ "$PUSH" == "true" ]]; then

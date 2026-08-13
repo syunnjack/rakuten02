@@ -18,6 +18,12 @@ $jobs = @(
     Optional = $true
   },
   @{
+    Name = "task-dashboard (darekore FAQ JSON-LD / robots query)"
+    Dir  = "task-dashboard"
+    Patch = "$patchBase/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch"
+    Optional = $true
+  },
+  @{
     Name = "machi-list (robots conflict + VC SID)"
     Dir  = "machi-list"
     Patch = "$patchBase/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch"

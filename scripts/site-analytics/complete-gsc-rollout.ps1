@@ -67,8 +67,11 @@ $jobs = @(
   @{
     Dir = "task-dashboard"
     Base = "main"
-    Patch = "patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch"
-    Title = "GSC: richer title, noindex search queries, encode sitemap"
+    Patch = @(
+      "patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch",
+      "patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch"
+    )
+    Title = "GSC: richer title, FAQ JSON-LD, noindex search queries"
   },
   @{
     Dir = "machi-list"
@@ -102,14 +105,17 @@ foreach ($job in $jobs) {
     git checkout $job.Base
     git pull origin $job.Base
     git checkout -B $branch "origin/$($job.Base)"
-    $patchPath = Join-Path $root $job.Patch
-    git am $patchPath
-    if ($LASTEXITCODE -ne 0) {
-      Write-Host "git am failed — trying 3-way apply" -ForegroundColor Yellow
-      git am --abort 2>$null
-      git apply --3way $patchPath
-      git add -A
-      git commit -m $job.Title
+    foreach ($rel in @($job.Patch)) {
+      $patchPath = Join-Path $root $rel
+      Write-Host "  am $rel"
+      git am $patchPath
+      if ($LASTEXITCODE -ne 0) {
+        Write-Host "git am failed — trying 3-way apply" -ForegroundColor Yellow
+        git am --abort 2>$null
+        git apply --3way $patchPath
+        git add -A
+        git commit -m $job.Title
+      }
     }
     git push -u origin $branch
     $prUrl = gh pr create --base $job.Base --head $branch --title $job.Title --body "Applied from rakuten02/$($job.Patch)`n`nSee also docs/GSC-FINISH.md" 2>$null

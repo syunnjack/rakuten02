@@ -1,0 +1,135 @@
+From c47c78887e17e7247b91067781fb9f1d644a0a92 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 14:13:49 +0000
+Subject: [PATCH] Add FAQ JSON-LD, encoded actress canonicals, and noindex
+ query robots
+
+---
+ index.html                         | 57 +++++++++++++++++++++++++-----
+ public/robots.txt                  |  2 ++
+ scripts/generate-actress-pages.mjs |  6 +++-
+ src/App.jsx                        |  2 ++
+ 4 files changed, 57 insertions(+), 10 deletions(-)
+
+diff --git a/index.html b/index.html
+index d940d2d..0607cf0 100644
+--- a/index.html
++++ b/index.html
+@@ -20,18 +20,57 @@
+     <meta property="og:description" content="作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。" />
+     <meta property="og:url" content="https://darekore.jp/" />
+     <meta name="twitter:card" content="summary" />
++    <meta name="twitter:title" content="この子だれ？｜作品名・品番・メーカーから出演女優名を検索" />
+     <script type="application/ld+json">
+       {
+         "@context": "https://schema.org",
+-        "@type": "WebSite",
+-        "name": "この子だれ？",
+-        "url": "https://darekore.jp/",
+-        "description": "作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。",
+-        "potentialAction": {
+-          "@type": "SearchAction",
+-          "target": "https://darekore.jp/?q={search_term_string}",
+-          "query-input": "required name=search_term_string"
+-        }
++        "@graph": [
++          {
++            "@type": "WebSite",
++            "name": "この子だれ？",
++            "url": "https://darekore.jp/",
++            "description": "作品名・品番・メーカー・公開クレジットから出演女優の名前を探せる検索サイトです。",
++            "potentialAction": {
++              "@type": "SearchAction",
++              "target": "https://darekore.jp/?q={search_term_string}",
++              "query-input": "required name=search_term_string"
++            }
++          },
++          {
++            "@type": "Organization",
++            "name": "この子だれ？",
++            "url": "https://darekore.jp/"
++          },
++          {
++            "@type": "FAQPage",
++            "mainEntity": [
++              {
++                "@type": "Question",
++                "name": "作品名や品番だけで出演女優名を探せますか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "公開されている作品ページ、メーカー情報、販売サイトのクレジットをもとに候補を整理します。"
++                }
++              },
++              {
++                "@type": "Question",
++                "name": "名前が違う、別名義がある場合はどうなりますか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "別名義、旧名義、SNS名をプロフィールに紐づけ、ユーザー投稿で補完できる設計です。"
++                }
++              },
++              {
++                "@type": "Question",
++                "name": "ユーザー投稿はすぐ掲載されますか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "誤情報を防ぐため、投稿は証拠URLとあわせて受け付け、運営確認後に反映します。"
++                }
++              }
++            ]
++          }
++        ]
+       }
+     </script>
+     <title>この子だれ？｜作品名・品番・メーカーから出演女優名を検索</title>
+diff --git a/public/robots.txt b/public/robots.txt
+index b1b6ca1..8db6c33 100644
+--- a/public/robots.txt
++++ b/public/robots.txt
+@@ -1,4 +1,6 @@
+ User-agent: *
+ Allow: /
++Disallow: /*?q=
++Disallow: /*?q=*
+ 
+ Sitemap: https://darekore.jp/sitemap.xml
+diff --git a/scripts/generate-actress-pages.mjs b/scripts/generate-actress-pages.mjs
+index 95f1eab..015e9e7 100644
+--- a/scripts/generate-actress-pages.mjs
++++ b/scripts/generate-actress-pages.mjs
+@@ -19,6 +19,10 @@ const affiliateConfig = {
+   dticashTemplate: process.env.VITE_DTICASH_AFFILIATE_URL || '',
+ }
+ 
++function encodeActressPath(slug) {
++  return String(slug).split('/').map(encodeURIComponent).join('/')
++}
++
+ function slugify(name, code) {
+   const base = String(name || code || 'unknown')
+     .normalize('NFKC')
+@@ -89,7 +93,7 @@ function extractProfile(record) {
+ }
+ 
+ function renderPage(record, slug, related) {
+-  const canonical = `${SITE_URL}/actress/${slug}/`
++  const canonical = `${SITE_URL}/actress/${encodeActressPath(slug)}/`
+   const profile = extractProfile(record)
+   const title = `${escapeHtml(record.name)}の出演作品・検索結果｜この子だれ？`
+   const profileBits = profile
+diff --git a/src/App.jsx b/src/App.jsx
+index 9971e12..a557375 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -111,6 +111,8 @@ function App() {
+       robots.setAttribute('content', 'index, follow')
+       document.title = 'この子だれ？｜作品名・品番・メーカーから出演女優名を検索'
+     }
++    const canon = document.querySelector('link[rel="canonical"]')
++    if (canon) canon.setAttribute('href', 'https://darekore.jp/')
+   }, [query])
+ 
+   useEffect(() => {
+-- 
+2.43.0
+

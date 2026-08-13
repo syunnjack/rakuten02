@@ -5,8 +5,8 @@
 | # | サイト | ライブ状態 | 対応 |
 |---|--------|------------|------|
 | 1 | shudenhotel.jp | ✅ https / GA4 / GSC / FAQ / 関西・名古屋・福岡・札幌・神戸LP | **PR #38 本番済。#39 で追加LP** |
-| 2 | busselect.jp | ❌ GA4/GSC プレースホルダ / search が indexable | パッチ `0005` + Devin #1 + Site Creator |
-| 3 | darekore.jp | ✅ 基本OK / title 薄い | パッチ `0005` + Devin #8 |
+| 2 | busselect.jp | ❌ GA4 プレースホルダ / search indexable（GSC タグは本番で有効） | パッチ `0005` + Devin #1 + Site Creator GA4 |
+| 3 | darekore.jp | 🟡 title 薄い / sitemap 未エンコード | パッチ `0005`+`0006` + Devin #8 |
 | 4 | machi-list.jp | 🟡 YOUR_VC_* 残 | パッチ `0003` + Devin #1 |
 | 5 | goalpilot.jp | 🟡 canonical は og:url 経由 | パッチ `0002` + Devin #1 |
 

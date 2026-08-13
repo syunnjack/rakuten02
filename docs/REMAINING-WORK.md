@@ -9,10 +9,10 @@ GSC 詳細: `docs/GSC-PERFORMANCE.md` / 完了手順: `docs/GSC-FINISH.md`
 | サイト | 公開 | GA4 | GSC | 残り |
 |--------|------|-----|-----|------|
 | shudenhotel.jp | ✅ | ✅ | ✅ | GSC sitemap 再送信 / Bing Webmaster（IndexNow） |
-| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` + Devin #8 |
+| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005`+`0006` + Devin #8 |
 | goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002` + Devin #1 |
 | machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`（YOUR_VC_*） |
-| busselect.jp | ✅ | ❌ placeholder | ❌ placeholder | パッチ `0005` + Devin #1 + Site Creator |
+| busselect.jp | ✅ | ❌ placeholder | ✅ タグ有効 | パッチ `0005` + Devin #1 + Site Creator GA4 |
 
 ### 最短ルート
 
