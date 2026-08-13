@@ -33,10 +33,10 @@ git pull origin master
 
 ## トラック B — DTI 動画サイト
 
-| リポジトリ | 状態 | 残り |
-|------------|------|------|
-| hey-douga-guide | PR #1 マージ済。Devin #2/#3/#4 マージ待ち | マージ後に本番 migrate + import |
-| free-sample-hub | Devin #1 が現行（ローカル 0001–0003 は衝突） | Devin #1 マージ + 本番 migrate |
+| リポジトリ | 本番 | 状態 | 残り |
+|------------|------|------|------|
+| hey-douga-guide | sosoru.org | GA4/GSC ライブ。パッチ 0003–0005 = Devin #2/#3/#4 | マージ + migrate |
+| free-sample-hub | sosoru.asia | GA4/GSC ライブ。パッチ `0004` = Devin #1 | マージ + migrate |
 
 ```bash
 bash scripts/site-analytics/complete-dti-rollout.sh
@@ -44,6 +44,15 @@ bash scripts/site-analytics/complete-dti-rollout.sh
 
 ---
 
-## トラック C — ランキングサイト（41 repo）
+## トラック C — ランキングサイト
 
-未デプロイ。`docs/RANKING-SITES.md`
+**多くは本番稼働中**（未デプロイではない）。台帳: `docs/RANKING-SITES.md` / `docs/XSERVER-DEPLOY.md`
+
+| グループ | 残り |
+|----------|------|
+| ColorfulBOX 10 | 3 件の API キー復旧（duga/gravure/mature） |
+| WPX 17 | DNS を本番サーバーへ |
+
+```bash
+bash scripts/site-analytics/check-ranking-signals.sh
+```

@@ -109,6 +109,9 @@ var landingPages = new[]
     new LandingPage("/areas/osaka-station-last-train", "大阪駅で終電を逃した時のホテル検索", "大阪駅・梅田周辺で終電後、出張延長、飲み会後に泊まれるホテルを探せます。堂島、中津、福島方面の空室探しに。", "大阪駅", "大阪駅で終電を逃したら", "大阪駅・梅田は繁華街とビジネスホテルが近く、深夜でも宿泊需要が高いエリアです。堂島や中津方面まで含めると候補が増えます。"),
     new LandingPage("/areas/kyoto-station-tonight-hotel", "京都駅周辺で今夜泊まれるホテル検索", "京都駅周辺で終電後、観光後、深夜到着時に泊まれるホテルを探せます。烏丸、東寺、七条方面の空室探しに。", "京都駅", "京都駅周辺で今夜泊まるなら", "京都駅は新幹線到着や観光の延長で当日宿泊需要が出やすいエリアです。烏丸や東寺方面まで広げると候補を見つけやすくなります。"),
     new LandingPage("/areas/nagoya-station-last-train", "名古屋駅で終電を逃した時のホテル検索", "名古屋駅周辺で終電後、出張延長、新幹線乗継時に泊まれるホテルを探せます。名駅、栄、金山方面の空室探しに。", "名古屋駅", "名古屋駅で終電を逃したら", "名古屋駅は新幹線乗継と出張需要が高く、名駅周辺に宿泊候補が集中します。見つからない時は栄や金山方面まで検索範囲を広げます。"),
+    new LandingPage("/areas/fukuoka-tenjin-last-train", "天神・博多で終電を逃した時のホテル検索", "天神・博多周辺で終電後、飲み会後、出張延長に泊まれるホテルを探せます。中洲、薬院、博多駅方面の空室探しに。", "天神", "天神・博多で終電を逃したら", "福岡は天神と博多に宿泊需要が分かれます。終電後はまず天神周辺を探し、見つからなければ博多駅・中洲方面まで広げると候補が増えます。"),
+    new LandingPage("/areas/sapporo-station-last-train", "札幌駅で終電を逃した時のホテル検索", "札幌駅周辺で終電後、飲み会後、観光後に泊まれるホテルを探せます。すすきの、大通、琴似方面の空室探しに。", "札幌駅", "札幌駅で終電を逃したら", "札幌はすすきの方面の深夜需要が高く、駅周辺のビジネスホテルも探しやすいエリアです。見つからない時は大通や琴似方面まで広げます。"),
+    new LandingPage("/areas/kobe-sannomiya-last-train", "三宮で終電を逃した時のホテル検索", "三宮・神戸周辺で終電後、飲み会後、観光後に泊まれるホテルを探せます。元町、神戸駅、ハーバーランド方面の空室探しに。", "三宮", "三宮で終電を逃したら", "三宮は繁華街とホテルが近く、終電後の宿泊ニーズが出やすいエリアです。元町や神戸駅方面まで含めると候補が広がります。"),
     new LandingPage("/venues/tokyo-dome-after-live", "東京ドームのライブ後に泊まれるホテル検索", "東京ドームのライブ、イベント、野球観戦後に帰れない時のホテル検索ページです。水道橋、後楽園、飯田橋周辺の空室を探せます。", "東京ドーム", "東京ドームの終演後に帰れない時", "終演直後は水道橋駅周辺が混みやすいため、後楽園、飯田橋、御茶ノ水方面まで候補に入れると見つかりやすくなります。"),
     new LandingPage("/venues/saitama-super-arena-after-live", "さいたまスーパーアリーナのライブ後に泊まれるホテル検索", "さいたまスーパーアリーナのライブ、イベント後に泊まれるホテルを探せます。さいたま新都心、大宮、浦和方面の空室探しに。", "さいたまスーパーアリーナ", "さいたまスーパーアリーナの終演後に泊まるなら", "終演後はさいたま新都心駅周辺が混みやすいため、大宮や浦和方面まで広げて探すと候補を見つけやすくなります。"),
     new LandingPage("/venues/yokohama-arena-after-live", "横浜アリーナのライブ後に泊まれるホテル検索", "横浜アリーナのライブ、イベント後に泊まれるホテルを探せます。新横浜、横浜、菊名方面の空室探しに。", "横浜アリーナ", "横浜アリーナの終演後に泊まるなら", "新横浜駅周辺はイベント日程で混みやすいため、横浜駅方面や菊名方面も含めて探すと選択肢が広がります。"),
@@ -313,6 +316,9 @@ app.MapMethods("/llms.txt", new[] { "GET", "HEAD" }, async (HttpContext context,
 - Osaka station: {origin}/areas/osaka-station-last-train
 - Kyoto station: {origin}/areas/kyoto-station-tonight-hotel
 - Nagoya station: {origin}/areas/nagoya-station-last-train
+- Fukuoka Tenjin: {origin}/areas/fukuoka-tenjin-last-train
+- Sapporo station: {origin}/areas/sapporo-station-last-train
+- Kobe Sannomiya: {origin}/areas/kobe-sannomiya-last-train
 - Tokyo Dome venue: {origin}/venues/tokyo-dome-after-live
 
 ## Useful Query Intents
@@ -570,7 +576,7 @@ internal static class HtmlPages
             ("タクシーよりホテルの方が安いことはある？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
             ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。"),
             ("終電ホテルは予約サイト？", "空室検索の入口です。予約は楽天トラベルの公式画面で完了します。当サイトでは決済を扱いません。"),
-            ("大阪や京都、名古屋でも使える？", "使えます。大阪駅・梅田、京都駅、名古屋駅、なんばのエリアページから今夜の空室を探せます。")
+            ("大阪や京都、名古屋でも使える？", "使えます。大阪駅・梅田、京都駅、名古屋駅、なんばに加え、天神・博多、札幌、三宮のエリアページから今夜の空室を探せます。")
         };
         var jsonLd = CombineJsonLd(
             WebApplicationNode(origin),
@@ -611,6 +617,9 @@ internal static class HtmlPages
     <a href="/areas/osaka-station-last-train">大阪駅・梅田で終電を逃した</a>
     <a href="/areas/kyoto-station-tonight-hotel">京都駅周辺で今夜泊まる</a>
     <a href="/areas/nagoya-station-last-train">名古屋駅で終電を逃した</a>
+    <a href="/areas/fukuoka-tenjin-last-train">天神・博多で終電を逃した</a>
+    <a href="/areas/sapporo-station-last-train">札幌駅で終電を逃した</a>
+    <a href="/areas/kobe-sannomiya-last-train">三宮で終電を逃した</a>
     <a href="/venues/saitama-super-arena-after-live">さいたまアリーナのライブ後</a>
     <a href="/venues/yokohama-arena-after-live">横浜アリーナのライブ後</a>
     <a href="/venues/makuhari-messe-after-event">幕張メッセのイベント後</a>
@@ -712,10 +721,14 @@ internal static class HtmlPages
 <section class="content-band">
   <h2>すぐ探す</h2>
   <div class="quick-links">
-    <a href="/search?place=%E6%96%B0%E5%AE%BF%E9%A7%85&radius=1.0">新宿駅周辺</a>
-    <a href="/search?place=%E6%B8%8B%E8%B0%B7%E9%A7%85&radius=1.0">渋谷駅周辺</a>
-    <a href="/search?place=%E6%9D%B1%E4%BA%AC%E9%A7%85&radius=1.0">東京駅周辺</a>
-    <a href="/search?place=%E6%A8%AA%E6%B5%9C%E9%A7%85&radius=1.0">横浜駅周辺</a>
+    <a href="/areas/shinjuku-last-train">新宿駅周辺</a>
+    <a href="/areas/shibuya-tonight-hotel">渋谷駅周辺</a>
+    <a href="/areas/tokyo-station-tonight-hotel">東京駅周辺</a>
+    <a href="/areas/yokohama-last-train">横浜駅周辺</a>
+    <a href="/areas/osaka-station-last-train">大阪駅・梅田</a>
+    <a href="/areas/fukuoka-tenjin-last-train">天神・博多</a>
+    <a href="/areas/sapporo-station-last-train">札幌駅周辺</a>
+    <a href="/areas/kobe-sannomiya-last-train">三宮・神戸</a>
   </div>
 </section>
 
@@ -1240,6 +1253,16 @@ internal static class HtmlPages
             ["京都駅"] = "/areas/kyoto-station-tonight-hotel",
             ["名古屋"] = "/areas/nagoya-station-last-train",
             ["名古屋駅"] = "/areas/nagoya-station-last-train",
+            ["天神"] = "/areas/fukuoka-tenjin-last-train",
+            ["博多"] = "/areas/fukuoka-tenjin-last-train",
+            ["博多駅"] = "/areas/fukuoka-tenjin-last-train",
+            ["福岡"] = "/areas/fukuoka-tenjin-last-train",
+            ["札幌"] = "/areas/sapporo-station-last-train",
+            ["札幌駅"] = "/areas/sapporo-station-last-train",
+            ["すすきの"] = "/areas/sapporo-station-last-train",
+            ["三宮"] = "/areas/kobe-sannomiya-last-train",
+            ["神戸"] = "/areas/kobe-sannomiya-last-train",
+            ["神戸駅"] = "/areas/kobe-sannomiya-last-train",
             ["東京ドーム"] = "/venues/tokyo-dome-after-live",
             ["さいたまスーパーアリーナ"] = "/venues/saitama-super-arena-after-live",
             ["横浜アリーナ"] = "/venues/yokohama-arena-after-live",

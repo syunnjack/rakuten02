@@ -1,0 +1,180 @@
+From f4f42e42eb97fef5a72d4924cb5baf3fdd00fcff Mon Sep 17 00:00:00 2001
+From: syunnjack <syunnjack@gmail.com>
+Date: Tue, 11 Aug 2026 12:50:09 +0000
+Subject: [PATCH] Serve DTI sample media over https to avoid mixed content
+
+Co-Authored-By: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
+---
+ app/Console/Commands/ImportMovieCsv.php |  4 +-
+ app/Services/DtiSampleResolver.php      | 35 ++++++++++++++---
+ tests/Feature/ExampleTest.php           |  4 +-
+ tests/Unit/DtiSampleResolverTest.php    | 51 +++++++++++++++++++++++++
+ 4 files changed, 86 insertions(+), 8 deletions(-)
+ create mode 100644 tests/Unit/DtiSampleResolverTest.php
+
+diff --git a/app/Console/Commands/ImportMovieCsv.php b/app/Console/Commands/ImportMovieCsv.php
+index d0c0d9e..4671b4c 100644
+--- a/app/Console/Commands/ImportMovieCsv.php
++++ b/app/Console/Commands/ImportMovieCsv.php
+@@ -88,9 +88,9 @@ private function importRow(array $row, bool $verifySample): bool
+         $description = trim((string) ($row['description'] ?? ''));
+         $actorName = trim((string) ($row['actress'] ?? '')) ?: null;
+         $siteName = trim((string) ($row['site_name'] ?? '')) ?: null;
+-        $pageUrl = trim((string) ($row['sample_url'] ?? ''));
++        $pageUrl = DtiSampleResolver::secureUrl(trim((string) ($row['sample_url'] ?? '')));
+         $affiliateUrl = trim((string) ($row['aff_link'] ?? ''));
+-        $sampleMp4Url = trim((string) ($row['sample_movie_url_2'] ?? ''));
++        $sampleMp4Url = DtiSampleResolver::secureUrl(trim((string) ($row['sample_movie_url_2'] ?? '')));
+ 
+         if ($sampleMp4Url === '' && $pageUrl !== '') {
+             $sampleMp4Url = DtiSampleResolver::sampleMp4Url($pageUrl) ?? '';
+diff --git a/app/Services/DtiSampleResolver.php b/app/Services/DtiSampleResolver.php
+index 0493639..85b6c4a 100644
+--- a/app/Services/DtiSampleResolver.php
++++ b/app/Services/DtiSampleResolver.php
+@@ -39,15 +39,15 @@ public static function officialPageUrl(string $affiliateUrl): ?string
+         }
+ 
+         if (str_contains($affiliateUrl, 'caribbeancompr.com')) {
+-            return "http://www.caribbeancompr.com/moviepages/{$code}/index.html";
++            return "https://www.caribbeancompr.com/moviepages/{$code}/index.html";
+         }
+ 
+         if (str_contains($affiliateUrl, 'heyzo.com')) {
+-            return "http://www.heyzo.com/moviepages/{$code}/index.html";
++            return "https://www.heyzo.com/moviepages/{$code}/index.html";
+         }
+ 
+         if (str_contains($affiliateUrl, 'caribbeancom.com')) {
+-            return "http://www.caribbeancom.com/moviepages/{$code}/index.html";
++            return "https://www.caribbeancom.com/moviepages/{$code}/index.html";
+         }
+ 
+         return null;
+@@ -70,7 +70,7 @@ public static function sampleMp4Url(string $pageUrl): ?string
+         }
+ 
+         if (str_contains($pageUrl, 'caribbeancom.com')) {
+-            return "http://smovie.caribbeancom.com/sample/movies/{$code}/sample_m.mp4";
++            return "https://smovie.caribbeancom.com/sample/movies/{$code}/sample_m.mp4";
+         }
+ 
+         return null;
+@@ -93,12 +93,37 @@ public static function thumbnailUrl(string $pageUrl): ?string
+         }
+ 
+         if (str_contains($pageUrl, 'caribbeancom.com')) {
+-            return "http://www.caribbeancom.com/moviepages/{$code}/images/l_l.jpg";
++            return "https://www.caribbeancom.com/moviepages/{$code}/images/l_l.jpg";
+         }
+ 
+         return null;
+     }
+ 
++    /**
++     * DTI feeds and CSV exports still carry http:// links, which browsers block as
++     * mixed content once the page itself is served over https.
++     */
++    public static function secureUrl(string $url): string
++    {
++        if (! str_starts_with($url, 'http://')) {
++            return $url;
++        }
++
++        $host = parse_url($url, PHP_URL_HOST);
++
++        if (! is_string($host)) {
++            return $url;
++        }
++
++        foreach (['caribbeancom.com', 'caribbeancompr.com', 'heyzo.com'] as $domain) {
++            if ($host === $domain || str_ends_with($host, '.' . $domain)) {
++                return 'https://' . substr($url, strlen('http://'));
++            }
++        }
++
++        return $url;
++    }
++
+     public static function sampleMp4Exists(string $sampleUrl): bool
+     {
+         if ($sampleUrl === '') {
+diff --git a/tests/Feature/ExampleTest.php b/tests/Feature/ExampleTest.php
+index 8364a84..22ef0c5 100644
+--- a/tests/Feature/ExampleTest.php
++++ b/tests/Feature/ExampleTest.php
+@@ -2,11 +2,13 @@
+ 
+ namespace Tests\Feature;
+ 
+-// use Illuminate\Foundation\Testing\RefreshDatabase;
++use Illuminate\Foundation\Testing\RefreshDatabase;
+ use Tests\TestCase;
+ 
+ class ExampleTest extends TestCase
+ {
++    use RefreshDatabase;
++
+     /**
+      * A basic test example.
+      */
+diff --git a/tests/Unit/DtiSampleResolverTest.php b/tests/Unit/DtiSampleResolverTest.php
+new file mode 100644
+index 0000000..541c875
+--- /dev/null
++++ b/tests/Unit/DtiSampleResolverTest.php
+@@ -0,0 +1,51 @@
++<?php
++
++namespace Tests\Unit;
++
++use App\Services\DtiSampleResolver;
++use PHPUnit\Framework\TestCase;
++
++class DtiSampleResolverTest extends TestCase
++{
++    public function test_it_derives_https_page_sample_and_thumbnail_urls(): void
++    {
++        $affiliate = 'https://click.dtiserv2.com/Direct/162667/www.caribbeancom.com/moviepages/080626-001/index.html';
++        $page = DtiSampleResolver::officialPageUrl($affiliate);
++
++        $this->assertSame('https://www.caribbeancom.com/moviepages/080626-001/index.html', $page);
++        $this->assertSame(
++            'https://smovie.caribbeancom.com/sample/movies/080626-001/sample_m.mp4',
++            DtiSampleResolver::sampleMp4Url($page)
++        );
++        $this->assertSame(
++            'https://www.caribbeancom.com/moviepages/080626-001/images/l_l.jpg',
++            DtiSampleResolver::thumbnailUrl($page)
++        );
++    }
++
++    public function test_it_upgrades_known_http_hosts_and_leaves_others_alone(): void
++    {
++        $this->assertSame(
++            'https://smovie.caribbeancom.com/sample/movies/080626-001/sample_m.mp4',
++            DtiSampleResolver::secureUrl('http://smovie.caribbeancom.com/sample/movies/080626-001/sample_m.mp4')
++        );
++        $this->assertSame(
++            'https://www.heyzo.com/contents/3000/3754/gallery/001.jpg',
++            DtiSampleResolver::secureUrl('http://www.heyzo.com/contents/3000/3754/gallery/001.jpg')
++        );
++        $this->assertSame(
++            'http://example.com/sample.mp4',
++            DtiSampleResolver::secureUrl('http://example.com/sample.mp4')
++        );
++        $this->assertSame(
++            'http://notcaribbeancom.com/sample.mp4',
++            DtiSampleResolver::secureUrl('http://notcaribbeancom.com/sample.mp4')
++        );
++    }
++
++    public function test_it_ignores_urls_without_a_movie_page_path(): void
++    {
++        $this->assertNull(DtiSampleResolver::movieCode('https://www.caribbeancom.com/listpages/all1.htm'));
++        $this->assertNull(DtiSampleResolver::sampleMp4Url('https://www.caribbeancom.com/'));
++    }
++}
+-- 
+2.43.0
+

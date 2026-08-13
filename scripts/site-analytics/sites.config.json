@@ -77,7 +77,12 @@
     "status": "live-placeholder-ga4-gsc",
     "liveVerified": "2026-08-12",
     "patchApplied": "2026-08-06",
-    "patches": ["0002", "0003", "0004-optional", "0005-placeholder-guard"],
+    "patches": [
+      "0002",
+      "0003",
+      "0004-optional",
+      "0005-placeholder-guard"
+    ],
     "deployDoc": "patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md",
     "leafletDoc": "patches/kousokubus-benri/APPLY-0003-LEAFLET.md",
     "windowsDevDoc": "patches/kousokubus-benri/WINDOWS-DEV.md",
@@ -93,5 +98,23 @@
     "patchNote": "0001 fails on current layout.tsx — use 0002. Live emits Japanese placeholders until Site Creator env is fixed.",
     "indexNowKey": "busselectindex2026",
     "note": "Site Creator の GA4/GSC が日本語プレースホルダ。コード側で拒否＋title absolute 修正"
+  },
+  {
+    "id": "hey-douga",
+    "repo": "syunnjack/hey-douga-guide",
+    "domain": "https://sosoru.org/",
+    "stack": "laravel-colorfulbox",
+    "status": "live-ga4-gsc",
+    "ga4": "G-DDSV1YXLEB",
+    "note": "Devin #2/#3/#4 patches as 0003-0005"
+  },
+  {
+    "id": "free-sample",
+    "repo": "syunnjack/free-sample-hub",
+    "domain": "https://sosoru.asia/",
+    "stack": "laravel-colorfulbox",
+    "status": "live-ga4-gsc",
+    "ga4": "G-F1L60W8K4L",
+    "note": "Patch 0004 = Devin #1"
   }
 ]

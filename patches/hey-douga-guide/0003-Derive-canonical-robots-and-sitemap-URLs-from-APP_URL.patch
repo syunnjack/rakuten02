@@ -1,0 +1,93 @@
+From 1ad02f4b2441dbf1c80a441bceb8507d703e2258 Mon Sep 17 00:00:00 2001
+From: "devin-ai-integration[bot]"
+ <devin-ai-integration[bot]@users.noreply.github.com>
+Date: Tue, 11 Aug 2026 10:48:00 +0000
+Subject: [PATCH] Derive canonical, robots and sitemap URLs from APP_URL
+
+---
+ app/Providers/AppServiceProvider.php | 11 ++++++++++-
+ public/robots.txt                    |  4 ----
+ public/sitemap.xml                   |  8 --------
+ routes/web.php                       | 15 +++++++++++++++
+ 4 files changed, 25 insertions(+), 13 deletions(-)
+ delete mode 100644 public/robots.txt
+ delete mode 100644 public/sitemap.xml
+
+diff --git a/app/Providers/AppServiceProvider.php b/app/Providers/AppServiceProvider.php
+index e44dc41..d6f755f 100644
+--- a/app/Providers/AppServiceProvider.php
++++ b/app/Providers/AppServiceProvider.php
+@@ -3,6 +3,7 @@
+ namespace App\Providers;
+ 
+ use App\Services\DtiRssClient;
++use Illuminate\Support\Facades\URL;
+ use Illuminate\Support\ServiceProvider;
+ 
+ class AppServiceProvider extends ServiceProvider
+@@ -22,6 +23,14 @@ public function register(): void
+      */
+     public function boot(): void
+     {
+-        //
++        $canonicalRoot = rtrim((string) config('app.url'), '/');
++
++        if ($canonicalRoot !== '') {
++            URL::forceRootUrl($canonicalRoot);
++
++            if (str_starts_with($canonicalRoot, 'https://')) {
++                URL::forceScheme('https');
++            }
++        }
+     }
+ }
+diff --git a/public/robots.txt b/public/robots.txt
+deleted file mode 100644
+index ba33d8b..0000000
+--- a/public/robots.txt
++++ /dev/null
+@@ -1,4 +0,0 @@
+-User-agent: *
+-Allow: /
+-
+-Sitemap: https://sosoru.org/sitemap.xml
+diff --git a/public/sitemap.xml b/public/sitemap.xml
+deleted file mode 100644
+index 32fcbc5..0000000
+--- a/public/sitemap.xml
++++ /dev/null
+@@ -1,8 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+-  <url>
+-    <loc>https://sosoru.org/</loc>
+-    <changefreq>daily</changefreq>
+-    <priority>1.0</priority>
+-  </url>
+-</urlset>
+diff --git a/routes/web.php b/routes/web.php
+index 2f6d545..63bd546 100644
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -4,3 +4,18 @@
+ use Illuminate\Support\Facades\Route;
+ 
+ Route::get('/', [DtiController::class, 'index']);
++
++Route::get('/robots.txt', function () {
++    $body = "User-agent: *\nAllow: /\n\nSitemap: ".url('/sitemap.xml')."\n";
++
++    return response($body, 200, ['Content-Type' => 'text/plain']);
++});
++
++Route::get('/sitemap.xml', function () {
++    $body = '<?xml version="1.0" encoding="UTF-8"?>'
++        .'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
++        .'<url><loc>'.url('/').'</loc><changefreq>daily</changefreq><priority>1.0</priority></url>'
++        .'</urlset>';
++
++    return response($body, 200, ['Content-Type' => 'application/xml']);
++});
+-- 
+2.43.0
+

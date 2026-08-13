@@ -19,36 +19,27 @@ jobs:
       matrix:
         include:
           - repo: hey-douga-guide
-            patches: patches/hey-douga-guide/*.patch
-            note: "0001/0002 already on master (PR #1); skip if git am fails"
+            # 0001/0002 already on master; apply open Devin follow-ups
+            patch_glob: "patches/hey-douga-guide/000[345]*.patch"
           - repo: free-sample-hub
-            patches: patches/free-sample-hub/*.patch
-            note: "Prefer Devin PR #1; local 0001-0003 may conflict"
+            patch_glob: "patches/free-sample-hub/0004*.patch"
     steps:
       - uses: actions/checkout@v4
 
       - name: Clone ${{ matrix.repo }}
         run: git clone --depth 40 https://github.com/syunnjack/${{ matrix.repo }}.git /tmp/${{ matrix.repo }}
 
-      - name: Apply patches (skip already-merged)
+      - name: Apply patches
         run: |
           set -euo pipefail
           cd /tmp/${{ matrix.repo }}
-          applied=0
-          skipped=0
-          failed=0
-          for patch in $GITHUB_WORKSPACE/${{ matrix.patches }}; do
+          shopt -s nullglob
+          patches=($GITHUB_WORKSPACE/${{ matrix.patch_glob }})
+          if [[ ${#patches[@]} -eq 0 ]]; then
+            echo "No patches matched; ok"
+            exit 0
+          fi
+          for patch in "${patches[@]}"; do
             echo "======== $(basename "$patch") ========"
-            if git am "$patch"; then
-              echo "applied"
-              applied=$((applied + 1))
-            else
-              git am --abort 2>/dev/null || true
-              echo "git am skipped (already on default branch or superseded)"
-              skipped=$((skipped + 1))
-            fi
+            git am "$patch"
           done
-          echo "applied=$applied skipped=$skipped failed=$failed"
-          echo "${{ matrix.note }}"
-          # Completer merges Devin PRs; stale local patches are informational.
-          exit 0

@@ -21,7 +21,7 @@
 
 | サイト | 状態 |
 |--------|------|
-| shudenhotel | ✅ PR #34–#38: https / GA4 / GSC / FAQ / 関西・名古屋LP |
+| shudenhotel | ✅ PR #34–#38: https / GA4 / GSC / FAQ / 関西・名古屋・福岡・札幌・神戸LP |
 | darekore | パッチ `0005` 適用待ち |
 | goalpilot | パッチ `0002` 適用待ち |
 | machi-list | パッチ `0003` 適用待ち |
@@ -33,15 +33,12 @@
 
 | リポ | 状態 |
 |------|------|
-| hey-douga-guide | master に CSV import 済。残り Devin #2/#3/#4 + 本番 migrate |
-| free-sample-hub | Devin #1 をマージ（`complete-dti-rollout.sh`） |
+| hey-douga-guide | master に CSV import 済。0003–0005 = Devin #2/#3/#4。本番 sosoru.org |
+| free-sample-hub | パッチ `0004` = Devin #1。本番 sosoru.asia |
 
 ---
 
-## ユーザー作業（優先順）
+## トラック C — ランキング
 
-1. `.\scripts\site-analytics\complete-gsc-rollout.ps1`（または CROSS_REPO_PAT workflow）
-2. busselect Site Creator 実トークン
-3. Search Console sitemap 再送信 ×5
-4. （任意）sitemap-auto 単体 repo + GSC SA
-5. hey-douga 本番 migrate
+ライブ台帳: `docs/RANKING-SITES.md`（ColorfulBOX 稼働 / WPX DNS 待ち）
+`bash scripts/site-analytics/check-ranking-signals.sh`
