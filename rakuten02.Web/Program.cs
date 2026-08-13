@@ -536,7 +536,7 @@ internal static class HtmlPages
             ("タクシーよりホテルの方が安いことはある？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
             ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。")
         };
-        var jsonLd = CombineJsonLd(WebApplicationNode(origin), FaqJsonLd(faqs));
+        var jsonLd = CombineJsonLd(WebApplicationNode(origin), OrganizationNode(origin), FaqJsonLd(faqs));
 
         return Layout(
             title: "終電ホテル | 終電を逃した夜に今夜泊まれる近くのホテルを探す",
@@ -913,6 +913,18 @@ internal static class HtmlPages
   "applicationCategory": "TravelApplication",
   "operatingSystem": "Web",
   "description": "終電後や急な宿泊時に、駅名や地名から今夜泊まれるホテル空室を探すWebアプリです。"
+}
+""";
+    }
+
+    private static string OrganizationNode(string origin)
+    {
+        return $$"""
+{
+  "@type": "Organization",
+  "name": "終電ホテル",
+  "url": "{{origin}}/",
+  "logo": "{{origin}}/favicon.svg"
 }
 """;
     }

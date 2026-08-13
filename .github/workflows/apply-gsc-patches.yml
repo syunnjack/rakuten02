@@ -1,0 +1,58 @@
+name: Apply GSC patches to site repos
+
+# Requires repo secret CROSS_REPO_PAT (classic PAT with repo scope on
+# kousokubus-benri, task-dashboard, machi-list, goal-pilot-app).
+# Without the secret this workflow exits successfully after printing setup help.
+
+on:
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "Push branches and open PRs (true/false)"
+        required: true
+        default: "true"
+      create_prs:
+        description: "Open pull requests after push"
+        required: true
+        default: "true"
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require CROSS_REPO_PAT
+        id: gate
+        env:
+          CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
+        run: |
+          if [ -z "${CROSS_REPO_PAT}" ]; then
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+            cat <<'EOF'
+          CROSS_REPO_PAT is not set.
+
+          Setup:
+          1. Create a classic PAT with `repo` scope for syunnjack/*
+          2. Add it as repository secret CROSS_REPO_PAT on rakuten02
+          3. Re-run this workflow
+
+          Until then, apply patches locally via:
+            patches/APPLY-GSC-2026-08-12.md
+            or scripts/site-analytics/apply-patches.ps1
+          EOF
+          else
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply patches and open PRs
+        if: steps.gate.outputs.missing == 'false'
+        env:
+          CROSS_REPO_PAT: ${{ secrets.CROSS_REPO_PAT }}
+          PUSH: ${{ github.event.inputs.push }}
+          CREATE_PRS: ${{ github.event.inputs.create_prs }}
+        run: |
+          set -euo pipefail
+          bash scripts/site-analytics/apply-gsc-patches.sh
