@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Rakuten02.Core;
 
@@ -529,6 +530,14 @@ internal static class HtmlPages
     public static string Home(HttpRequest request, DateOnly defaultCheckin, DateOnly defaultCheckout)
     {
         var origin = Origin(request);
+        var faqs = new (string Question, string Answer)[]
+        {
+            ("終電を逃したらどうホテルを探す？", "近い駅名・繁華街名・会場名を入力し、半径1kmから今夜の空室を検索します。見つからなければ1.5km、2kmへ広げます。"),
+            ("タクシーよりホテルの方が安いことはある？", "帰宅距離が長いほどタクシー代は高くなります。駅近のビジネスホテルやカプセルホテルの方が現実的な場合があります。"),
+            ("表示価格はそのまま予約できる？", "検索結果は最大10分間キャッシュされます。予約前に必ず楽天トラベル側で最新の空室・料金・チェックイン条件を確認してください。")
+        };
+        var jsonLd = CombineJsonLd(WebApplicationNode(origin), FaqJsonLd(faqs));
+
         return Layout(
             title: "終電ホテル | 終電を逃した夜に今夜泊まれる近くのホテルを探す",
             description: "終電を逃した時、ライブ後、飲み会後、出張延長で今夜泊まれるホテルを駅名や地名から探せます。",
@@ -575,8 +584,10 @@ internal static class HtmlPages
     <p>ホテル名、住所、アクセス、レビュー、宿泊プラン、食事条件、料金を一覧で確認できます。予約前に楽天トラベルで最新の空室とチェックイン条件をご確認ください。</p>
   </div>
 </section>
+
+{FaqSection(faqs)}
 """,
-            jsonLd: SoftwareJsonLd(origin));
+            jsonLd: jsonLd);
     }
 
     public static string SearchResults(
@@ -599,8 +610,8 @@ internal static class HtmlPages
         return Layout(
             title,
             description,
-            canonicalUrl: $"{origin}/search?place={Uri.EscapeDataString(place)}&checkin={checkin:yyyy-MM-dd}&checkout={checkout:yyyy-MM-dd}&radius={radius:F1}",
-            // Live availability for a given date range: useful to visitors, not a page to index.
+            // noindex page: consolidate signals on the matching landing page or home.
+            canonicalUrl: SearchCanonical(origin, place),
             noIndex: true,
             body: $"""
 <section class="search-header">
@@ -769,6 +780,8 @@ internal static class HtmlPages
   <meta name="theme-color" content="#bf0000">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
   <link rel="stylesheet" href="/styles.css">
   {GoogleAnalyticsHead()}
   <script type="application/ld+json">{jsonLd}</script>
@@ -906,8 +919,14 @@ internal static class HtmlPages
 
     private static string GoogleAnalyticsHead()
     {
+        // Fall back to the Blueprint measurement ID when Render env drift omits it.
         var measurementId = Environment.GetEnvironmentVariable("GOOGLE_ANALYTICS_MEASUREMENT_ID");
         if (string.IsNullOrWhiteSpace(measurementId))
+        {
+            measurementId = "G-542370310";
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(measurementId.Trim(), @"^G-[A-Z0-9]+$", RegexOptions.IgnoreCase))
         {
             return string.Empty;
         }
@@ -931,9 +950,21 @@ internal static class HtmlPages
     private static string GoogleSiteVerificationMeta()
     {
         var token = Environment.GetEnvironmentVariable("GOOGLE_SITE_VERIFICATION");
-        return string.IsNullOrWhiteSpace(token)
-            ? string.Empty
-            : $"""  <meta name="google-site-verification" content="{Html(token.Trim())}">""";
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            // Same token as render.yaml — keep GSC ownership stable if env is unset.
+            token = "z2cnfDF9eYms_B21Y6_3g3p9xQ1CrpzjKK02j2OfeLo";
+        }
+
+        token = token.Trim();
+        if (token.Length < 10
+            || token.Contains(' ', StringComparison.Ordinal)
+            || System.Text.RegularExpressions.Regex.IsMatch(token, @"[\u3040-\u30ff\u3400-\u9fff]"))
+        {
+            return string.Empty;
+        }
+
+        return $"""  <meta name="google-site-verification" content="{Html(token)}">""";
     }
 
     private static (string Question, string Answer)[] LandingFaqs(LandingPage page)
@@ -1101,6 +1132,31 @@ internal static class HtmlPages
     }
 
     private static string Origin(HttpRequest request) => PublicUrls.Origin(request);
+
+    private static string SearchCanonical(string origin, string place)
+    {
+        // Map popular places to static landing pages so noindex search URLs
+        // still reinforce the pages we want indexed.
+        var landings = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["新宿駅"] = "/areas/shinjuku-last-train",
+            ["渋谷駅"] = "/areas/shibuya-tonight-hotel",
+            ["東京駅"] = "/areas/tokyo-station-tonight-hotel",
+            ["横浜駅"] = "/areas/yokohama-last-train",
+            ["池袋駅"] = "/areas/ikebukuro-last-train",
+            ["上野駅"] = "/areas/ueno-tonight-hotel",
+            ["品川駅"] = "/areas/shinagawa-business-hotel",
+            ["なんば駅"] = "/areas/namba-last-train",
+            ["東京ドーム"] = "/venues/tokyo-dome-after-live",
+            ["さいたまスーパーアリーナ"] = "/venues/saitama-super-arena-after-live",
+            ["横浜アリーナ"] = "/venues/yokohama-arena-after-live",
+            ["幕張メッセ"] = "/venues/makuhari-messe-after-event"
+        };
+
+        return landings.TryGetValue(place.Trim(), out var path)
+            ? origin + path
+            : origin + "/";
+    }
 
     private static string OriginFromCanonical(string canonicalUrl)
     {
