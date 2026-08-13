@@ -21,13 +21,13 @@
 
 | サイト | 公開 | GA4 | GSC | 残り |
 |--------|------|-----|-----|------|
-| shudenhotel.jp | ✅ | ✅ | ✅ | Search Console で https sitemap 再送信 |
-| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` |
-| goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002` |
-| machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003` |
-| busselect.jp | ✅ | ❌ | ❌ | パッチ `0005` + Site Creator 実トークン |
+| shudenhotel.jp | ✅ | ✅ | ✅ | GSC sitemap 再送信 / Bing Webmaster |
+| darekore.jp | ✅ | ✅ | ✅ | パッチ `0005` + Devin #8 |
+| goalpilot.jp | ✅ | ✅ | ✅ | パッチ `0002` + Devin #1 |
+| machi-list.jp | ✅ | ✅ | ✅ | パッチ `0003`（YOUR_VC_*） |
+| busselect.jp | ✅ | ❌ | ❌ | パッチ `0005` + Devin #1 + Site Creator |
 
-パッチ適用（最短）:
+パッチ適用（最短）: `docs/GSC-FINISH.md` のワンショットスクリプト。
 
 ```powershell
 .\scripts\site-analytics\complete-gsc-rollout.ps1

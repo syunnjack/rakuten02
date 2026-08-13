@@ -9,7 +9,7 @@
     "searchConsole": "verified",
     "sitemap": "success",
     "liveVerified": "2026-08-13",
-    "note": "PR #34 live: https canonical, GA4/GSC fallbacks, FAQ, IndexNow key 200"
+    "note": "PR #34–#37 live. IndexNow Yandex OK; Bing 403 until Webmaster verify."
   },
   {
     "id": "darekore",

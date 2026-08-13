@@ -43,6 +43,19 @@ builder.Services.AddSingleton(_ => new RakutenApiOptions(
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+
+// Resolve IndexNow key early so the key file can short-circuit before StaticFiles
+// (and before any later middleware that may strip Content-Length under Cloudflare).
+var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
+if (string.IsNullOrWhiteSpace(indexNowKey))
+{
+    indexNowKey = "shudenhotelindex2026";
+}
+
+var trimmedIndexNowKey = indexNowKey.Trim();
+var indexNowKeyPath = $"/{trimmedIndexNowKey}.txt";
+var indexNowKeyBytes = Encoding.UTF8.GetBytes(trimmedIndexNowKey + "\n");
+
 app.Use(async (context, next) =>
 {
     // Prefer the apex host so Search Console does not split signals across www.
@@ -57,6 +70,26 @@ app.Use(async (context, next) =>
     if (string.Equals(context.Request.Host.Host, "shudenhotel.jp", StringComparison.OrdinalIgnoreCase))
     {
         context.Response.Headers.StrictTransportSecurity = "max-age=31536000; includeSubDomains";
+    }
+
+    // IndexNow key: plain text, fixed length, long CDN cache so Bing/Yandex fetch a HIT.
+    if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+    {
+        if (string.Equals(context.Request.Path.Value, indexNowKeyPath, StringComparison.OrdinalIgnoreCase))
+        {
+            context.Response.StatusCode = StatusCodes.Status200OK;
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            context.Response.ContentLength = indexNowKeyBytes.Length;
+            context.Response.Headers.CacheControl = "public, max-age=86400, immutable";
+            context.Response.Headers["Cloudflare-CDN-Cache-Control"] = "max-age=86400";
+            context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+            if (!HttpMethods.IsHead(context.Request.Method))
+            {
+                await context.Response.Body.WriteAsync(indexNowKeyBytes);
+            }
+
+            return;
+        }
     }
 
     await next();
@@ -300,19 +333,7 @@ app.MapMethods("/sitemap.xml", new[] { "GET", "HEAD" }, async (HttpContext conte
     await WriteTextResponse(context, request, body, "application/xml; charset=utf-8");
 });
 
-// IndexNow key file: emit with Content-Length (Bing validators reject chunked/no-length).
-var indexNowKey = Environment.GetEnvironmentVariable("INDEXNOW_KEY");
-if (string.IsNullOrWhiteSpace(indexNowKey))
-{
-    indexNowKey = "shudenhotelindex2026";
-}
-
-var trimmedIndexNowKey = indexNowKey.Trim();
-app.MapMethods($"/{trimmedIndexNowKey}.txt", new[] { "GET", "HEAD" }, async (HttpContext context, HttpRequest request) =>
-{
-    // Trailing newline matches working IndexNow hosts (e.g. darekore).
-    await WriteTextResponse(context, request, trimmedIndexNowKey + "\n", "text/plain; charset=utf-8");
-});
+// IndexNow key is served by the early middleware above (before StaticFiles).
 
 app.Run();
 

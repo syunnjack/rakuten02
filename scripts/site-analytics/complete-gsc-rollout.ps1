@@ -142,6 +142,7 @@ if (Get-Command bash -ErrorAction SilentlyContinue) {
 Write-Host "`n== Manual leftovers ==" -ForegroundColor Yellow
 Write-Host "1. busselect Site Creator: set real NEXT_PUBLIC_GOOGLE_* (remove Japanese placeholders)"
 Write-Host "2. Search Console: resubmit sitemap.xml for all 5 properties"
-Write-Host "3. After busselect redeploy, re-run check-sites.ps1"
+Write-Host "3. Bing Webmaster: verify shudenhotel.jp (clears IndexNow Bing 403)"
+Write-Host "4. After busselect redeploy, re-run check-sites.ps1"
 Write-Host "`nok=$ok fail=$fail"
 if ($fail -gt 0) { exit 1 }
