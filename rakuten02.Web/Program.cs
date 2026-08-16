@@ -327,8 +327,11 @@ app.MapMethods("/llms.txt", new[] { "GET", "HEAD" }, async (HttpContext context,
 ## Domain
 - Production: https://shudenhotel.jp/
 
+## Support
+- BOOTH shop: {BoothShopUrl()}
+
 ## Notes
-検索結果は楽天トラベルAPIとOpenStreetMap Nominatimを利用して生成されます。楽天アフィリエイトリンクはAPIレスポンスのaffiliateUrlを優先して出力します。
+検索結果は楽天トラベルAPIとOpenStreetMap Nominatimを利用して生成されます。楽天アフィリエイトリンクはAPIレスポンスのaffiliateUrlを優先して出力します。有料ツール・特典コンテンツはBOOTHでも販売しています。
 """;
     await WriteTextResponse(context, request, body, "text/plain; charset=utf-8");
 });
@@ -458,7 +461,7 @@ internal static class HtmlPages
             title: "広告・アフィリエイト表記 | 終電ホテル",
             description: "終電ホテルの広告、アフィリエイトリンク、楽天トラベルAPI利用についての表記です。",
             canonicalUrl: origin + "/affiliate-disclosure",
-            body: """
+            body: $"""
 <section class="article-hero">
   <a class="back-link" href="/">検索トップへ</a>
   <h1>広告・アフィリエイト表記</h1>
@@ -474,6 +477,11 @@ internal static class HtmlPages
     <h2>収益について</h2>
     <p>ユーザーが本サイトのリンク経由で予約した場合、運営者が成果報酬を受け取ることがあります。表示順位や掲載内容は、検索条件とAPIレスポンスに基づきます。</p>
   </div>
+</section>
+
+<section class="content-band">
+  <h2>BOOTHでの開発支援</h2>
+  <p>運営者は <a href="{BoothShopUrl()}" target="_blank" rel="nofollow sponsored noopener">BOOTH（chitamaru）</a> で有料ツールや特典コンテンツを販売しています。本サイトの利用に加え、BOOTHでのご購入も開発継続の支援になります。</p>
 </section>
 """,
             jsonLd: SoftwareJsonLd(origin));
@@ -847,6 +855,7 @@ internal static class HtmlPages
       <a href="/affiliate-disclosure">広告・アフィリエイト表記</a>
       <a href="/privacy">プライバシーポリシー</a>
       <a href="/terms">利用規約</a>
+      <a href="{BoothShopUrl()}" target="_blank" rel="nofollow sponsored noopener">開発支援（BOOTH）</a>
     </nav>
   </footer>
 </body>
@@ -1020,6 +1029,14 @@ internal static class HtmlPages
         }
 
         return $"""  <meta name="google-site-verification" content="{Html(token)}">""";
+    }
+
+    private static string BoothShopUrl()
+    {
+        var configured = Environment.GetEnvironmentVariable("BOOTH_SHOP_URL");
+        return string.IsNullOrWhiteSpace(configured)
+            ? "https://chitamaru.booth.pm"
+            : configured.Trim().TrimEnd('/');
     }
 
     private static (string Question, string Answer)[] LandingFaqs(LandingPage page)

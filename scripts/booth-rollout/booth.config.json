@@ -1,0 +1,7 @@
+{
+  "shopUrl": "https://chitamaru.booth.pm",
+  "shopLabel": "BOOTH（chitamaru）",
+  "readmeHeading": "## 開発支援（BOOTH）",
+  "readmeMarker": "<!-- booth-support:readme -->",
+  "htmlMarker": "<!-- booth-support:footer -->"
+}

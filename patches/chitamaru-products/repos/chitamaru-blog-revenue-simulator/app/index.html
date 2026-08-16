@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ブログ収益シミュレーション | 知多丸</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <p class="brand">知多丸</p>
+    <h1>ブログ収益シミュレーション</h1>
+    <p class="lead">PV・CTR・承認率・単価から記事・サイトの見込み報酬を試算するシミュレータです。</p>
+    <section class="panel">
+      <label for="input">入力</label>
+      <textarea id="input" rows="6" placeholder="ここに内容を入力…"></textarea>
+      <div class="row">
+        <button type="button" id="run">生成する</button>
+        <button type="button" id="copy" class="ghost">コピー</button>
+      </div>
+      <label for="output">出力</label>
+      <textarea id="output" rows="8" readonly></textarea>
+    </section>
+    <p class="foot">買い切り想定 ¥1,480 — <a href="https://chitamaru.booth.pm/items/blog-revenue-simulator">BOOTH</a></p>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
