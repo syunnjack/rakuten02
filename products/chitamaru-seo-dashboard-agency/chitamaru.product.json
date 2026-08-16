@@ -1,0 +1,39 @@
+{
+  "rank": 15,
+  "repo": "chitamaru-seo-dashboard-agency",
+  "slug": "seo-dashboard-agency",
+  "title": "SEO Dashboard Agency",
+  "titleJa": "SEO管理ダッシュボード Agency",
+  "emoji": "📊",
+  "mode": "dashboard",
+  "phase": 3,
+  "form": "S",
+  "price": "¥3,800",
+  "priceMonthly": "¥9,800〜",
+  "priceB2B": "複数顧客 Agency ¥9,800〜",
+  "category": "seo-ops",
+  "who": "複数サイト／複数顧客のSEOを見る個人と制作会社",
+  "prototype": null,
+  "boothItem": "seo-dashboard-agency",
+  "tagline": "顧客ごとの順位・指摘・月次レポを1画面に。",
+  "features": [
+    "複数顧客カード",
+    "仮想の順位・流入サマリー",
+    "指摘チケット",
+    "月次レポート下書き"
+  ],
+  "seedKind": "seo",
+  "faqs": [
+    [
+      "個人 Pro との違いは？",
+      "個人 Pro は自サイト。Agency は複数顧客とレポ・チケットです。"
+    ],
+    [
+      "今すぐ売るか？",
+      "個人 Pro の実績後。リポは先に独立させておきます。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-seo-dashboard-agency",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-seo-dashboard-agency/",
+  "boothUrl": "https://chitamaru.booth.pm/items/seo-dashboard-agency"
+}

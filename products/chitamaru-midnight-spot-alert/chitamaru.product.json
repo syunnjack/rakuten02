@@ -1,0 +1,39 @@
+{
+  "rank": 6,
+  "repo": "chitamaru-midnight-spot-alert",
+  "slug": "midnight-spot-alert",
+  "title": "Midnight Spot Alert",
+  "titleJa": "終電後スポット通知",
+  "emoji": "🌙",
+  "mode": "watch",
+  "phase": 1,
+  "form": "B",
+  "price": "¥580",
+  "priceMonthly": "¥580",
+  "priceB2B": "飲食・宿泊の掲載課金",
+  "category": "hotel",
+  "who": "終電後の休憩／食事／仮眠を探す人",
+  "prototype": "syunnjack/midnight-spot-alert",
+  "boothItem": "midnight-spot-alert",
+  "tagline": "終電を逃した夜に、休憩・食事・仮眠の候補をすぐ出す。",
+  "features": [
+    "駅・種別（休憩／食事／仮眠）",
+    "終電後スポットのシード検索",
+    "ウォッチ保存",
+    "終電ホテルへの送客"
+  ],
+  "seedKind": "midnight",
+  "faqs": [
+    [
+      "終電ホテルとの違いは？",
+      "ホテル以外（サウナ・漫画喫茶・飲食）を先に出す補完ラインです。"
+    ],
+    [
+      "月額は？",
+      "Phase 2 で通知月額 ¥580。今は買い切りガイドとして出します。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-midnight-spot-alert",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-midnight-spot-alert/",
+  "boothUrl": "https://chitamaru.booth.pm/items/midnight-spot-alert"
+}

@@ -1,0 +1,39 @@
+{
+  "rank": 14,
+  "repo": "chitamaru-content-brief-packs",
+  "slug": "content-brief-packs",
+  "title": "Content Brief Packs",
+  "titleJa": "業界別コンテンツブリーフ素材集",
+  "emoji": "📝",
+  "mode": "briefs",
+  "phase": 1,
+  "form": "B",
+  "price": "¥580",
+  "priceMonthly": "シリーズ追加 ¥580",
+  "priceB2B": "制作会社向けセット",
+  "category": "content",
+  "who": "不動産／転職／飲食の記事を量産したい個人",
+  "prototype": "syunnjack/content-brief-engine",
+  "boothItem": "content-brief-packs",
+  "tagline": "業界別テンプレで、ブリーフをすぐ書き出せる。",
+  "features": [
+    "不動産・転職・飲食の3パック",
+    "見出し・検索意図・CTAの雛形",
+    "コピー出力",
+    "シリーズ追加販売"
+  ],
+  "seedKind": "briefs",
+  "faqs": [
+    [
+      "既存の Content Brief Engine は？",
+      "本体ツールは既掲載。本リポは業界別素材の分岐商品です。"
+    ],
+    [
+      "なぜ ¥580？",
+      "試し買い単価。業界を増やして複数買いを取ります。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-content-brief-packs",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-content-brief-packs/",
+  "boothUrl": "https://chitamaru.booth.pm/items/content-brief-packs"
+}

@@ -1,0 +1,39 @@
+{
+  "rank": 4,
+  "repo": "chitamaru-nearqueue",
+  "slug": "nearqueue",
+  "title": "NearQueue",
+  "titleJa": "受付番号・待ち時間システム",
+  "emoji": "🎟️",
+  "mode": "queue",
+  "phase": 3,
+  "form": "S",
+  "price": "¥3,800",
+  "priceMonthly": "¥3,800",
+  "priceB2B": "店舗SaaS ¥3,800〜 / 導入 ¥19,800〜",
+  "category": "b2b",
+  "who": "美容・飲食・医療など、順番待ちを改善したい店舗",
+  "prototype": "syunnjack/reservation-waiting-time-v1",
+  "boothItem": "nearqueue",
+  "tagline": "近くの店舗で番号を取り、待ち時間を自分の時間に変える。",
+  "features": [
+    "来店者の受付番号発行（デモ）",
+    "待ち組数・目安時間",
+    "スタッフボード（呼び出し／案内済）",
+    "受付後のクーポン枠"
+  ],
+  "seedKind": "queue",
+  "faqs": [
+    [
+      "個人向けに売る？",
+      "デモは無料公開。売上は店舗ライセンスが本体です。"
+    ],
+    [
+      "既存の reservation-waiting-time-v1 は？",
+      "プロトタイプ。本リポが商品名・価格・導入導線を持った独立製品です。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-nearqueue",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-nearqueue/",
+  "boothUrl": "https://chitamaru.booth.pm/items/nearqueue"
+}

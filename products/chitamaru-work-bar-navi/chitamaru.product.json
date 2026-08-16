@@ -1,0 +1,39 @@
+{
+  "rank": 5,
+  "repo": "chitamaru-work-bar-navi",
+  "slug": "work-bar-navi",
+  "title": "Work Bar Navi",
+  "titleJa": "夜のお店／仕事／エリアナビ",
+  "emoji": "🌃",
+  "mode": "listings",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "掲載 ¥2,480",
+  "priceB2B": "掲載パッケージ ¥2,480〜（運用代行可）",
+  "category": "local",
+  "who": "夜勤・短時間・飲み／仕事導線をまとめたい層",
+  "prototype": "syunnjack/work-bar-navi",
+  "boothItem": "work-bar-navi",
+  "tagline": "エリア×業態で、夜の仕事とお店を一本のナビにする。",
+  "features": [
+    "エリア・業態フィルター",
+    "求人／店舗カード",
+    "スポンサー枠のプレースホルダ",
+    "送客・掲載課金の導線"
+  ],
+  "seedKind": "workbar",
+  "faqs": [
+    [
+      "個人の買い切りは何？",
+      "エリアナビの使い方キットとローカル保存。掲載課金は店舗向けです。"
+    ],
+    [
+      "収益の柱は？",
+      "最終的にはスポンサー・掲載・送客アフィです。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-work-bar-navi",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-work-bar-navi/",
+  "boothUrl": "https://chitamaru.booth.pm/items/work-bar-navi"
+}

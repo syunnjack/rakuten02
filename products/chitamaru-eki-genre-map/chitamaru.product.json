@@ -1,0 +1,39 @@
+{
+  "rank": 13,
+  "repo": "chitamaru-eki-genre-map",
+  "slug": "eki-genre-map",
+  "title": "Eki Genre Map",
+  "titleJa": "駅×ジャンルのローカル発見マップ",
+  "emoji": "🚉",
+  "mode": "listings",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "ローカル広告",
+  "priceB2B": "掲載 ¥1,980〜",
+  "category": "local",
+  "who": "近場で何があるかを駅から探したい人",
+  "prototype": "syunnjack/eki-genre-map",
+  "boothItem": "eki-genre-map",
+  "tagline": "駅名とジャンルを選ぶだけで、近場の候補が出る。",
+  "features": [
+    "駅×ジャンルのマトリクス",
+    "スポットカード",
+    "お気に入り保存",
+    "ローカル広告・掲載枠"
+  ],
+  "seedKind": "eki",
+  "faqs": [
+    [
+      "まちリストとの違いは？",
+      "駅起点×ジャンル発見に特化しています。"
+    ],
+    [
+      "掲載単価は？",
+      "B2Bは ¥1,980〜。個人の発見ツールは ¥980 買い切りです。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-eki-genre-map",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-eki-genre-map/",
+  "boothUrl": "https://chitamaru.booth.pm/items/eki-genre-map"
+}

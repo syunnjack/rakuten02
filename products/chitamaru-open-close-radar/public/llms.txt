@@ -1,0 +1,5 @@
+# Open/Close Radar
+
+近所の開店・閉店を、UGCと通知で速報する。
+
+Price: ¥580

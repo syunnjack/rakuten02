@@ -1,0 +1,39 @@
+{
+  "rank": 11,
+  "repo": "chitamaru-comicstay",
+  "slug": "comicstay",
+  "title": "ComicStay",
+  "titleJa": "漫画喫茶／ネットカフェ UGC検索",
+  "emoji": "📚",
+  "mode": "listings",
+  "phase": 1,
+  "form": "B",
+  "price": "¥980",
+  "priceMonthly": "キーワード広告",
+  "priceB2B": "掲載プラン ¥2,480〜",
+  "category": "local",
+  "who": "個室・シャワー・深夜滞在などの条件で探したい人",
+  "prototype": "syunnjack/manga-cafe-finder",
+  "boothItem": "comicstay",
+  "tagline": "個室・シャワー・深夜滞在。条件で漫画喫茶を探す。",
+  "features": [
+    "個室／シャワー／深夜のフィルター",
+    "UGCメモ",
+    "施設カード",
+    "掲載・キーワード広告枠"
+  ],
+  "seedKind": "comic",
+  "faqs": [
+    [
+      "manga-cafe-finder との関係は？",
+      "プロトタイプ。ComicStay が商品名の独立リポです。"
+    ],
+    [
+      "終電後スポットとの違いは？",
+      "漫画喫茶に特化し、滞在条件フィルターが本体です。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-comicstay",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-comicstay/",
+  "boothUrl": "https://chitamaru.booth.pm/items/comicstay"
+}

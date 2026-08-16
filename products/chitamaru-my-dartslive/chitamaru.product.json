@@ -1,0 +1,39 @@
+{
+  "rank": 12,
+  "repo": "chitamaru-my-dartslive",
+  "slug": "my-dartslive",
+  "title": "My Dartslive",
+  "titleJa": "ダーツ施設横断 UGC",
+  "emoji": "🎯",
+  "mode": "listings",
+  "phase": 1,
+  "form": "B",
+  "price": "¥2,480",
+  "priceMonthly": "クーポン枠",
+  "priceB2B": "施設掲載 ¥2,480〜",
+  "category": "hobby",
+  "who": "大会／クーポン／深夜営業などで施設を探す層",
+  "prototype": "syunnjack/my-dartslive",
+  "boothItem": "my-dartslive",
+  "tagline": "大会・クーポン・深夜。ダーツ施設を横断して探す。",
+  "features": [
+    "施設条件フィルター",
+    "大会・クーポン・深夜タグ",
+    "UGC",
+    "施設掲載課金枠"
+  ],
+  "seedKind": "darts",
+  "faqs": [
+    [
+      "なぜ ¥2,480？",
+      "UGC・大会・クーポンまで揃う横断検索で、本気で施設を探す層向けです。"
+    ],
+    [
+      "B2Bは？",
+      "個人利用のあと、施設掲載とクーポン枠です。"
+    ]
+  ],
+  "repoUrl": "https://github.com/syunnjack/chitamaru-my-dartslive",
+  "pagesUrl": "https://syunnjack.github.io/chitamaru-my-dartslive/",
+  "boothUrl": "https://chitamaru.booth.pm/items/my-dartslive"
+}
