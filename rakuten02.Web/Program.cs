@@ -1121,9 +1121,21 @@ internal static class HtmlPages
 
     private static string BreadcrumbJsonLd(string origin, (string Label, string Path)[] items)
     {
+        // Google のパンくずは、最後の1件を除いて item（URL）が必須。
+        // 「エリア・会場」「ガイド」のような見出しは実体のページを持たないため、
+        // そのまま載せると Search Console が
+        // 「項目「item」がありません（「itemListElement」に含まれる）」で弾く。
+        //
+        // /areas /guides は実際に404で、当てられる URL が無い。
+        // item を作れない以上、構造化データからは外すのが筋。
+        // 画面のパンくずには文脈として意味があるので残す（BreadcrumbHtml は触らない）。
+        var linkable = items
+            .Where((item, index) => item.Path.Length > 0 || index == items.Length - 1)
+            .ToArray();
+
         var elements = new StringBuilder();
         var position = 1;
-        foreach (var item in items)
+        foreach (var item in linkable)
         {
             if (elements.Length > 0)
             {
