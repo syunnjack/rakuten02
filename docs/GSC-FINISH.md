@@ -34,15 +34,22 @@ bash scripts/site-analytics/complete-gsc-rollout.sh
 
 スクリプトが行うこと:
 1. 既存の有益な Devin PR をマージ試行  
-   - [kousokubus-benri#1](https://github.com/syunnjack/kousokubus-benri/pull/1)  
    - [task-dashboard#8](https://github.com/syunnjack/task-dashboard/pull/8)  
    - [machi-list#1](https://github.com/syunnjack/machi-list/pull/1)  
-   - [goal-pilot-app#1](https://github.com/syunnjack/goal-pilot-app/pull/1)  
-   - DTI: hey-douga-guide #2/#3/#4, free-sample-hub #1
-2. rakuten02 パッチ `0005/0005/0003/0002` を適用 → PR → マージ
+   - DTI: hey-douga-guide #2/#3/#4, free-sample-hub #1（`complete-dti-rollout.sh` → `apply-dti-patches.sh`）  
+   - goal-pilot-app#1 / kousokubus-benri#1 は **マージしない**（それぞれ `0002`+`0003` / `0005`+`0006` が包含し衝突する）
+2. rakuten02 パッチ（busselect `0005`+`0006` / darekore `0005`+`0006` / machi-list `0003`+`0004` / goalpilot `0002`+`0003`）を適用 → PR → マージ
 3. ライブ信号チェック + IndexNow（Bing + Yandex）
 
-UI で先にマージする場合も同じ4 PR でOK（その後スクリプト再実行）。
+DTI だけ先にやる場合:
+
+```bash
+PUSH=true bash scripts/site-analytics/apply-dti-patches.sh
+# dry-run:
+PUSH=false MERGE_EXISTING_PRS=false bash scripts/site-analytics/apply-dti-patches.sh
+```
+
+UI で先にマージする場合も darekore / machi-list の Devin PR でOK（busselect / goalpilot はパッチのみ。その後スクリプト再実行）。
 
 ## 手動3点（スクリプト後）
 
@@ -50,10 +57,10 @@ UI で先にマージする場合も同じ4 PR でOK（その後スクリプト�
 
 | Key | 操作 |
 |-----|------|
-| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | `GA4測定ID` を削除 → 実 `G-...` |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 日本語プレースホルダ削除 → 実トークン |
+| `NEXT_PUBLIC_GOOGLE_ANALYTICS_MEASUREMENT_ID` | `GA4測定ID` を削除 → 実 `G-...`（または変数ごと削除） |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 不要なら削除可（layout に検証トークンがハードコード済み） |
 
-未取得なら **変数ごと削除**（パッチ適用後は偽タグが出ない）。
+未取得なら **GA4 変数ごと削除**（パッチ適用後は偽タグが出ない）。
 
 ### B. Search Console サイトマップ再送信
 

@@ -44,14 +44,14 @@ GitHub で PR 作成 → master にマージ。
 
 ## 2. free-sample-hub（次の作業）
 
+本番は **https://sosoru.asia/**。パッチは Devin PR #1 相当の `0004` を使用。
+
 ```powershell
 cd C:\Users\syunn
 git clone https://github.com/syunnjack/free-sample-hub.git
 cd free-sample-hub
 
-git am C:\Users\syunn\rakuten02\patches\free-sample-hub\0001-Add-DTI-Caribbeancom-sample-import-and-MP4-playback.patch
-git am C:\Users\syunn\rakuten02\patches\free-sample-hub\0002-Add-Premium-HEYZO-sample-URL-support-and-424-row-CSV.patch
-git am C:\Users\syunn\rakuten02\patches\free-sample-hub\0003-Add-thumbnail-URL-derivation-for-DTI-imports.patch
+git am C:\Users\syunn\rakuten02\patches\free-sample-hub\0004-Add-DTI-CSV-import-with-https-only-sample-media.patch
 
 copy .env.example .env
 composer install

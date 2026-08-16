@@ -1,0 +1,153 @@
+From 4e6a2de0cf31f26ae7faf0165eb079182d337b5d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 16:52:26 +0000
+Subject: [PATCH] Noindex search, add FAQ JSON-LD, and fix layout canonical
+
+Search result URLs stay out of the index and sitemap, robots
+disallows /search, the homepage owns its canonical, and FAQ /
+Organization JSON-LD is added alongside WebSite.
+---
+ app/layout.tsx      |  3 +--
+ app/page.tsx        | 62 +++++++++++++++++++++++++++++++++++++--------
+ app/robots.ts       |  2 +-
+ app/search/page.tsx |  6 ++++-
+ app/sitemap.ts      |  1 -
+ 5 files changed, 58 insertions(+), 16 deletions(-)
+
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 355d82b..499cf83 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -10,8 +10,7 @@ export const metadata: Metadata = {
+   metadataBase: new URL(SITE_URL),
+   title: { default: "NOLU | 高速バスを、価格だけで選ばない。", template: "%s | NOLU" },
+   description: "料金・快眠度・定時性・設備・口コミを一度に比較できる、高速バスの移動品質ナビ。",
+-  alternates: { canonical: "/" },
+-  openGraph: { title: "NOLU by BUSSELECT", description: "高速バスを、価格だけで選ばない。", locale: "ja_JP", type: "website", url: "/" },
++  openGraph: { title: "NOLU by BUSSELECT", description: "高速バスを、価格だけで選ばない。", locale: "ja_JP", type: "website" },
+   robots: { index: true, follow: true },
+   verification: { google: "oZwpaNI66r9fBNEagYXlyEraiRbUKKuzXGJ_x2Dj3BM" },
+ };
+diff --git a/app/page.tsx b/app/page.tsx
+index 6b14a9d..9c2e992 100644
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -11,22 +11,62 @@ export const metadata: Metadata = {
+   title: { absolute: "NOLU | 高速バスを、価格だけで選ばない。" },
+   description:
+     "料金・快眠度・定時性・設備・口コミを一度に比較。あなたに合う夜行バス・高速バスを見つける移動品質ナビ。",
++  alternates: { canonical: "/" },
++  openGraph: { url: "/" },
+ };
+ 
+ const jsonLd = {
+   "@context": "https://schema.org",
+-  "@type": "WebSite",
+-  name: "NOLU",
+-  url: siteUrl("/"),
+-  description: "高速バス・夜行バスの移動品質比較ナビ",
+-  potentialAction: {
+-    "@type": "SearchAction",
+-    target: {
+-      "@type": "EntryPoint",
+-      urlTemplate: siteUrl("/search?from={from}&to={to}"),
++  "@graph": [
++    {
++      "@type": "WebSite",
++      name: "NOLU",
++      url: siteUrl("/"),
++      description: "高速バス・夜行バスの移動品質比較ナビ",
++      potentialAction: {
++        "@type": "SearchAction",
++        target: {
++          "@type": "EntryPoint",
++          urlTemplate: siteUrl("/search?from={from}&to={to}"),
++        },
++        "query-input": ["required name=from", "required name=to"],
++      },
+     },
+-    "query-input": "required name=from",
+-  },
++    {
++      "@type": "Organization",
++      name: "NOLU",
++      url: siteUrl("/"),
++    },
++    {
++      "@type": "FAQPage",
++      mainEntity: [
++        {
++          "@type": "Question",
++          name: "NOLUでは何を比較できますか？",
++          acceptedAnswer: {
++            "@type": "Answer",
++            text: "高速バス・夜行バスの料金だけでなく、快眠スコア、定時性、設備、口コミをまとめて比較できます。",
++          },
++        },
++        {
++          "@type": "Question",
++          name: "検索結果ページは検索結果に載りますか？",
++          acceptedAnswer: {
++            "@type": "Answer",
++            text: "条件検索の結果URLはインデックス対象外です。路線一覧や都市別ページなど、内容が安定したページを検索向けに公開しています。",
++          },
++        },
++        {
++          "@type": "Question",
++          name: "到着後の乗り換えも調べられますか？",
++          acceptedAnswer: {
++            "@type": "Answer",
++            text: "到着地からの路線バス・電車・地下鉄・徒歩・タクシーをまとめて案内する乗換検索があります。",
++          },
++        },
++      ],
++    },
++  ],
+ };
+ 
+ export default async function Home() {
+diff --git a/app/robots.ts b/app/robots.ts
+index 6cd6e2d..acb3378 100644
+--- a/app/robots.ts
++++ b/app/robots.ts
+@@ -3,7 +3,7 @@ import { SITE_HOST, siteUrl } from "../lib/site";
+ 
+ export default function robots(): MetadataRoute.Robots {
+   return {
+-    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin/", "/api/"] }],
++    rules: [{ userAgent: "*", allow: "/", disallow: ["/admin/", "/api/", "/search"] }],
+     sitemap: siteUrl("/sitemap.xml"),
+     host: SITE_HOST,
+   };
+diff --git a/app/search/page.tsx b/app/search/page.tsx
+index 4658d74..c871f4c 100644
+--- a/app/search/page.tsx
++++ b/app/search/page.tsx
+@@ -8,7 +8,11 @@ type SearchParams = Promise<{ from?: string; to?: string; date?: string; passeng
+ 
+ export async function generateMetadata({ searchParams }: { searchParams: SearchParams }): Promise<Metadata> {
+   const query = await searchParams, from = clean(query.from, "東京"), to = clean(query.to, "大阪");
+-  return { title: `${from}発 ${to}行き 高速バス比較`, description: `${from}から${to}への高速バスと、到着後の路線バス・鉄道・地下鉄・徒歩・タクシーをまとめて案内します。` };
++  return {
++    title: `${from}発 ${to}行き 高速バス比較`,
++    description: `${from}から${to}への高速バスと、到着後の路線バス・鉄道・地下鉄・徒歩・タクシーをまとめて案内します。`,
++    robots: { index: false, follow: true },
++  };
+ }
+ 
+ export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
+diff --git a/app/sitemap.ts b/app/sitemap.ts
+index a352509..6bb9150 100644
+--- a/app/sitemap.ts
++++ b/app/sitemap.ts
+@@ -10,7 +10,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+   const busStops = await getD1().prepare("SELECT id, updated_at AS updatedAt FROM bus_stops ORDER BY updated_at DESC LIMIT 50000").all<{ id: string; updatedAt: number }>();
+   return [
+     { url: siteUrl(), lastModified: now, changeFrequency: "daily", priority: 1 },
+-    { url: siteUrl("/search"), lastModified: now, changeFrequency: "daily", priority: 0.8 },
+     { url: siteUrl("/routes"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
+     { url: siteUrl("/local-bus"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
+     { url: siteUrl("/onward"), lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+-- 
+2.43.0
+

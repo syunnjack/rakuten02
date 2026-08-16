@@ -14,3 +14,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ripgrep
       - name: Check live GSC signals
         run: bash scripts/site-analytics/check-gsc-signals.sh
+
+      - name: Check ColorfulBOX ranking / DTI signals
+        continue-on-error: true
+        run: bash scripts/site-analytics/check-ranking-signals.sh

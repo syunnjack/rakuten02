@@ -16,15 +16,13 @@
     "repo": "syunnjack/task-dashboard",
     "domain": "https://darekore.jp/",
     "stack": "vite-github-pages",
-    "status": "ga4-done-gsc-verify-in-console",
+    "status": "gsc-title-faq-patch-pending",
     "ga4": "G-5P2QCWYG8V",
     "searchConsole": "meta-tag-live",
-    "patch": "patches/task-dashboard/0001-Add-GA4-Search-Console-sitemap-robots-and-IndexNow-f.patch",
-    "patch2": "patches/task-dashboard/0002-Add-workflow-dispatch-for-Search-Console-token.patch",
-    "patch3": "patches/task-dashboard/0003-Add-Search-Console-meta-to-index-html.patch",
-    "setupDoc": "patches/task-dashboard/SETUP-SEARCH-CONSOLE.md",
+    "patch": "patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch",
+    "patch6": "patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch",
     "indexNowKey": "darekoreindex2026",
-    "note": "Search Console: public/googleXXXX.html を push（Secret 不要）が最短",
+    "note": "本番は薄い title。0005+0006 と Devin #8 を適用すれば GSC 改善",
     "secrets": []
   },
   {
@@ -32,11 +30,13 @@
     "repo": "syunnjack/goal-pilot-app",
     "domain": "https://goalpilot.jp/",
     "stack": "nextjs-xserver",
-    "status": "gsc-sitemap-pending",
+    "status": "gsc-canonical-faq-patch-pending",
     "ga4": "G-02C2YQ4WYE",
-    "searchConsole": "tag-live-unverified",
-    "patch": "patches/goal-pilot-app/0001-Add-robots-canonical-and-search-console-doc.patch",
-    "note": "Search Console でサイトマップ送信のみ"
+    "searchConsole": "tag-live",
+    "patch": "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch",
+    "patch3": "patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch",
+    "indexNowKey": "goalpilotindex2026",
+    "note": "本番は og:url のみ。0002+0003 が Devin #1 を包含（ページ単位 canonical / FAQ / IndexNow）"
   },
   {
     "id": "rakuafi-tool",
@@ -52,7 +52,7 @@
     "repo": "syunnjack/machi-list",
     "domain": "https://machi-list.jp/",
     "stack": "static-render",
-    "status": "live-ga4-gsc-robots-vc-fix-pending",
+    "status": "gsc-vc-faq-patch-pending",
     "httpsEnforced": "2026-08-09",
     "dnsVerified": "2026-08-06",
     "ga4Live": "G-WPET51XMKW",
@@ -60,7 +60,9 @@
     "postDnsDoc": "patches/machi-list/POST-DNS-GITHUB-PAGES.md",
     "deployDocRender": "patches/machi-list/DEPLOY-CUSTOM-DOMAIN.md",
     "indexNowKey": "machilistindex2026",
-    "dnsNote": "HTTPS+GA4+GSC live。空ページ robots 競合とホーム YOUR_VC_* を修正中",
+    "patch": "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch",
+    "patch4": "patches/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch",
+    "dnsNote": "HTTPS+GA4+GSC live。0003+0004 と Devin #1 で YOUR_VC_* / FAQ / 店舗詳細を直す",
     "renderEnv": [
       "GOOGLE_ANALYTICS_MEASUREMENT_ID",
       "GOOGLE_SITE_VERIFICATION"
@@ -74,10 +76,16 @@
     "repo": "syunnjack/kousokubus-benri",
     "domain": "https://busselect.jp/",
     "stack": "vinext-nextjs",
-    "status": "live-placeholder-ga4-gsc",
-    "liveVerified": "2026-08-12",
+    "status": "gsc-ga4-search-patch-pending",
+    "liveVerified": "2026-08-13",
     "patchApplied": "2026-08-06",
-    "patches": ["0002", "0003", "0004-optional", "0005-placeholder-guard"],
+    "patches": [
+      "0002",
+      "0003",
+      "0004-optional",
+      "0005-placeholder-guard",
+      "0006-search-noindex-faq"
+    ],
     "deployDoc": "patches/kousokubus-benri/DEPLOY-SITE-CREATOR-DNS.md",
     "leafletDoc": "patches/kousokubus-benri/APPLY-0003-LEAFLET.md",
     "windowsDevDoc": "patches/kousokubus-benri/WINDOWS-DEV.md",
@@ -88,10 +96,29 @@
     "githubSecrets": [
       "INDEXNOW_KEY"
     ],
-    "patch": "patches/kousokubus-benri/0002-Add-GA4-Search-Console-and-IndexNow-for-current-layout.patch",
+    "patch": "patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch",
+    "patch6": "patches/kousokubus-benri/0006-Noindex-search-add-faq-jsonld-and-fix-layout-canonical.patch",
     "patchLegacy": "patches/kousokubus-benri/0001-Add-GA4-Search-Console-and-IndexNow.patch",
-    "patchNote": "0001 fails on current layout.tsx — use 0002. Live emits Japanese placeholders until Site Creator env is fixed.",
+    "patchNote": "0005+0006 が Devin #1 を包含。本番 GA4 は Site Creator の実 G- が必要（未設定ならタグ非表示）。",
     "indexNowKey": "busselectindex2026",
-    "note": "Site Creator の GA4/GSC が日本語プレースホルダ。コード側で拒否＋title absolute 修正"
+    "note": "本番は GA4測定ID・二重 title・/search indexable。0005+0006 適用後は Site Creator で実 GA4 のみ手動"
+  },
+  {
+    "id": "hey-douga",
+    "repo": "syunnjack/hey-douga-guide",
+    "domain": "https://sosoru.org/",
+    "stack": "laravel-colorfulbox",
+    "status": "live-ga4-gsc",
+    "ga4": "G-DDSV1YXLEB",
+    "note": "Devin #2/#3/#4 patches as 0003-0005"
+  },
+  {
+    "id": "free-sample",
+    "repo": "syunnjack/free-sample-hub",
+    "domain": "https://sosoru.asia/",
+    "stack": "laravel-colorfulbox",
+    "status": "live-ga4-gsc",
+    "ga4": "G-F1L60W8K4L",
+    "note": "Patch 0004 = Devin #1"
   }
 ]

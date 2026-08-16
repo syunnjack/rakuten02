@@ -1,0 +1,129 @@
+From 757bb73fd60c33900cccc3e8096fe99359d74741 Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 16:49:30 +0000
+Subject: [PATCH] Add FAQ JSON-LD, richer Open Graph tags, and query robots
+
+Homepage now emits Organization and FAQPage alongside WebSite,
+matches og:title to the document title, and blocks thin query URLs
+in robots.txt. Generated pages get og/twitter metadata in pageShell.
+---
+ index.html                | 64 +++++++++++++++++++++++++++++++++------
+ robots.txt                |  1 +
+ scripts/generate-pages.js |  9 ++++++
+ 3 files changed, 64 insertions(+), 10 deletions(-)
+
+diff --git a/index.html b/index.html
+index 61d8ca677..754306e89 100644
+--- a/index.html
++++ b/index.html
+@@ -7,23 +7,67 @@
+     <meta name="description" content="主要都市のお店・商業施設を市区町村、ジャンル、条件から一覧で探せます。近い順、予算の安い順、予約、クーポン、通販、地図も確認できます。">
+     <link rel="canonical" href="https://machi-list.jp/">
+     <link rel="stylesheet" href="./assets/styles.css">
+-    <meta property="og:title" content="まちリスト">
++    <meta property="og:title" content="まちリスト｜市区町村とジャンルでお店を探す">
+     <meta property="og:description" content="市区町村とジャンルから、お店・商業施設を一覧で探せます。">
+     <meta property="og:type" content="website">
++    <meta property="og:url" content="https://machi-list.jp/">
++    <meta property="og:locale" content="ja_JP">
++    <meta property="og:site_name" content="まちリスト">
++    <meta name="twitter:card" content="summary">
++    <meta name="twitter:title" content="まちリスト｜市区町村とジャンルでお店を探す">
++    <meta name="twitter:description" content="市区町村とジャンルから、お店・商業施設を一覧で探せます。">
+     <script type="application/ld+json">
+       {
+         "@context": "https://schema.org",
+-        "@type": "WebSite",
+-        "name": "まちリスト",
+-        "url": "https://machi-list.jp/",
+-        "potentialAction": {
+-          "@type": "SearchAction",
+-          "target": "https://machi-list.jp/?area={area}&genre={genre}",
+-          "query-input": ["required name=area", "required name=genre"]
+-        }
++        "@graph": [
++          {
++            "@type": "WebSite",
++            "name": "まちリスト",
++            "url": "https://machi-list.jp/",
++            "description": "主要都市のお店・商業施設を市区町村、ジャンル、条件から一覧で探せます。",
++            "potentialAction": {
++              "@type": "SearchAction",
++              "target": "https://machi-list.jp/?area={area}&genre={genre}",
++              "query-input": ["required name=area", "required name=genre"]
++            }
++          },
++          {
++            "@type": "Organization",
++            "name": "まちリスト",
++            "url": "https://machi-list.jp/"
++          },
++          {
++            "@type": "FAQPage",
++            "mainEntity": [
++              {
++                "@type": "Question",
++                "name": "まちリストでは何が探せますか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "主要都市の飲食、娯楽、生活関連のお店・商業施設を、市区町村とジャンルから一覧で比較できます。近い順や予算の安い順、予約・クーポン・駐車場の確認にも使えます。"
++                }
++              },
++              {
++                "@type": "Question",
++                "name": "エリアとジャンルはどう選べばいいですか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "トップの条件パネルか、都道府県・市区町村・ジャンルの各ページから絞り込めます。地図と一覧が連動するので、場所と条件を同時に確認できます。"
++                }
++              },
++              {
++                "@type": "Question",
++                "name": "店舗の詳細情報はどこで見られますか？",
++                "acceptedAnswer": {
++                  "@type": "Answer",
++                  "text": "検証済みの店舗は個別の店舗ページがあり、住所・公式サイト・周辺のお店へのリンクを掲載しています。一覧の「詳細」から開けます。"
++                }
++              }
++            ]
++          }
++        ]
+       }
+     </script>
+-  
+     <meta name="robots" content="index, follow">
+   </head>
+   <body>
+diff --git a/robots.txt b/robots.txt
+index 4994bc199..7f79c420a 100644
+--- a/robots.txt
++++ b/robots.txt
+@@ -1,4 +1,5 @@
+ User-agent: *
+ Allow: /
++Disallow: /*?*
+ 
+ Sitemap: https://machi-list.jp/sitemap.xml
+diff --git a/scripts/generate-pages.js b/scripts/generate-pages.js
+index 13856fc17..0f8acef40 100644
+--- a/scripts/generate-pages.js
++++ b/scripts/generate-pages.js
+@@ -562,6 +562,15 @@ function pageShell({ title, description, canonical, depth, body, structuredData
+     <meta name="description" content="${escapeHtml(description)}">
+     <link rel="canonical" href="${canonical}">
+     <meta name="robots" content="${noindex ? "noindex, follow" : "index, follow"}">
++    <meta property="og:title" content="${escapeHtml(title)}">
++    <meta property="og:description" content="${escapeHtml(description)}">
++    <meta property="og:type" content="website">
++    <meta property="og:url" content="${canonical}">
++    <meta property="og:locale" content="ja_JP">
++    <meta property="og:site_name" content="まちリスト">
++    <meta name="twitter:card" content="summary">
++    <meta name="twitter:title" content="${escapeHtml(title)}">
++    <meta name="twitter:description" content="${escapeHtml(description)}">
+     <link rel="stylesheet" href="${css(depth)}">
+     ${siteAnalyticsHead()}
+     ${structuredData}
+-- 
+2.43.0
+

@@ -18,9 +18,21 @@ $jobs = @(
     Optional = $true
   },
   @{
+    Name = "task-dashboard (darekore FAQ JSON-LD / robots query)"
+    Dir  = "task-dashboard"
+    Patch = "$patchBase/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch"
+    Optional = $true
+  },
+  @{
     Name = "machi-list (robots conflict + VC SID)"
     Dir  = "machi-list"
     Patch = "$patchBase/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch"
+    Optional = $true
+  },
+  @{
+    Name = "machi-list (FAQ JSON-LD / og / query robots)"
+    Dir  = "machi-list"
+    Patch = "$patchBase/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch"
     Optional = $true
   },
   @{
@@ -30,9 +42,21 @@ $jobs = @(
     Optional = $true
   },
   @{
+    Name = "goal-pilot-app (per-route canonicals / FAQ / IndexNow)"
+    Dir  = "goal-pilot-app"
+    Patch = "$patchBase/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch"
+    Optional = $true
+  },
+  @{
     Name = "kousokubus-benri (busselect placeholder guard)"
     Dir  = "kousokubus-benri"
     Patch = "$patchBase/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
+    Optional = $true
+  },
+  @{
+    Name = "kousokubus-benri (busselect search noindex / FAQ)"
+    Dir  = "kousokubus-benri"
+    Patch = "$patchBase/kousokubus-benri/0006-Noindex-search-add-faq-jsonld-and-fix-layout-canonical.patch"
     Optional = $true
   }
 )

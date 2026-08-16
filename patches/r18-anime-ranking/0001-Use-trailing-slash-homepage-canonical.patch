@@ -1,0 +1,25 @@
+From a660ae788144c9dc4b80e1c50556f1b85c5f974d Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Thu, 13 Aug 2026 17:08:59 +0000
+Subject: [PATCH] Use trailing slash homepage canonical
+
+---
+ resources/views/welcome.blade.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/resources/views/welcome.blade.php b/resources/views/welcome.blade.php
+index d68331a..1f75c7b 100644
+--- a/resources/views/welcome.blade.php
++++ b/resources/views/welcome.blade.php
+@@ -6,7 +6,7 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>R18アニメランキング｜レビュー評価の高いFANZAアニメまとめ</title>
+   <meta name="description" content="FANZAのR18アニメ作品を、実際のレビュー評価が高い順にランキング形式でチェックできます。18歳未満閲覧禁止。">
+-  <link rel="canonical" href="{{ url()->current() }}">
++  <link rel="canonical" href="{{ request()->is('/') ? rtrim(config('app.url'), '/').'/' : url()->current() }}">
+   <meta property="og:site_name" content="R18アニメランキング">
+   <meta property="og:type" content="website">
+   <meta property="og:title" content="R18アニメランキング｜レビュー評価の高いFANZAアニメまとめ">
+-- 
+2.43.0
+

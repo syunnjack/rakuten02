@@ -140,11 +140,54 @@ for entry in "${sites[@]}"; do
     notes+=("dup-title")
     warn=$((warn + 1))
   fi
+  if [[ "$name" == "machi-list.jp" ]]; then
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+    robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+    if ! printf '%s' "$robots" | rg -q 'Disallow: /\*\?\*'; then
+      notes+=("robots-allows-query")
+      warn=$((warn + 1))
+    fi
+  fi
+  if [[ "$name" == "goalpilot.jp" ]]; then
+    inner="$(curl -fsSL --max-time 15 "${url%/}/diagnosis/" 2>/dev/null || true)"
+    inner_canon="$(printf '%s' "$inner" | rg -o 'rel="canonical" href="[^"]+"' | head -1 | sed -E 's/.*href="([^"]+)".*/\1/' || true)"
+    if [[ -z "$inner_canon" ]]; then
+      inner_canon="$(printf '%s' "$inner" | rg -o '\"rel\":\"canonical\",\"href\":\"[^\"]+\"' | head -1 | sed -E 's/.*"href":"([^"]+)".*/\1/' || true)"
+    fi
+    if [[ -z "$inner_canon" ]]; then
+      notes+=("inner-no-canonical")
+      warn=$((warn + 1))
+    elif [[ "$inner_canon" == "https://goalpilot.jp/" || "$inner_canon" == "https://goalpilot.jp" ]]; then
+      notes+=("inner-canonical-home")
+      warn=$((warn + 1))
+    fi
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+  fi
   if [[ "$name" == "busselect.jp" ]]; then
     search_robots="$(curl -fsSL --max-time 15 "${url%/}/search?from=tokyo&to=osaka" 2>/dev/null \
       | rg -o 'name=\"robots\" content=\"[^\"]+\"|\"name\":\"robots\",\"content\":\"[^\"]+\"' | head -1 || true)"
     if printf '%s' "$search_robots" | rg -q 'index, follow'; then
       notes+=("search-still-indexable")
+      warn=$((warn + 1))
+    fi
+    if ! printf '%s' "$html" | rg -q 'FAQPage'; then
+      notes+=("no-faq-jsonld")
+      warn=$((warn + 1))
+    fi
+    robots="$(curl -fsSL --max-time 10 "${url%/}/robots.txt" || true)"
+    if ! printf '%s' "$robots" | rg -q 'Disallow: /search'; then
+      notes+=("robots-allows-search")
+      warn=$((warn + 1))
+    fi
+    sm="$(curl -fsSL --max-time 15 "${url%/}/sitemap.xml" || true)"
+    if printf '%s' "$sm" | rg -q '<loc>[^<]*/search'; then
+      notes+=("sitemap-has-search")
       warn=$((warn + 1))
     fi
   fi

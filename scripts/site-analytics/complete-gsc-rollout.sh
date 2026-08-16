@@ -33,10 +33,8 @@ merge_pr() {
   fi
 }
 
-merge_pr syunnjack/kousokubus-benri 1 "title absolute + search noindex"
 merge_pr syunnjack/task-dashboard 8 "percent-encode actress URLs"
 merge_pr syunnjack/machi-list 1 "shop detail pages + sitemap"
-merge_pr syunnjack/goal-pilot-app 1 "canonicals + sitemap routes"
 
 echo
 echo "== DTI Devin PRs =="
@@ -71,5 +69,6 @@ echo "Done. Manual leftovers:"
 echo "  1) busselect Site Creator: fix/remove NEXT_PUBLIC_GOOGLE_* placeholders"
 echo "  2) Search Console: resubmit sitemap.xml x5"
 echo "  3) Bing Webmaster: verify shudenhotel.jp (clears IndexNow 403)"
-echo "  4) DTI: bash scripts/site-analytics/complete-dti-rollout.sh  (or included above)"
-echo "See docs/GSC-FINISH.md"
+echo "  4) DTI: bash scripts/site-analytics/apply-dti-patches.sh  (or complete-dti-rollout.sh; included above)"
+echo "  5) Ranking trailing-slash: PUSH=false bash scripts/site-analytics/apply-ranking-canonical-patches.sh"
+echo "See docs/GSC-FINISH.md / patches/ranking-sites/README.md"

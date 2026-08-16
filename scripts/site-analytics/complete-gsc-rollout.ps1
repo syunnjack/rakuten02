@@ -34,10 +34,8 @@ try {
 
 # Open PRs that already fix overlapping GSC issues (merge first when clean).
 $existingPrs = @(
-  @{ Repo = "syunnjack/kousokubus-benri"; Number = 1; Note = "title absolute + search noindex" },
   @{ Repo = "syunnjack/task-dashboard"; Number = 8; Note = "percent-encode actress URLs" },
   @{ Repo = "syunnjack/machi-list"; Number = 1; Note = "shop detail pages + sitemap" },
-  @{ Repo = "syunnjack/goal-pilot-app"; Number = 1; Note = "canonicals + sitemap routes" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 2; Note = "canonical/robots from APP_URL" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 3; Note = "https sample media" },
   @{ Repo = "syunnjack/hey-douga-guide"; Number = 4; Note = "crawlable work/provider pages" },
@@ -61,26 +59,38 @@ $jobs = @(
   @{
     Dir = "kousokubus-benri"
     Base = "main"
-    Patch = "patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch"
-    Title = "GSC: reject placeholder GA4/GSC tokens and fix title"
+    Patch = @(
+      "patches/kousokubus-benri/0005-Reject-placeholder-GA4-GSC-and-fix-title.patch",
+      "patches/kousokubus-benri/0006-Noindex-search-add-faq-jsonld-and-fix-layout-canonical.patch"
+    )
+    Title = "GSC: reject fake GA4/GSC, noindex search, FAQ JSON-LD"
   },
   @{
     Dir = "task-dashboard"
     Base = "main"
-    Patch = "patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch"
-    Title = "GSC: richer title, noindex search queries, encode sitemap"
+    Patch = @(
+      "patches/task-dashboard/0005-Improve-GSC-title-noindex-query-and-sitemap-encoding.patch",
+      "patches/task-dashboard/0006-Add-FAQ-JSON-LD-encoded-canonicals-and-robots-query.patch"
+    )
+    Title = "GSC: richer title, FAQ JSON-LD, noindex search queries"
   },
   @{
     Dir = "machi-list"
     Base = "main"
-    Patch = "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch"
-    Title = "GSC: fix robots conflict and ValueCommerce placeholders"
+    Patch = @(
+      "patches/machi-list/0003-Fix-robots-conflict-and-valuecommerce-placeholders.patch",
+      "patches/machi-list/0004-Add-faq-jsonld-og-tags-and-query-robots.patch"
+    )
+    Title = "GSC: fix VC placeholders, FAQ JSON-LD, og tags, query robots"
   },
   @{
     Dir = "goal-pilot-app"
     Base = "main"
-    Patch = "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch"
-    Title = "GSC: expand sitemap, remove vercel robots, add JSON-LD"
+    Patch = @(
+      "patches/goal-pilot-app/0002-Expand-sitemap-remove-vercel-robots-add-jsonld.patch",
+      "patches/goal-pilot-app/0003-Add-per-route-canonicals-faq-jsonld-and-indexnow.patch"
+    )
+    Title = "GSC: per-route canonicals, FAQ JSON-LD, IndexNow"
   }
 )
 
@@ -102,14 +112,17 @@ foreach ($job in $jobs) {
     git checkout $job.Base
     git pull origin $job.Base
     git checkout -B $branch "origin/$($job.Base)"
-    $patchPath = Join-Path $root $job.Patch
-    git am $patchPath
-    if ($LASTEXITCODE -ne 0) {
-      Write-Host "git am failed — trying 3-way apply" -ForegroundColor Yellow
-      git am --abort 2>$null
-      git apply --3way $patchPath
-      git add -A
-      git commit -m $job.Title
+    foreach ($rel in @($job.Patch)) {
+      $patchPath = Join-Path $root $rel
+      Write-Host "  am $rel"
+      git am $patchPath
+      if ($LASTEXITCODE -ne 0) {
+        Write-Host "git am failed — trying 3-way apply" -ForegroundColor Yellow
+        git am --abort 2>$null
+        git apply --3way $patchPath
+        git add -A
+        git commit -m $job.Title
+      }
     }
     git push -u origin $branch
     $prUrl = gh pr create --base $job.Base --head $branch --title $job.Title --body "Applied from rakuten02/$($job.Patch)`n`nSee also docs/GSC-FINISH.md" 2>$null
@@ -147,7 +160,8 @@ Write-Host "`n== Manual leftovers ==" -ForegroundColor Yellow
 Write-Host "1. busselect Site Creator: set real NEXT_PUBLIC_GOOGLE_* (remove Japanese placeholders)"
 Write-Host "2. Search Console: resubmit sitemap.xml for all 5 properties"
 Write-Host "3. Bing Webmaster: verify shudenhotel.jp (clears IndexNow Bing 403)"
-Write-Host "4. DTI: merge hey-douga #2/#3/#4 and free-sample-hub #1 (included above)"
-Write-Host "5. After busselect redeploy, re-run check-sites.ps1"
+Write-Host "4. DTI: bash scripts/site-analytics/apply-dti-patches.sh (or complete-dti-rollout.sh; included above)"
+Write-Host "5. Ranking trailing-slash: PUSH=false bash scripts/site-analytics/apply-ranking-canonical-patches.sh"
+Write-Host "6. After busselect redeploy, re-run check-sites.ps1"
 Write-Host "`nok=$ok fail=$fail"
 if ($fail -gt 0) { exit 1 }
